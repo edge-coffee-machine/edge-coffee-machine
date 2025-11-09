@@ -1,107 +1,67 @@
 import QtQuick 2.15
 
-Card {
-    width: 270
+Rectangle {
+    id: root
+    width: 380
     height: 420
-    color: "#131515"
+    color: "#131515" // Aligned with the color of the other cards
+    radius: 10
 
-    Column {
-        id: drinkListPanel
-        width: 250; height: 400
-        anchors.fill: parent
-        spacing: 10
+    // Expose the ListView's model property as a property of DrinkListPanel
+    // This allows main.qml to assign data to it.
+    property alias model: drinkListView.model
 
-        Column {
-            id: textColumn
-            Text {
-                text: "Just <b>for you</b>"
-                textFormat: Text.RichText
-                font.pixelSize: 18
-                color: "white"
-            }
+    Text {
+        id: panelTitle
+        text: "Available Drinks"
+        color: "#E0E0E0"
+        font.pixelSize: 20
+        font.bold: true
+        anchors.top: parent.top
+        anchors.topMargin: 15
+        anchors.horizontalCenter: parent.horizontalCenter
+    }
 
-            Text {
-                text: "Explore a list of drinks created just for you."
-                font.pixelSize: 10
-                color: "white"
-                font.weight: Font.Light
+    ListView {
+        id: drinkListView
+        anchors.top: panelTitle.bottom
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: parent.width - 20 // Side margins
+        anchors.topMargin: 15
+        anchors.bottomMargin: 10
+        spacing: 5
+        clip: true // Prevents items from going out of bounds
 
-            }
-        }
+        // A custom delegate for a better look
+        delegate: Component {
+            Rectangle {
+                width: drinkListView.width
+                height: 50
+                color: mouseArea.containsMouse ? "#3A3E40" : "#2A2E30"
+                radius: 8
 
+                Behavior on color { ColorAnimation { duration: 150 } }
 
+                Text {
+                    text: modelData.name // Accesses the 'name' property of the Beverage object
+                    color: "white"
+                    font.pixelSize: 18
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: parent.left
+                    anchors.leftMargin: 20
+                }
 
-        // Scrollable list simulation
-        Flickable {
-            width: parent.width
-            height: drinkListPanel.height - button.height - textColumn.height - drinkListPanel.spacing * 2
-            contentHeight: columnContent.height
-            clip: true
+                MouseArea {
+                    id: mouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
 
-            Column {
-                id: columnContent
-                width: parent.width
-                spacing: 10
-
-                Repeater {
-                    model: [
-                        { name: "Cappuccino", price: "€ 2,20" },
-                        { name: "Mocaccino", price: "€ 1,30" },
-                        { name: "Latte", price: "€ 1,00" },
-                        { name: "Lungo", price: "€ 1,50" },
-                        { name: "Cappuccino", price: "€ 2,20" },
-                        { name: "Mocaccino", price: "€ 1,30" },
-                        { name: "Latte", price: "€ 1,00" },
-                        { name: "Lungo", price: "€ 1,50" }
-                    ]
-                    delegate: Rectangle {
-                        width: parent.width
-                        height: 50
-                        radius: 8
-                        color: "#1A1B1C"
-
-                        Row {
-                            anchors.verticalCenter: parent.verticalCenter
-                            spacing: 10
-                            anchors.left: parent.left
-                            anchors.leftMargin: 10
-
-                            Image {
-                                source: "://assets/img/cappuccino.png"
-                                width: 40; height: 40
-                                fillMode: Image.PreserveAspectFit
-                            }
-                            Column {
-                                spacing: 2
-                                Text { text: modelData.name; color: "white"; font.pixelSize: 16; font.bold: true }
-                                Text { text: modelData.price; color: "white"; font.pixelSize: 14; font.weight: Font.Light }
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            onClicked: console.log("Selected", modelData.name)
-                        }
+                    onClicked: {
+                        edgeCoffeeMachineController.selectBeverage(modelData.name)
                     }
                 }
             }
         }
-
-        Rectangle {
-            id: button
-            width: parent.width
-            height: 40
-            radius: 20
-            color: "#212223"
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            Text {
-                text: "All drinks"
-                anchors.centerIn: parent
-                color: "white"
-                font.pixelSize: 16
-            }
-        }
     }
 }
-

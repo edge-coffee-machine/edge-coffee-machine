@@ -1,90 +1,118 @@
 import QtQuick 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Controls 2.15
 
-Card {
-    id: settingsPanel
-    width: 220; height: 400
-    radius: 16
-    color: "#1a1a1a"
+Rectangle {
+    id: root
+    color: "transparent"
 
-    Column {
-        spacing: 5
+    // This property will receive the selected beverage object from main.qml
+    property var targetBeverage: null
 
-        Column {
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.margins: 15
+        spacing: 10
+
+        // This content is only visible when a beverage is selected
+        ColumnLayout {
+            Layout.fillWidth: true
+            visible: targetBeverage !== null
+
             Text {
-                text: "Settings"
-                font.pixelSize: 20
+                text: targetBeverage ? targetBeverage.name : ""
+                color: "white"
+                font.pixelSize: 24
                 font.bold: true
-                color: "white"
+                Layout.alignment: Qt.AlignHCenter
             }
 
             Text {
-                text: "Customize your drink."
-                font.weight: Font.Light
-                font.pixelSize: 10
-                color: "white"
-
+                text: "Ingredients:"
+                color: "#A0A0A0"
+                font.pixelSize: 16
+                Layout.topMargin: 10
             }
-        }
 
+            // We use a Repeater to iterate over the ingredients map
+            ColumnLayout {
+                id: ingredientsRepeater
+                Layout.fillWidth: true
+                Layout.leftMargin: 20
+                Layout.rightMargin: 20
 
+                Repeater {
+                    // Object.keys() creates a list of ingredient names from the map
+                    model: targetBeverage ? Object.keys(targetBeverage.ingredients) : []
 
-        // Example slider row
-        Repeater {
-            model: ["Foam", "Milk", "Water", "Powder", "Coffee"]
-            delegate: Item {
-                width: 200; height: 40
-                    Text {
-                        text: modelData
-                        color: "white"
-                        anchors.left: parent.left
-                        anchors.verticalCenter: parent.verticalCenter
+                    RowLayout {
+                        Layout.fillWidth: true
+                        Text {
+                            text: modelData // 'modelData' here is the ingredient name (the key)
+                            color: "#E0E0E0"
+                            font.pixelSize: 18
+                        }
+                        Item { Layout.fillWidth: true } // Spacer
+                        Text {
+                            // We access the map value using the key
+                            text: targetBeverage.ingredients[modelData] + "g"
+                            color: "#A0A0A0"
+                            font.pixelSize: 16
+                        }
                     }
-                        Rectangle {
-                            id: bar
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: 100; height: 6
-                            radius: 3
-                            color: "#17191A"
-                            Rectangle {
-                                width: 50; height: 6
-                                radius: 3
-                                color: "white"
-                            }
+                }
+            }
+
+            // Spacer to push the button down
+            Item { Layout.fillHeight: true }
+
+            // We use an Item as a container to allow overlapping
+            // the button and the progress indicator, without layout conflicts.
+            Item {
+                Layout.fillWidth: true
+                Layout.minimumHeight: 50
+                Button {
+                    id: makeButton
+                    text: "Make " + (targetBeverage ? targetBeverage.name : "")
+                    anchors.fill: parent
+                    // Disable the button while the machine is busy
+                    enabled: !edgeCoffeeMachineController.isMakingDrink
+                    onClicked: {
+                        edgeCoffeeMachineController.makeDrink(targetBeverage.name)
+                    }
+                    background: Rectangle {
+                        // Colors more consistent with the theme
+                        color: makeButton.down ? "#4A4E50" : (makeButton.hovered ? "#3A3E40" : "#2A2E30")
+                        radius: 8
+                        Behavior on color { ColorAnimation { duration: 100 } }
+                    }
+                    contentItem: Item {
+                        anchors.fill: parent
+                        Text {
+                            text: makeButton.text
+                            color: "white"
+                            font.bold: true
+                            anchors.centerIn: parent
+                            visible: makeButton.enabled // Show text only when the button is active
                         }
-                        Rectangle {
-                            width: parent.width
-                            height: 1.2
-                            opacity: 0.05
-                            radius: 2
+                        BusyIndicator {
+                            anchors.centerIn: parent
+                            running: !makeButton.enabled // The indicator runs when the button is disabled
+                            visible: running
                         }
-
-
-
-
-
+                    }
+                }
             }
         }
-    }
 
-    Card {
-        height: 100
-        width: 200
-        anchors.bottom: parent.bottom
-        color: "#212223"
+        // Placeholder for when no beverage is selected
         Text {
-            text: "€ 1.20"
-            color: "white"
-            font.bold: true
-            font.pixelSize: 28
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        CustomButton {
-            text: "Brew now"
-            color: "#17191A"
-            onClick: console.log("Brew Espresso")
-            anchors.bottom: parent.bottom
+            text: "Select a drink to see details"
+            color: "#808080"
+            font.pixelSize: 18
+            wrapMode: Text.WordWrap
+            Layout.alignment: Qt.AlignCenter // Use Layout.alignment to center
+            visible: targetBeverage === null
         }
     }
 }

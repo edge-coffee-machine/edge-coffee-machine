@@ -1,6 +1,7 @@
 // Main.qml (rearranged into components)
 import QtQuick 2.15
 import "components" as Components
+import QtQuick.Layouts 1.15
 
 Rectangle {
     id: root
@@ -29,20 +30,18 @@ Rectangle {
             width: 600
             height: 420
 
-            Row {
-                id: mainComponentRow
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-
-                spacing: 10
-
-            Components.FavouritePanel { id: favouritePanel }
-            Components.SettingsPanel { id: settingsPanel }
+            Components.SettingsPanel {
+                id: settingsPanel
+                anchors.fill: parent // Make the panel fill the Card
+                targetBeverage: edgeCoffeeMachineController.selectedBeverage // Connects the selected beverage to the panel
             }
         }
 
 
-        Components.DrinkListPanel { id: drinkListPanel }
+        Components.DrinkListPanel {
+            id: drinkListPanel
+            model: edgeCoffeeMachineController.beverages // Passes the list of beverages from C++ to the panel's model
+        }
     }
 
 
