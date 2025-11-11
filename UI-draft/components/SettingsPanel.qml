@@ -2,9 +2,9 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
-Rectangle {
+Card {
     id: root
-    color: "transparent"
+    color: "#1A1B1C"
 
     // This property will receive the selected beverage object from main.qml
     property var targetBeverage: null
@@ -39,7 +39,6 @@ Rectangle {
                 id: ingredientsRepeater
                 Layout.fillWidth: true
                 Layout.leftMargin: 20
-                Layout.rightMargin: 20
 
                 Repeater {
                     // Object.keys() creates a list of ingredient names from the map
@@ -63,14 +62,28 @@ Rectangle {
                 }
             }
 
-            // Spacer to push the button down
-            Item { Layout.fillHeight: true }
+        Item {
+            Layout.fillHeight: true
+        }
 
-            // We use an Item as a container to allow overlapping
-            // the button and the progress indicator, without layout conflicts.
+        Card {
+            Layout.fillWidth: true
+            height: 150
+            color: "#212223"
+            anchors.bottom: parent.bottom
+            Text {
+                y: 20
+                text: "€ 1.20"
+                font.pixelSize: 40
+                font.bold: true
+                color: "white"
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
             Item {
-                Layout.fillWidth: true
-                Layout.minimumHeight: 50
+                width: parent.width
+                height: 40
+                anchors.bottom: parent.bottom
                 Button {
                     id: makeButton
                     text: "Make " + (targetBeverage ? targetBeverage.name : "")
@@ -82,8 +95,8 @@ Rectangle {
                     }
                     background: Rectangle {
                         // Colors more consistent with the theme
-                        color: makeButton.down ? "#4A4E50" : (makeButton.hovered ? "#3A3E40" : "#2A2E30")
-                        radius: 8
+                        color: makeButton.down ? "#4A4E50" : (makeButton.hovered ? "#3A3E40" : "#1A1B1C")
+                        radius: parent.height
                         Behavior on color { ColorAnimation { duration: 100 } }
                     }
                     contentItem: Item {
@@ -92,6 +105,7 @@ Rectangle {
                             text: makeButton.text
                             color: "white"
                             font.bold: true
+                            font.pixelSize: 18
                             anchors.centerIn: parent
                             visible: makeButton.enabled // Show text only when the button is active
                         }
@@ -115,4 +129,5 @@ Rectangle {
             visible: targetBeverage === null
         }
     }
+}
 }

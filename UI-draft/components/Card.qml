@@ -13,6 +13,6 @@ Rectangle {
     Item {
         id: contentItem
         anchors.fill: parent
-        anchors.margins: 10
+        anchors.margins: 15
     }
 }
