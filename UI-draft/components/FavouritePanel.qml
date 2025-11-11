@@ -22,6 +22,7 @@ Column {
             anchors.centerIn: parent
             spacing: 20
 
+            // The source will probabily need to be adjusted.
             Image {
                 id: espressoImg
                 source: "://assets/img/cappuccino.png"

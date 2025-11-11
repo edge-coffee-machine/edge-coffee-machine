@@ -26,11 +26,14 @@ target_include_directories(coffee_machine_app PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 # Find all QML files recursively in the UI-draft directory
 file(GLOB_RECURSE QML_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../UI-draft/*.qml")
 
-# Add all QML files as resources, preserving the directory structure
+# Find all asset files recursively in the UI-draft/assets directory
+file(GLOB_RECURSE ASSET_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../UI-draft/assets/*")
+
+# Add all QML files and assets as resources, preserving the directory structure
 qt_add_resources(coffee_machine_app "EdgeCoffeeMachine"
     PREFIX "/EdgeCoffeeMachine"
     BASE "${CMAKE_CURRENT_SOURCE_DIR}/../UI-draft"
-    FILES ${QML_FILES}
+    FILES ${QML_FILES} ${ASSET_FILES}
 )
 
 # Link Qt libraries to the executable

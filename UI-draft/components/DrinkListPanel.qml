@@ -62,11 +62,11 @@ Card {
                             height: parent.height
                             spacing: 20
 
-                            Rectangle {
-                                id: icon
+                            // Note: In the future we should look at .qrt files for the resources
+                            Image {
+                                source: "../assets/img/cappuccino.png"
                                 width: 60
                                 height: 60
-                                radius: 30
                                 anchors.verticalCenter: parent.verticalCenter
                             }
 
