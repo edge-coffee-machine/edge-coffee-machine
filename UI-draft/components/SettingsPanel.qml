@@ -70,7 +70,6 @@ Card {
             Layout.fillWidth: true
             height: 150
             color: "#212223"
-            anchors.bottom: parent.bottom
             Text {
                 y: 20
                 text: "€ 1.20"
