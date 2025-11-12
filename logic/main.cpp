@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine> // Loads QML files and manages the QML engine
 #include <QQmlContext> // Provides context for QML engine to access C++ objects
 #include <QQmlEngine> // Core QML engine functionalities
-#include <QDebug> // Debugging utilities    
+#include <QDebug> // Debugging utilities
 
 #include "EdgeCoffeeMachine.h" // Include the EdgeCoffeeMachine header
 #include "Beverage.h" // Include the Beverage header

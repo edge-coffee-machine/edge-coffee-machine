@@ -36,7 +36,7 @@ public:
 
 private:
     Beverage* getBeverage(const QString& name); // Helper to find a beverage by name
-    
+
     // Data members
     std::vector<std::unique_ptr<Beverage>> beverages;
     QString m_status;

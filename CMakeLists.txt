@@ -17,22 +17,25 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOMOC ON)
 
 # Add the executable for the coffee machine application
-qt_add_executable(coffee_machine_app main.cpp EdgeCoffeeMachine.cpp Beverage.cpp
+qt_add_executable(coffee_machine_app
+    logic/main.cpp
+	logic/EdgeCoffeeMachine.cpp
+    logic/Beverage.cpp
 )
 
 # Set include directories for the C++ source files
-target_include_directories(coffee_machine_app PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(coffee_machine_app PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/logic)
 
-# Find all QML files recursively in the UI-draft directory
-file(GLOB_RECURSE QML_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../UI-draft/*.qml")
+# Find all QML files recursively
+file(GLOB_RECURSE QML_FILES "${CMAKE_CURRENT_SOURCE_DIR}/user-interface/*.qml")
 
-# Find all asset files recursively in the UI-draft/assets directory
-file(GLOB_RECURSE ASSET_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../UI-draft/assets/*")
+# Find all asset files recursively
+file(GLOB_RECURSE ASSET_FILES "${CMAKE_CURRENT_SOURCE_DIR}/user-interface/assets/*")
 
 # Add all QML files and assets as resources, preserving the directory structure
 qt_add_resources(coffee_machine_app "EdgeCoffeeMachine"
     PREFIX "/EdgeCoffeeMachine"
-    BASE "${CMAKE_CURRENT_SOURCE_DIR}/../UI-draft"
+    BASE "${CMAKE_CURRENT_SOURCE_DIR}/user-interface"
     FILES ${QML_FILES} ${ASSET_FILES}
 )
 
