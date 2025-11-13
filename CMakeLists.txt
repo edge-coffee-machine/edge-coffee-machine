@@ -21,6 +21,7 @@ qt_add_executable(coffee_machine_app
     logic/main.cpp
 	logic/EdgeCoffeeMachine.cpp
     logic/Beverage.cpp
+    logic/User.cpp
 )
 
 # Set include directories for the C++ source files
