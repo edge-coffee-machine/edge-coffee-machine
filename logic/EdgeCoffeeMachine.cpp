@@ -72,7 +72,7 @@ void EdgeCoffeeMachine::addBeverage(const QString& name) {
         newBeverage->addIngredient("Milk", 120);
         newBeverage->addIngredient("Chocolate Syrup", 20);
     } else if (name == "Tea") {
-        newBeverage->addIngredient("Tea Leaves", 5);
+        newBeverage->addIngredient("Tea Leav es", 5);
         newBeverage->addIngredient("Water", 200);
     }
 

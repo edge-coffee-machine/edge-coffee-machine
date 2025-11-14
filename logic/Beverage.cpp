@@ -113,6 +113,33 @@ float Beverage::maxMilk() const {
 float Beverage::minMilk() const { 
     return m_minMilk;
 }
+float Beverage::getDefaultCoffeeBeans() const {
+    return m_defaultCoffeeBeans;
+}
+float Beverage::getDefaultCocoaPowder() const {
+    return m_defaultCocoaPowder;
+}
+float Beverage::getDefaultWater() const {
+    return m_defaultWater;
+}
+float Beverage::getDefaultFoam() const {
+    return m_defaultFoam;
+}
+float Beverage::getDefaultMilk() const {
+    return m_defaultMilk;
+}
+
+QQmlListProperty<Beverage> Beverage::defaultBeverageList(){
+    return QQmlListProperty<Beverage>(nullptr, &s_defaultBeverageList,
+        [](QQmlListProperty<Beverage>* list) -> qsizetype {
+            return reinterpret_cast<QList<Beverage*>*>(list->data)->size();
+        },
+        [](QQmlListProperty<Beverage>* list, qsizetype index) -> Beverage* {
+            return reinterpret_cast<QList<Beverage*>*>(list->data)->at(index);
+        });
+}
+
+
 
 void Beverage::resetIngredients() { // Method to reset ingredients to default values
     m_coffeeBeans=m_defaultCoffeeBeans;
@@ -126,5 +153,41 @@ void Beverage::resetIngredients() { // Method to reset ingredients to default va
     emit foamChanged();
     emit milkChanged();
 }
+
+// Static method to initialize the static list of default beverages.
+// This method should be called once at application startup
+void Beverage::initDefaultBeveragesList(){
+    qDeleteAll(Beverage::s_defaultBeverageList);
+    Beverage::s_defaultBeverageList.clear();
+
+    Beverage::s_defaultBeverageList.append(new Beverage("Espresso", 0.2, 0.4, 0.3, 0, 0));
+    Beverage::s_defaultBeverageList.append(new Beverage("Cappuccino", 0.1, 0, 0.3, 0, 0.1));
+    Beverage::s_defaultBeverageList.append(new Beverage("Latte", 0.1, 0, 0.3, 0, 0.15));
+    Beverage::s_defaultBeverageList.append(new Beverage("Americano", 0.1, 0, 1.0, 0, 0));
+    Beverage::s_defaultBeverageList.append(new Beverage("Mocha", 0.1, 0.05, 0.3, 0, 0.12));
+    Beverage::s_defaultBeverageList.append(new Beverage("Tea", 0, 0, 0.2, 0, 0));
+    //Maybe we should notify here that the list has changed? but static methods can't emit signals.
+    qDebug() << "Default beverages list initialized with" << Beverage::s_defaultBeverageList.size() << "beverages.";
+
+}
+
+// Static method to create an independent list of the default beverages.
+// The caller is responsible for deleting the cloned beverages.
+ QList<Beverage*> Beverage::getIndependentBeverageList() {
+    QList<Beverage*> clonedList;
+    for (Beverage* bev : Beverage::s_defaultBeverageList) {
+        Beverage* newBeverage = new Beverage(
+            bev->name(),
+            bev->getDefaultCoffeeBeans(),
+            bev->getDefaultCocoaPowder(),
+            bev->getDefaultWater(),
+            bev->getDefaultFoam(),
+            bev->getDefaultMilk()
+        );
+        clonedList.append(newBeverage);
+    }
+    return clonedList;
+}
+
 
 
