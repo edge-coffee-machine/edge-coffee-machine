@@ -47,10 +47,10 @@ public:
     Called from QML when a beverage is customized
     beverage: pointer to the beverage customized by the user from QML
 
-    Updates the ingredients of the specified beverage according to the user's customization, and
+    Records that the user has customized a beverage for recommendation purposes.
+    For the actual change in ingredients, use the Beverage methods directly.
     */
-    Q_INVOKABLE void beverageCustomized(Beverage* beverage, float coffee, float water, float cocoa, float milk, float foam);
-
+    Q_INVOKABLE void beverageCustomized();
     // For QML access
     QString name() const;
     int picture() const;
@@ -60,10 +60,10 @@ signals:
     void beveragesChanged(); // Emitted when the beverage list changes, to notify QML
 
 private:
-    inline static constexpr float conservativeWeightR = 0.05f; // Weight update rate for conservative users
-    inline static constexpr float earlyAdopterWeightR = 0.20f; // Weight update rate for early adopters
+    inline static constexpr float conservativeWeightR = 0.1f; // Weight update rate for conservative users
+    inline static constexpr float earlyAdopterWeightR = 0.25f; // Weight update rate for early adopters
     inline static constexpr float tryerR = 0.25f; // Tryer score update rate
-    inline static constexpr float customizerR = 0.1f; // Customizer score
+    inline static constexpr float customizerR = 0.225f; // Customizer score update rate
 
     // Basic properties
     QString m_name;
@@ -72,12 +72,13 @@ private:
     std::vector<Beverage*> m_beverages; // The list of beverages of the user (with his potential ingredient modifications)
 
     // Recomendation system data/parameters
+    int m_numBeverages = 0; // Number of beverages the user has selected
     std::vector<float> m_beveragesW; // Weights for each beverage, for recommendation purposes
     float m_tryerScore = 0.0f; // Score for how much the user tries new beverages
     float m_customizerScore = 0.0f; // Score for how much the user customizes beverages
 
-    float m_weightR = 0.1f; // Update rate for the coffee weights, based on user category
-    int m_customizations = 0; // Number of customizations made by the user since the last beverage selection
+    float m_weightR = 0.175f; // Update rate for the coffee weights, based on user category
+    bool m_customized = false; // Wether the user has customized a drink since the last beverage selection
 };
 
 #endif

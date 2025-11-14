@@ -6,6 +6,11 @@ User::User(const QString& name, int picture, QObject* parent)
     : QObject(parent), m_name(name), m_picture(picture), m_category(UserCategory::Default)
 {
     //m_beverages = Beverage::createDefaultTemplates(this);
+    m_beverages.clear();
+    m_beverages.push_back(new Beverage(QStringLiteral("Espresso"), this));
+    m_beverages.push_back(new Beverage(QStringLiteral("Cappuccino"), this));
+    m_beverages.push_back(new Beverage(QStringLiteral("Americano"), this));
+
     m_beveragesW = std::vector<float>(m_beverages.size(), 0.0f);
     emit beveragesChanged();
 }
@@ -25,7 +30,6 @@ QQmlListProperty<Beverage> User::beverages()
     );
 }
 
-
 void User::beverageSelected(Beverage* beverage)
 {
     if (!beverage) return;
@@ -44,20 +48,46 @@ void User::beverageSelected(Beverage* beverage)
         return;
     }
 
+    qInfo() << "User::beverageSelected called for beverage:" << beverage->name();
+
     // Update tryer score
     m_tryerScore = tryerR*(1-m_beveragesW[idx]) + (1-tryerR)*(m_tryerScore);
 
     // Update customizer score
-    if (m_customizations == 0) {
-        m_customizerScore = (1-customizerR)*(m_customizerScore);
+    if (m_customized) {
+        m_customizerScore = customizerR + (1-customizerR)*(m_customizerScore);
     }
     else {
-        for (int i = 0; i < m_customizations; i++){
-            m_customizerScore = customizerR + (1-customizerR)*(m_customizerScore);
-        }
+        m_customizerScore = (1-customizerR)*(m_customizerScore);
     }
 
-    m_customizations = 0;
+    m_customized = false;
+
+    // print tryer score, customizer score, and beverage weights for debugging
+    qInfo() << "User::beverageSelected: tryerScore =" << m_tryerScore << ", customizerScore =" << m_customizerScore;
+    qInfo() << "Beverage weights:";
+    for (int i = 0; i < m_beveragesW.size(); i++) {
+        qInfo() << "  Beverage" << i << ": weight =" << m_beveragesW[i];
+    }
+
+    if (m_numBeverages > 3) { // Classify the user after 3 selections
+        float tryerRatio = 0.7f; // Weight of tryer score in adoption score
+
+        // Calculate an early adopter score to classify the user based on the tryer and customizer scores
+        float earlyAdopterScore = tryerRatio*m_tryerScore + (1-tryerRatio)*m_customizerScore; 
+
+        qInfo() << "User::beverageSelected: earlyAdopterScore =" << earlyAdopterScore;
+        
+        // Classify user
+        if (earlyAdopterScore < 0.5f) {
+            m_category = UserCategory::Conservative;
+            m_weightR = conservativeWeightR;
+        }
+        else {
+            m_category = UserCategory::EarlyAdopter;
+            m_weightR = earlyAdopterWeightR;
+        }
+    }
 
     // Update coffee weights
     for (int i = 0; i < m_beveragesW.size(); i++) {
@@ -68,18 +98,23 @@ void User::beverageSelected(Beverage* beverage)
             m_beveragesW[i] = (1.0f - m_weightR) * m_beveragesW[i];
         }
     }
-}
 
-void User::beverageCustomized(Beverage* beverage, float coffee, float water, float cocoa, float milk, float foam)
-{
-    if (!beverage) {
-        qWarning() << "User::beverage_customized: null beverage";
-        return;
+    // Normalize weights
+    float sum = 0.0f;
+    for (size_t i = 0; i < m_beveragesW.size(); ++i) {
+        sum += m_beveragesW[i];
+    }
+    if (sum > 0.0f) {
+        for (size_t i = 0; i < m_beveragesW.size(); ++i) {
+            m_beveragesW[i] /= sum;
+        }
     }
 
-    qInfo() << "User::beverage_customized called (not implemented yet)."
-            << "params: coffee=" << coffee << "water=" << water
-            << "cocoa=" << cocoa << "milk=" << milk << "foam=" << foam;
+    m_numBeverages++;
+}
 
-    m_customizations++;
+void User::beverageCustomized()
+{
+    qInfo() << "User::beverage_customized called.";
+    m_customized = true;
 }
