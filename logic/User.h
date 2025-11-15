@@ -76,8 +76,6 @@ public:
     */
     Q_INVOKABLE void beverageCustomized();
 
-    void test();
-
     // For QML access
     // Gets the user's name
     QString name() const;
