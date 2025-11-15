@@ -10,23 +10,30 @@ User::User(const QString& name, int picture, QObject* parent)
     m_beverages.push_back(new Beverage(QStringLiteral("Espresso"), this));
     m_beverages.push_back(new Beverage(QStringLiteral("Cappuccino"), this));
     m_beverages.push_back(new Beverage(QStringLiteral("Americano"), this));
+    m_beverages.push_back(new Beverage(QStringLiteral("Latte"), this));
+    m_beverages.push_back(new Beverage(QStringLiteral("Chocolate"), this));
+    m_beverages.push_back(new Beverage(QStringLiteral("Skibidi"), this));
+    m_beverages.push_back(new Beverage(QStringLiteral("Prr prr patapim"), this));
 
     float w = 1.0f / static_cast<float>(m_beverages.size());
     m_beveragesW = std::vector<float>(m_beverages.size(), w);
-    emit beveragesChanged();
+    emit displayBeveragesChanged();
 }
 
 QString User::name() const { return m_name; }
 int User::picture() const { return m_picture; }
 
-QQmlListProperty<Beverage> User::beverages()
+QQmlListProperty<Beverage> User::displayBeverages()
 {
-    return QQmlListProperty<Beverage>(this, this,
-        [](QQmlListProperty<Beverage>* list) -> qsizetype {
-            return static_cast<qsizetype>(reinterpret_cast<User*>(list->data)->m_beverages.size());
+    return QQmlListProperty<Beverage>(
+        this, &m_displayBeverages,
+        [](QQmlListProperty<Beverage>* prop) {
+            auto vec = static_cast<std::vector<Beverage*>*>(prop->data);
+            return qsizetype(vec->size());
         },
-        [](QQmlListProperty<Beverage>* list, qsizetype index) -> Beverage* {
-            return reinterpret_cast<User*>(list->data)->m_beverages.at(static_cast<size_t>(index));
+        [](QQmlListProperty<Beverage>* prop, qsizetype index) {
+            auto vec = static_cast<std::vector<Beverage*>*>(prop->data);
+            return (*vec)[index];
         }
     );
 }
@@ -172,5 +179,52 @@ void User::sortBeverages()
         qInfo() << "      Beverage" << i << "(" << m_beverages[i]->name() << "): weight =" << m_beveragesW[i];
     }
 
-    emit beveragesChanged();
+    updateDisplayBeverages();
+}
+
+void User::updateDisplayBeverages()
+{
+    m_displayBeverages = m_beverages;
+
+    if (m_category == UserCategory::EarlyAdopter && m_beverages.size() > 3)
+    {
+        int n = m_beverages.size();
+        int randomIdx = n-1 - (rand() % std::min(3, n-1));
+
+        Beverage* suggestion = m_beverages[randomIdx];
+
+        // eliminarla de donde esté
+        m_displayBeverages.erase(
+            std::remove(m_displayBeverages.begin(), m_displayBeverages.end(), suggestion),
+            m_displayBeverages.end()
+        );
+
+        // insertarla en la tercera posición
+        m_displayBeverages.insert(m_displayBeverages.begin() + 2, suggestion);
+    }
+
+    qInfo() << "   Display beverages updated:";
+    for (int i = 0; i < m_displayBeverages.size(); i++) {
+        qInfo() << "      Display beverage [" << i << "]: " << m_displayBeverages[i]->name();
+    }
+
+    emit displayBeveragesChanged();
+}
+
+void User::test()
+{
+    beverageSelected(m_beverages[0]);
+    beverageCustomized();
+    beverageSelected(m_beverages[2]);
+    beverageSelected(m_beverages[2]);
+    beverageCustomized();
+    beverageSelected(m_beverages[2]);
+    beverageCustomized();
+    beverageSelected(m_beverages[2]);
+    beverageCustomized();
+    beverageSelected(m_beverages[2]);
+    beverageSelected(m_beverages[2]);
+    beverageCustomized();
+    beverageSelected(m_beverages[2]);
+    //beverageCustomized(m_beverages[0], 0.5f, 0.5f, 0.0f, 0.5f, 0.0f);
 }

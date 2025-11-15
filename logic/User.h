@@ -1,15 +1,7 @@
-/*
-This class handles everything related to (recognized) users:
-- Name
-- Picture
-- Category (default, conservative, early adopter)
-- Beverage list 
-- Interaction history
-- Creating a personalized menu
-*/
-
 #ifndef USER_H
 #define USER_H
+
+// TODO: Beverage sorting could be implemented by using an inverse bubble sort since only one weight changes significantly at a time.
 
 #include <QObject>
 #include <QString>
@@ -18,12 +10,49 @@ This class handles everything related to (recognized) users:
 #include <QVector>
 #include "Beverage.h"
 
+/*
+ * User
+ *
+ * Purpose
+ * -------
+ * Represents a person of the coffee machine application, exposing user identity and
+ * personalized beverage preferences to QML and the recommendation subsystem.
+ * The class encapsulates a small recommendation model that updates per-beverage
+ * weights and user behaviour scores (tryer / customizer) whenever the user
+ * selects (brews) or customizes a beverage from the UI.
+ * 
+ * Implementation notes
+ * --------------------
+ * - The beverages method exposes m_beverages to QML as a QQmlListProperty. m_beverages is always
+ *   sorted by weight after updates to ensure the UI reflects current recommendations.
+ * - m_beverages and m_beveragesW are kept in sync via parallel updates and sorting.
+ *
+ * Recommendation & Classification Model (high level)
+ * -------------------------------------------------
+ * - Per-beverage weights are updated using an exponential-style decay model:
+ *     - The selected beverage receives a positive update (increased weight).
+ *     - Other beverages are decayed accordingly so the vector remains meaningful
+ *       for ranking and recommendation.
+ * - The per-user weight update rate m_weightR is driven by the user's current
+ *   category (Default, Conservative, EarlyAdopter). Category-specific constants
+ *   (conservativeWeightR, earlyAdopterWeightR) determine how aggressively weights
+ *   move after a selection.
+ * - Two behavioural scores are tracked:
+ *     - m_tryerScore: how often the user tries new beverages
+ *     - m_customizerScore: how often the user customizes beverages before selecting
+ *   These are updated when selections occur.
+ * - classifyUser() combines tryer and customizer scores (using tryerToCustomizerRatio)
+ *   and a threshold (earlyAdopterTreshold) to promote users into the EarlyAdopter
+ *   category. Classification affects future weight update rates.
+ */
+
 class User : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(QString name READ name CONSTANT) // User's name. Set only at creation
     Q_PROPERTY(int picture READ picture CONSTANT) // User's picture index. Set only at creation
-    Q_PROPERTY(QQmlListProperty<Beverage> beverages READ beverages NOTIFY beveragesChanged) // List of user's beverages. Initialized with the defaults
+    Q_PROPERTY(QQmlListProperty<Beverage> displayBeverages READ displayBeverages) // Beverages sorted by recommendation (for early adopters, an unfrequent beverage appears third)
+
 
 public:
     enum class UserCategory { Default, Conservative, EarlyAdopter };
@@ -40,9 +69,6 @@ public:
     */
     Q_INVOKABLE void beverageSelected(Beverage* beverage); 
 
-    // Called from QML when a beverage is customized, updates the beverage ingredients
-    // The ingredients should be in a range of 0.0 to 1.0 representing the proportion of each ingredient
-
     /*
     Called from QML when a beverage is customized
     beverage: pointer to the beverage customized by the user from QML
@@ -52,13 +78,25 @@ public:
     */
     Q_INVOKABLE void beverageCustomized();
 
+    void test();
+
     // For QML access
+    // Gets the user's name
     QString name() const;
+
+    // Gets the user's picture index
     int picture() const;
-    QQmlListProperty<Beverage> beverages();
+
+    /*
+    TODO: DEPRECATED DESCRIPTION
+    Gets the SORTED list of user's beverages as a QQmlListProperty for QML access.
+    The list is sorted by recommendation weight, so that more recommended beverages
+    appear earlier in the list.
+    */
+    QQmlListProperty<Beverage> displayBeverages();
 
 signals:
-    void beveragesChanged(); // Emitted when the beverage list changes, to notify QML
+    void displayBeveragesChanged(); // Emitted when the beverage list changes, to notify QML
 
 private:
     /*
@@ -83,6 +121,11 @@ private:
     */
     void sortBeverages();
 
+    /*
+    
+    */
+    void updateDisplayBeverages();
+
     inline static constexpr float conservativeWeightR = 0.1f; // Weight update rate for conservative users
     inline static constexpr float earlyAdopterWeightR = 0.25f; // Weight update rate for early adopters
     inline static constexpr float tryerR = 0.25f; // Tryer score update rate
@@ -94,11 +137,12 @@ private:
     QString m_name;
     int m_picture = 0;
     UserCategory m_category = UserCategory::Default;
-    std::vector<Beverage*> m_beverages; // The list of beverages of the user (with his potential ingredient modifications)
+    std::vector<Beverage*> m_beverages; // The sorted list of beverages of the user, with his potential ingredient modifications
 
     // Recomendation system data/parameters
     int m_numBeverages = 0; // Number of beverages the user has selected
     std::vector<float> m_beveragesW; // Weights for each beverage, for recommendation purposes. (Should be) synced with m_beverages
+    std::vector<Beverage*> m_displayBeverages;
     float m_tryerScore = 0.0f; // Score for how much the user tries new beverages
     float m_customizerScore = 0.0f; // Score for how much the user customizes beverages
 
