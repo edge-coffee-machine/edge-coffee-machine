@@ -51,6 +51,7 @@ public:
     For the actual change in ingredients, use the Beverage methods directly.
     */
     Q_INVOKABLE void beverageCustomized();
+
     // For QML access
     QString name() const;
     int picture() const;
@@ -60,10 +61,34 @@ signals:
     void beveragesChanged(); // Emitted when the beverage list changes, to notify QML
 
 private:
+    /*
+    Should only be called from beverageSelected.
+    Updates the weights after a beverage has been selected.
+    selectedIdx: index of the beverage that has been selected in m_beverages (whose weight will be increased)
+    */
+    void updateBeverageWeights(int selectedIdx);
+
+    /*
+    Should only be called from beverageSelected.
+    Updates the user scores and category based on the selected beverage.
+    Resets m_customized flag.
+    selectedIdx: index of the beverage that has been selected in m_beverages
+    */
+    void classifyUser(int selectedIdx);
+
+    /*
+    Called each time the weights change, to sort the beverages (and weights) accordingly.
+    Higher weight beverages will be earlier in the list.
+    Maintains the correspondence between m_beverages and m_beveragesW.
+    */
+    void sortBeverages();
+
     inline static constexpr float conservativeWeightR = 0.1f; // Weight update rate for conservative users
     inline static constexpr float earlyAdopterWeightR = 0.25f; // Weight update rate for early adopters
     inline static constexpr float tryerR = 0.25f; // Tryer score update rate
     inline static constexpr float customizerR = 0.225f; // Customizer score update rate
+    inline static constexpr float tryerToCustomizerRatio = 0.8f; // How much more important is the tryer score vs the customizer score in classifying users
+    inline static constexpr float earlyAdopterTreshold = 0.5f; // Treshold for early adopter classification
 
     // Basic properties
     QString m_name;
@@ -73,7 +98,7 @@ private:
 
     // Recomendation system data/parameters
     int m_numBeverages = 0; // Number of beverages the user has selected
-    std::vector<float> m_beveragesW; // Weights for each beverage, for recommendation purposes
+    std::vector<float> m_beveragesW; // Weights for each beverage, for recommendation purposes. (Should be) synced with m_beverages
     float m_tryerScore = 0.0f; // Score for how much the user tries new beverages
     float m_customizerScore = 0.0f; // Score for how much the user customizes beverages
 
