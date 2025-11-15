@@ -1,8 +1,6 @@
 #ifndef USER_H
 #define USER_H
 
-// TODO: Beverage sorting could be implemented by using an inverse bubble sort since only one weight changes significantly at a time.
-
 #include <QObject>
 #include <QString>
 #include <QQmlListProperty>
@@ -88,10 +86,10 @@ public:
     int picture() const;
 
     /*
-    TODO: DEPRECATED DESCRIPTION
-    Gets the SORTED list of user's beverages as a QQmlListProperty for QML access.
-    The list is sorted by recommendation weight, so that more recommended beverages
-    appear earlier in the list.
+    Gets the list of user's beverages to display for QML access.
+    For conservative users, the list is sorted by recommendation weight, so that 
+    more recommended beverages appear earlier in the list.
+    For early adopters, the third beverage in the list is always an unfrequent beverage.
     */
     QQmlListProperty<Beverage> displayBeverages();
 
@@ -115,14 +113,16 @@ private:
     void classifyUser(int selectedIdx);
 
     /*
-    Called each time the weights change, to sort the beverages (and weights) accordingly.
+    Should only be called from beverageSelected.
+    Called each time the weights change, to sort the modified beverage (and weight).
+    It does NOT do a full sort, only repositions the selectedIdx item as needed to maintain order.
     Higher weight beverages will be earlier in the list.
     Maintains the correspondence between m_beverages and m_beveragesW.
     */
-    void sortBeverages();
+    void reorderBeverage(int selectedIdx);
 
     /*
-    
+    Updates m_displayBeverages based on the current user category and beverage list.
     */
     void updateDisplayBeverages();
 

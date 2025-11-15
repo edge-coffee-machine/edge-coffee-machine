@@ -6,14 +6,6 @@ User::User(const QString& name, int picture, QObject* parent)
     : QObject(parent), m_name(name), m_picture(picture), m_category(UserCategory::Default)
 {
     //m_beverages = Beverage::createDefaultTemplates(this);
-    m_beverages.clear();
-    m_beverages.push_back(new Beverage(QStringLiteral("Espresso"), this));
-    m_beverages.push_back(new Beverage(QStringLiteral("Cappuccino"), this));
-    m_beverages.push_back(new Beverage(QStringLiteral("Americano"), this));
-    m_beverages.push_back(new Beverage(QStringLiteral("Latte"), this));
-    m_beverages.push_back(new Beverage(QStringLiteral("Chocolate"), this));
-    m_beverages.push_back(new Beverage(QStringLiteral("Skibidi"), this));
-    m_beverages.push_back(new Beverage(QStringLiteral("Prr prr patapim"), this));
 
     float w = 1.0f / static_cast<float>(m_beverages.size());
     m_beveragesW = std::vector<float>(m_beverages.size(), w);
@@ -23,6 +15,7 @@ User::User(const QString& name, int picture, QObject* parent)
 QString User::name() const { return m_name; }
 int User::picture() const { return m_picture; }
 
+// TODO: For default users, it should return the list of beverages by global popularity
 QQmlListProperty<Beverage> User::displayBeverages()
 {
     return QQmlListProperty<Beverage>(
@@ -60,7 +53,7 @@ void User::beverageSelected(Beverage* beverage)
 
     classifyUser(idx);
     updateBeverageWeights(idx);
-    sortBeverages();
+    reorderBeverage(idx);
 
     m_numBeverages++;
 }
@@ -148,31 +141,16 @@ void User::classifyUser(int selectedIdx){
     qInfo() << "   User::beverageSelected: User category =" << categoryStr;
 }
 
-void User::sortBeverages()
+void User::reorderBeverage(int selectedIdx)
 {
-    size_t n = m_beverages.size();
-    if (n <= 1) return;
+    int i = selectedIdx;
 
-    std::vector<size_t> idxs(n);
-    for (size_t i = 0; i < n; ++i) idxs[i] = i;
-
-    std::sort(idxs.begin(), idxs.end(), [&](size_t a, size_t b){
-        float wa = (a < m_beveragesW.size()) ? m_beveragesW[a] : 0.0f;
-        float wb = (b < m_beveragesW.size()) ? m_beveragesW[b] : 0.0f;
-        return wa > wb;
-    });
-
-    std::vector<Beverage*> new_bev;
-    std::vector<float> new_w;
-    new_bev.reserve(n);
-    new_w.reserve(n);
-    for (size_t i = 0; i < n; ++i) {
-        new_bev.push_back(m_beverages[idxs[i]]);
-        new_w.push_back((idxs[i] < m_beveragesW.size()) ? m_beveragesW[idxs[i]] : 0.0f);
+    // Move upwards
+    while (i > 0 && m_beveragesW[i] > m_beveragesW[i - 1]) {
+        std::swap(m_beverages[i],  m_beverages[i - 1]);
+        std::swap(m_beveragesW[i], m_beveragesW[i - 1]);
+        i--;
     }
-
-    m_beverages.swap(new_bev);
-    m_beveragesW.swap(new_w);
 
     qInfo() << "   New beverage weights:";
     for (int i = 0; i < m_beveragesW.size(); i++) {
@@ -189,17 +167,17 @@ void User::updateDisplayBeverages()
     if (m_category == UserCategory::EarlyAdopter && m_beverages.size() > 3)
     {
         int n = m_beverages.size();
-        int randomIdx = n-1 - (rand() % std::min(3, n-1));
+        int randomIdx = n-1 - (rand() % std::min(3, n-1)); // Select a random index among the three less frequent beverages
 
         Beverage* suggestion = m_beverages[randomIdx];
 
-        // eliminarla de donde esté
+        // Remove the suggestion from its current position
         m_displayBeverages.erase(
             std::remove(m_displayBeverages.begin(), m_displayBeverages.end(), suggestion),
             m_displayBeverages.end()
         );
 
-        // insertarla en la tercera posición
+        // Insert the suggestion at index 2
         m_displayBeverages.insert(m_displayBeverages.begin() + 2, suggestion);
     }
 
@@ -209,22 +187,4 @@ void User::updateDisplayBeverages()
     }
 
     emit displayBeveragesChanged();
-}
-
-void User::test()
-{
-    beverageSelected(m_beverages[0]);
-    beverageCustomized();
-    beverageSelected(m_beverages[2]);
-    beverageSelected(m_beverages[2]);
-    beverageCustomized();
-    beverageSelected(m_beverages[2]);
-    beverageCustomized();
-    beverageSelected(m_beverages[2]);
-    beverageCustomized();
-    beverageSelected(m_beverages[2]);
-    beverageSelected(m_beverages[2]);
-    beverageCustomized();
-    beverageSelected(m_beverages[2]);
-    //beverageCustomized(m_beverages[0], 0.5f, 0.5f, 0.0f, 0.5f, 0.0f);
 }
