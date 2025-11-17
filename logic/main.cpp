@@ -9,6 +9,7 @@
 
 int main(int argc, char *argv[]) {
     using namespace Qt::StringLiterals;
+    Beverage::initDefaultBeveragesList();
 
     QGuiApplication app(argc, argv); // Create the application instance
     QQmlApplicationEngine engine; // Create the QML engine to load QML files and draw the UI

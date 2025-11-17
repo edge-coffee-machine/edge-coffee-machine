@@ -9,13 +9,10 @@
 EdgeCoffeeMachine::EdgeCoffeeMachine(QObject *parent)
 : QObject(parent), m_status("Idle"), m_isMakingDrink(false)
 {
-    // Initialize with some default beverages
-    addBeverage("Espresso");
-    addBeverage("Cappuccino");
-    addBeverage("Latte");
-    addBeverage("Americano");
-    addBeverage("Mocha");
-    addBeverage("Tea");
+    //as we do not have users yet, we will just copy the default beverages now for testing
+   beverages=Beverage::getIndependentBeverageList();
+   emit beveragesChanged(); // Notify QML about the change
+
 }
 
 // QQmlListProperty append function (not implemented for now)
@@ -49,9 +46,13 @@ void EdgeCoffeeMachine::setIsMakingDrink(bool making) {
 }
 
 // Q_INVOKABLE methods
+
+//method from the previous version, commented out for testing, but maybe it should be removed later
+//as i do not think beverages will be added dynamically during the execution of the program
 void EdgeCoffeeMachine::addBeverage(const QString& name) {
-    auto newBeverage = std::make_unique<Beverage>(name);
+    //auto newBeverage = std::make_unique<Beverage>(name);
     // Add some default ingredients based on the beverage name
+    /*
     if (name == "Espresso") {
         newBeverage->addIngredient("Coffee Beans", 10);
         newBeverage->addIngredient("Water", 30);
@@ -72,22 +73,26 @@ void EdgeCoffeeMachine::addBeverage(const QString& name) {
         newBeverage->addIngredient("Milk", 120);
         newBeverage->addIngredient("Chocolate Syrup", 20);
     } else if (name == "Tea") {
-        newBeverage->addIngredient("Tea Leaves", 5);
+        newBeverage->addIngredient("Tea Leav es", 5);
         newBeverage->addIngredient("Water", 200);
     }
-
+    
     beverages.push_back(std::move(newBeverage)); // Add to the list
+    */
     qDebug() << "Added beverage: " << name; // Debug output
     emit beveragesChanged(); // Notify QML about the change
 }
 
+// I do not know as well if this method will be used for the same reason as before,
+// but for now it is kept
 void EdgeCoffeeMachine::removeBeverage(const QString& name) {
-    auto it = std::remove_if(beverages.begin(), beverages.end(),
-                             [&](const std::unique_ptr<Beverage>& b) {
-                                 return b->name() == name;
-                             }); // Find beverage by name
+    auto it = std::find_if(beverages.begin(), beverages.end(),
+                           [&](Beverage* b) {
+                               return b->name() == name;
+                           }); // Find beverage by name
     if (it != beverages.end()) {
-        beverages.erase(it, beverages.end()); // Remove from the list
+        delete *it; // Free memory of the object
+        beverages.erase(it); // Remove from the list
         qDebug() << "Removed beverage: " << name; // Debug output
     } else {
         qDebug() << "Beverage not found: " << name; // Debug output if not found
@@ -100,7 +105,7 @@ Beverage* EdgeCoffeeMachine::getBeverage(const QString& name) {
     // Find beverage by name
     for (const auto& b : beverages) {
         if (b->name().toStdString() == name) {
-            return b.get(); // Return raw pointer
+            return b; // Return pointer if found
         }
     }
     return nullptr; // Not found
@@ -109,14 +114,30 @@ Beverage* EdgeCoffeeMachine::getBeverage(const QString& name) {
 // Q_PROPERTY getter for QQmlListProperty<Beverage>
 QQmlListProperty<Beverage> EdgeCoffeeMachine::getBeverages()
 {
-    return QQmlListProperty<Beverage>(this, this,
-        // Modern way using lambdas
+    return QQmlListProperty<Beverage>(this, &beverages,
+        [](QQmlListProperty<Beverage>* list, Beverage* beverage) {
+            auto beverages = reinterpret_cast<QList<Beverage*>*>(list->data);
+            if (beverages) {
+                beverages->append(beverage);
+            }
+        },
         [](QQmlListProperty<Beverage>* list) -> qsizetype {
-            return reinterpret_cast<EdgeCoffeeMachine*>(list->data)->beverages.size();
-        }, // Count of beverages
+            auto beverages = reinterpret_cast<QList<Beverage*>*>(list->data);
+            return beverages ? beverages->size() : 0;
+        },
         [](QQmlListProperty<Beverage>* list, qsizetype index) -> Beverage* {
-            return reinterpret_cast<EdgeCoffeeMachine*>(list->data)->beverages.at(index).get();
-        }); // Access beverage at index
+            auto beverages = reinterpret_cast<QList<Beverage*>*>(list->data);
+            if (beverages && index >= 0 && index < beverages->size()) {
+                return beverages->at(index);
+            }
+            return nullptr;
+        },
+        [](QQmlListProperty<Beverage>* list) {
+            auto beverages = reinterpret_cast<QList<Beverage*>*>(list->data);
+            if (beverages) {
+                beverages->clear();
+            }
+        });
 }
 
 void EdgeCoffeeMachine::makeDrink(const QString& drinkName) {
