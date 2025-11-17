@@ -4,6 +4,7 @@
 #include <QObject> // Include QObject for Q_OBJECT macro
 #include <QVariantList> // Include QVariantList if needed
 #include <QQmlListProperty> // Include QQmlListProperty for QML list properties
+#include <QList> // Include QList for list of beverages
 #include <vector>
 #include <string>
 #include <memory>
@@ -38,7 +39,7 @@ private:
     Beverage* getBeverage(const QString& name); // Helper to find a beverage by name
 
     // Data members
-    std::vector<std::unique_ptr<Beverage>> beverages;
+    QList<Beverage*> beverages;
     QString m_status;
     bool m_isMakingDrink;
     Beverage* m_selectedBeverage = nullptr;

@@ -34,30 +34,83 @@ Card {
                 Layout.topMargin: 10
             }
 
-            // We use a Repeater to iterate over the ingredients map
+            // Ingredients display
             ColumnLayout {
-                id: ingredientsRepeater
                 Layout.fillWidth: true
                 Layout.leftMargin: 20
 
-                Repeater {
-                    // Object.keys() creates a list of ingredient names from the map
-                    model: targetBeverage ? Object.keys(targetBeverage.ingredients) : []
+                RowLayout {
+                    Layout.fillWidth: true
+                    Text {
+                        text: "Coffee Beans"
+                        color: "#E0E0E0"
+                        font.pixelSize: 18
+                    }
+                    Item { Layout.fillWidth: true } 
+                    Text {
+                        text: targetBeverage ? (targetBeverage.minCoffeeBeans + targetBeverage.coffeeBeans * (targetBeverage.maxCoffeeBeans - targetBeverage.minCoffeeBeans)).toFixed(2) + "g" : "0g"
+                        color: "#A0A0A0"
+                        font.pixelSize: 16
+                    }
+                }
 
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Text {
-                            text: modelData // 'modelData' here is the ingredient name (the key)
-                            color: "#E0E0E0"
-                            font.pixelSize: 18
-                        }
-                        Item { Layout.fillWidth: true } // Spacer
-                        Text {
-                            // We access the map value using the key
-                            text: targetBeverage.ingredients[modelData] + "g"
-                            color: "#A0A0A0"
-                            font.pixelSize: 16
-                        }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Text {
+                        text: "Cocoa Powder"
+                        color: "#E0E0E0"
+                        font.pixelSize: 18
+                    }
+                    Item { Layout.fillWidth: true }
+                    Text {
+                        text: targetBeverage ? (targetBeverage.minCocoaPowder + targetBeverage.cocoaPowder * (targetBeverage.maxCocoaPowder - targetBeverage.minCocoaPowder)).toFixed(2) + "g" : "0g"
+                        color: "#A0A0A0"
+                        font.pixelSize: 16
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Text {
+                        text: "Water"
+                        color: "#E0E0E0"
+                        font.pixelSize: 18
+                    }
+                    Item { Layout.fillWidth: true } 
+                    Text {
+                        text: targetBeverage ? (targetBeverage.minWater + targetBeverage.water * (targetBeverage.maxWater - targetBeverage.minWater)).toFixed(2) + "ml" : "0ml"
+                        color: "#A0A0A0"
+                        font.pixelSize: 16
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Text {
+                        text: "Foam"
+                        color: "#E0E0E0"
+                        font.pixelSize: 18
+                    }
+                    Item { Layout.fillWidth: true } 
+                    Text {
+                        text: targetBeverage ? (targetBeverage.minFoam + targetBeverage.foam * (targetBeverage.maxFoam - targetBeverage.minFoam)).toFixed(2) + "ml" : "0ml"
+                        color: "#A0A0A0"
+                        font.pixelSize: 16
+                    }
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Text {
+                        text: "Milk"
+                        color: "#E0E0E0"
+                        font.pixelSize: 18
+                    }
+                    Item { Layout.fillWidth: true } // Espaciador
+                    Text {
+                        text: targetBeverage ? (targetBeverage.minMilk + targetBeverage.milk * (targetBeverage.maxMilk - targetBeverage.minMilk)).toFixed(2) + "ml" : "0ml"
+                        color: "#A0A0A0"
+                        font.pixelSize: 16
                     }
                 }
             }

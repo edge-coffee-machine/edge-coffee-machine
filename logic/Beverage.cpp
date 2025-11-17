@@ -19,6 +19,8 @@ Beverage::Beverage(const QString& name, float coffeeBeans, float cocoaPowder, fl
     m_milk = m_defaultMilk;
       }
 
+QList<Beverage*> Beverage::s_defaultBeverageList;
+
 QString Beverage::name() const { // Getter for name property
         return m_name;
 }
@@ -160,12 +162,12 @@ void Beverage::initDefaultBeveragesList(){
     qDeleteAll(Beverage::s_defaultBeverageList);
     Beverage::s_defaultBeverageList.clear();
 
-    Beverage::s_defaultBeverageList.append(new Beverage("Espresso", 0.2, 0.4, 0.3, 0, 0));
-    Beverage::s_defaultBeverageList.append(new Beverage("Cappuccino", 0.1, 0, 0.3, 0, 0.1));
-    Beverage::s_defaultBeverageList.append(new Beverage("Latte", 0.1, 0, 0.3, 0, 0.15));
-    Beverage::s_defaultBeverageList.append(new Beverage("Americano", 0.1, 0, 1.0, 0, 0));
-    Beverage::s_defaultBeverageList.append(new Beverage("Mocha", 0.1, 0.05, 0.3, 0, 0.12));
-    Beverage::s_defaultBeverageList.append(new Beverage("Tea", 0, 0, 0.2, 0, 0));
+    Beverage::s_defaultBeverageList.append(new Beverage("Espresso", 0.2f, 0.4f, 0.3f, 0.5f, 0.6f));
+    Beverage::s_defaultBeverageList.append(new Beverage("Cappuccino", 0.1f, 0, 0.3f, 0, 0.1f));
+    Beverage::s_defaultBeverageList.append(new Beverage("Latte", 0.1f, 0, 0.3f, 0, 0.15f));
+    Beverage::s_defaultBeverageList.append(new Beverage("Americano", 0.1f, 0, 1.0f, 0, 0));
+    Beverage::s_defaultBeverageList.append(new Beverage("Mocha", 0.1f, 0.05f, 0.3f, 0, 0.12f));
+    Beverage::s_defaultBeverageList.append(new Beverage("Milk", 0, 0, 0.2f, 0, 0));
     //Maybe we should notify here that the list has changed? but static methods can't emit signals.
     qDebug() << "Default beverages list initialized with" << Beverage::s_defaultBeverageList.size() << "beverages.";
 
