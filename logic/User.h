@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QQmlListProperty>
-#include <vector>
+#include <QList>
 #include <QVector>
 #include "Beverage.h"
 
@@ -65,7 +65,7 @@ public:
     Follows an exponential decay model where the selected beverage's weight is increased
     and the others are decreased, based on the user's update rate m_r.
     */
-    Q_INVOKABLE void beverageSelected(Beverage* beverage); 
+    Q_INVOKABLE void beverageBrewed(Beverage* beverage); 
 
     /*
     Called from QML when a beverage is customized
@@ -82,6 +82,8 @@ public:
 
     // Gets the user's picture index
     int picture() const;
+
+    void test();
 
     /*
     Gets the list of user's beverages to display for QML access.
@@ -135,12 +137,12 @@ private:
     QString m_name;
     int m_picture = 0;
     UserCategory m_category = UserCategory::Default;
-    std::vector<Beverage*> m_beverages; // The sorted list of beverages of the user, with his potential ingredient modifications
+    QList<Beverage*> m_beverages; // The sorted list of beverages of the user, with his potential ingredient modifications
 
     // Recomendation system data/parameters
     int m_numBeverages = 0; // Number of beverages the user has selected
-    std::vector<float> m_beveragesW; // Weights for each beverage, for recommendation purposes. (Should be) synced with m_beverages
-    std::vector<Beverage*> m_displayBeverages;
+    QVector<float> m_beveragesW; // Weights for each beverage, for recommendation purposes. (Should be) synced with m_beverages
+    QList<Beverage*> m_displayBeverages;
     float m_tryerScore = 0.0f; // Score for how much the user tries new beverages
     float m_customizerScore = 0.0f; // Score for how much the user customizes beverages
 

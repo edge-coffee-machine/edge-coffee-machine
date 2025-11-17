@@ -97,7 +97,7 @@ Card {
                             hoverEnabled: true
 
                             onClicked: {
-                                edgeCoffeeMachineController.selectBeverage(modelData.name)
+                                edgeCoffeeMachineController.selectBeverage(modelData)
                             }
                         }
                     }

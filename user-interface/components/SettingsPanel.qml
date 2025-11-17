@@ -143,7 +143,7 @@ Card {
                     // Disable the button while the machine is busy
                     enabled: !edgeCoffeeMachineController.isMakingDrink
                     onClicked: {
-                        edgeCoffeeMachineController.makeDrink(targetBeverage.name)
+                        edgeCoffeeMachineController.makeDrink(targetBeverage)
                     }
                     background: Rectangle {
                         // Colors more consistent with the theme

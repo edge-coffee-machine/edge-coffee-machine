@@ -8,34 +8,48 @@ User::User(const QString& name, int picture, QObject* parent)
     //m_beverages = Beverage::createDefaultTemplates(this);
 
     float w = 1.0f / static_cast<float>(m_beverages.size());
-    m_beveragesW = std::vector<float>(m_beverages.size(), w);
+    m_beveragesW = QVector<float>(m_beverages.size(), w);
     emit displayBeveragesChanged();
 }
 
 QString User::name() const { return m_name; }
 int User::picture() const { return m_picture; }
 
+void User::test()
+{
+    qInfo() << "User::test called.";
+
+    //Add example beverages
+    m_beverages.append(new Beverage("Espresso", 8.0f, 0.0f, 30.0f, 0.0f, 0.0f));
+    m_beverages.append(new Beverage("Cappuccino", 8.0f, 0.0f, 30.0f, 20.0f, 100.0f));
+    m_beverages.append(new Beverage("Skibidi", 8.0f, 0.0f, 30.0f, 20.0f, 100.0f));
+    m_beverages.append(new Beverage("Prr patapim", 8.0f, 0.0f, 30.0f, 20.0f, 100.0f));
+    m_beverages.append(new Beverage("Tralalero", 8.0f, 0.0f, 30.0f, 20.0f, 100.0f));
+    m_beverages.append(new Beverage("Ballerina", 8.0f, 0.0f, 30.0f, 20.0f, 100.0f));
+
+    m_beveragesW = QVector<float>(m_beverages.size(), 1.0f / static_cast<float>(m_beverages.size()));
+    
+    //Select beverages
+    beverageBrewed(m_beverages[4]);
+    beverageBrewed(m_beverages[4]);
+    beverageBrewed(m_beverages[4]);
+    beverageBrewed(m_beverages[4]);
+    beverageBrewed(m_beverages[4]);
+    beverageBrewed(m_beverages[4]);
+    beverageBrewed(m_beverages[4]);
+}
+
 // TODO: For default users, it should return the list of beverages by global popularity
 QQmlListProperty<Beverage> User::displayBeverages()
 {
-    return QQmlListProperty<Beverage>(
-        this, &m_displayBeverages,
-        [](QQmlListProperty<Beverage>* prop) {
-            auto vec = static_cast<std::vector<Beverage*>*>(prop->data);
-            return qsizetype(vec->size());
-        },
-        [](QQmlListProperty<Beverage>* prop, qsizetype index) {
-            auto vec = static_cast<std::vector<Beverage*>*>(prop->data);
-            return (*vec)[index];
-        }
-    );
+    return QQmlListProperty<Beverage>(this, &m_displayBeverages);
 }
 
-void User::beverageSelected(Beverage* beverage)
+void User::beverageBrewed(Beverage* beverage)
 {
     if (!beverage) return;
 
-    qInfo() << "User::beverageSelected called for beverage:" << beverage->name();
+    qInfo() << "User::beverageBrewed called for beverage:" << beverage->name();
 
     // Locate the beverage index
     int idx = -1;
@@ -47,7 +61,7 @@ void User::beverageSelected(Beverage* beverage)
     }
 
     if (idx < 0) {
-        qWarning() << "   User::beverageSelected: Beverage not found!";
+        qWarning() << "   User::beverageBrewed: Beverage not found!";
         return;
     }
 
@@ -103,13 +117,13 @@ void User::classifyUser(int selectedIdx){
     m_customized = false;
 
     // print tryer score, customizer score, and beverage weights for debugging
-    qInfo() << "   User::beverageSelected: tryerScore =" << m_tryerScore << ", customizerScore =" << m_customizerScore;
+    qInfo() << "   User::beverageBrewed: tryerScore =" << m_tryerScore << ", customizerScore =" << m_customizerScore;
 
     if (m_numBeverages >= 3) { // Classify the user after 3 selections
         // Calculate an early adopter score to classify the user based on the tryer and customizer scores
         float earlyAdopterScore = tryerToCustomizerRatio*m_tryerScore + (1-tryerToCustomizerRatio)*m_customizerScore; 
 
-        qInfo() << "   User::beverageSelected: earlyAdopterScore =" << earlyAdopterScore;
+        qInfo() << "   User::beverageBrewed: earlyAdopterScore =" << earlyAdopterScore;
         
         // Classify user
         if (earlyAdopterScore < earlyAdopterTreshold) {
@@ -138,7 +152,7 @@ void User::classifyUser(int selectedIdx){
             break;
     }
 
-    qInfo() << "   User::beverageSelected: User category =" << categoryStr;
+    qInfo() << "   User::beverageBrewed: User category =" << categoryStr;
 }
 
 void User::reorderBeverage(int selectedIdx)
@@ -169,16 +183,13 @@ void User::updateDisplayBeverages()
         int n = m_beverages.size();
         int randomIdx = n-1 - (rand() % std::min(3, n-1)); // Select a random index among the three less frequent beverages
 
-        Beverage* suggestion = m_beverages[randomIdx];
+        Beverage* suggestion = m_beverages.at(randomIdx);
 
         // Remove the suggestion from its current position
-        m_displayBeverages.erase(
-            std::remove(m_displayBeverages.begin(), m_displayBeverages.end(), suggestion),
-            m_displayBeverages.end()
-        );
+        m_displayBeverages.removeAll(suggestion);
 
         // Insert the suggestion at index 2
-        m_displayBeverages.insert(m_displayBeverages.begin() + 2, suggestion);
+        m_displayBeverages.insert(2, suggestion);
     }
 
     qInfo() << "   Display beverages updated:";
