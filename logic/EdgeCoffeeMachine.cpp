@@ -84,7 +84,9 @@ void EdgeCoffeeMachine::makeDrink(Beverage* beverage) {
         setStatus(drinkName + " is ready!"); // Update status
         setIsMakingDrink(false); // Reset making drink state
         m_weightedBeverages.recordSelection(beverage); // Record selection of the made drink, for popularity tracking
+        if (user) user->beverageBrewed(beverage); // Notify user about the brewed beverage
         emit beveragesChanged(); // Notify QML about the change
+        
     });
 }
 

@@ -45,13 +45,14 @@ public:
         return m_weights[index];
     }
 
-    // Record selection by index or item
+    // Record selection by index
     void recordSelectionAt(int index) {
         if (index < 0 || index >= m_items.size()) return;
         applyExponentialDecay(index);
         insertSortUp(index);
     }
 
+    // Record selection by item
     void recordSelection(const T& item) {
         int idx = indexOf(item);
         if (idx >= 0) recordSelectionAt(idx);
