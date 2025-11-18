@@ -5,10 +5,8 @@
 User::User(const QString& name, int picture, QObject* parent)
     : QObject(parent), m_name(name), m_picture(picture), m_category(UserCategory::Default)
 {
-    //m_beverages = Beverage::createDefaultTemplates(this);
-
-    float w = 1.0f / static_cast<float>(m_beverages.size());
-    m_beveragesW = QVector<float>(m_beverages.size(), w);
+    m_weightedBeverages = WeightedSortedList<Beverage*>(Beverage::getIndependentBeverageList(), defaultWeightR);
+    updateDisplayBeverages();
     emit displayBeveragesChanged();
 }
 
@@ -19,27 +17,16 @@ void User::test()
 {
     qInfo() << "User::test called.";
 
-    //Add example beverages
-    m_beverages.append(new Beverage("Espresso", 8.0f, 0.0f, 30.0f, 0.0f, 0.0f));
-    m_beverages.append(new Beverage("Cappuccino", 8.0f, 0.0f, 30.0f, 20.0f, 100.0f));
-    m_beverages.append(new Beverage("Skibidi", 8.0f, 0.0f, 30.0f, 20.0f, 100.0f));
-    m_beverages.append(new Beverage("Prr patapim", 8.0f, 0.0f, 30.0f, 20.0f, 100.0f));
-    m_beverages.append(new Beverage("Tralalero", 8.0f, 0.0f, 30.0f, 20.0f, 100.0f));
-    m_beverages.append(new Beverage("Ballerina", 8.0f, 0.0f, 30.0f, 20.0f, 100.0f));
-
-    m_beveragesW = QVector<float>(m_beverages.size(), 1.0f / static_cast<float>(m_beverages.size()));
-    
     //Select beverages
-    beverageBrewed(m_beverages[4]);
-    beverageBrewed(m_beverages[4]);
-    beverageBrewed(m_beverages[4]);
-    beverageBrewed(m_beverages[4]);
-    beverageBrewed(m_beverages[4]);
-    beverageBrewed(m_beverages[4]);
-    beverageBrewed(m_beverages[4]);
+    beverageBrewed(m_weightedBeverages.items()[0]);
+    beverageBrewed(m_weightedBeverages.items()[2]);
+    beverageBrewed(m_weightedBeverages.items()[4]);
+    beverageBrewed(m_weightedBeverages.items()[2]);
+    beverageBrewed(m_weightedBeverages.items()[3]);
+    beverageBrewed(m_weightedBeverages.items()[1]);
 }
 
-// TODO: For default users, it should return the list of beverages by global popularity
+// TODO: For default users, it should return the list of beverages by global popularity (populatiy list in EdgeCoffeeMachine, weightedBeverages.items())
 QQmlListProperty<Beverage> User::displayBeverages()
 {
     return QQmlListProperty<Beverage>(this, &m_displayBeverages);
@@ -52,13 +39,7 @@ void User::beverageBrewed(Beverage* beverage)
     qInfo() << "User::beverageBrewed called for beverage:" << beverage->name();
 
     // Locate the beverage index
-    int idx = -1;
-    for (int i = 0; i < m_beverages.size(); i++) {
-        if (m_beverages[i] == beverage) {
-            idx = i;
-            break;
-        }
-    }
+    int idx = m_weightedBeverages.indexOf(beverage);
 
     if (idx < 0) {
         qWarning() << "   User::beverageBrewed: Beverage not found!";
@@ -66,8 +47,15 @@ void User::beverageBrewed(Beverage* beverage)
     }
 
     classifyUser(idx);
-    updateBeverageWeights(idx);
-    reorderBeverage(idx);
+    m_weightedBeverages.recordSelectionAt(idx);
+    updateDisplayBeverages();
+
+    //print the beverage weights for debugging
+    qInfo() << "   Beverage weights after selection:";
+    for (int i = 0; i < m_weightedBeverages.size(); i++) {
+        qInfo() << "      Beverage [" << i << "]: " << m_weightedBeverages.items()[i]->name()
+                << ", weight =" << m_weightedBeverages.weightAt(i);
+    }
 
     m_numBeverages++;
 }
@@ -78,33 +66,10 @@ void User::beverageCustomized()
     m_customized = true;
 }
 
-void User::updateBeverageWeights(int selectedIdx)
-{
-    // Update coffee weights
-    for (int i = 0; i < m_beveragesW.size(); i++) {
-        if (i == selectedIdx) {
-            m_beveragesW[i] = m_weightR + (1.0f - m_weightR) * m_beveragesW[i];
-        } 
-        else {
-            m_beveragesW[i] = (1.0f - m_weightR) * m_beveragesW[i];
-        }
-    }
-
-    // Normalize weights
-    float sum = 0.0f;
-    for (size_t i = 0; i < m_beveragesW.size(); ++i) {
-        sum += m_beveragesW[i];
-    }
-    if (sum > 0.0f) {
-        for (size_t i = 0; i < m_beveragesW.size(); ++i) {
-            m_beveragesW[i] /= sum;
-        }
-    }
-}
-
 void User::classifyUser(int selectedIdx){
     // Update tryer score
-    m_tryerScore = tryerR*(1-m_beveragesW[selectedIdx]) + (1-tryerR)*(m_tryerScore);
+    float w = m_weightedBeverages.weightAt(selectedIdx);
+    m_tryerScore = tryerR*(1-w) + (1-tryerR)*(m_tryerScore);
 
     // Update customizer score
     if (m_customized) {
@@ -128,11 +93,11 @@ void User::classifyUser(int selectedIdx){
         // Classify user
         if (earlyAdopterScore < earlyAdopterTreshold) {
             m_category = UserCategory::Conservative;
-            m_weightR = conservativeWeightR;
+            m_weightedBeverages.setWeightR(conservativeWeightR);
         }
         else {
             m_category = UserCategory::EarlyAdopter;
-            m_weightR = earlyAdopterWeightR;
+            m_weightedBeverages.setWeightR(earlyAdopterWeightR);
         }
     }
 
@@ -155,35 +120,16 @@ void User::classifyUser(int selectedIdx){
     qInfo() << "   User::beverageBrewed: User category =" << categoryStr;
 }
 
-void User::reorderBeverage(int selectedIdx)
-{
-    int i = selectedIdx;
-
-    // Move upwards
-    while (i > 0 && m_beveragesW[i] > m_beveragesW[i - 1]) {
-        std::swap(m_beverages[i],  m_beverages[i - 1]);
-        std::swap(m_beveragesW[i], m_beveragesW[i - 1]);
-        i--;
-    }
-
-    qInfo() << "   New beverage weights:";
-    for (int i = 0; i < m_beveragesW.size(); i++) {
-        qInfo() << "      Beverage" << i << "(" << m_beverages[i]->name() << "): weight =" << m_beveragesW[i];
-    }
-
-    updateDisplayBeverages();
-}
-
 void User::updateDisplayBeverages()
 {
-    m_displayBeverages = m_beverages;
+    m_displayBeverages = m_weightedBeverages.items();
+    int n = m_displayBeverages.size();
 
-    if (m_category == UserCategory::EarlyAdopter && m_beverages.size() > 3)
+    if (m_category == UserCategory::EarlyAdopter && n > 3)
     {
-        int n = m_beverages.size();
         int randomIdx = n-1 - (rand() % std::min(3, n-1)); // Select a random index among the three less frequent beverages
 
-        Beverage* suggestion = m_beverages.at(randomIdx);
+        Beverage* suggestion = m_displayBeverages[randomIdx];
 
         // Remove the suggestion from its current position
         m_displayBeverages.removeAll(suggestion);

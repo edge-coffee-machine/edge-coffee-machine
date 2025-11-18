@@ -118,8 +118,7 @@ public:
 
     Q_INVOKABLE void resetIngredients();// Method to reset ingredients to default values
     static void initDefaultBeveragesList();
-    static QList<Beverage*> getIndependentBeverageList(); // Static method to clone an independent list of the default beverages.
-
+    static QList<Beverage*> getIndependentBeverageList(); // Returns a deep copy of the default beverage list, with new Beverage instances.
 
 private:
     // Data members
@@ -161,7 +160,6 @@ signals:
     void foamChanged();
     void milkChanged();
     void defaultBeverageListChanged();
-
 };
 
 #endif // BEVERAGE_H

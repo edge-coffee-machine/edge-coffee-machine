@@ -7,6 +7,7 @@
 #include <QList>
 #include <QVector>
 #include "Beverage.h"
+#include "WeightedSortedList.h"
 
 /*
  * User
@@ -126,6 +127,7 @@ private:
     */
     void updateDisplayBeverages();
 
+    inline static constexpr float defaultWeightR = 0.175f; // Weight update rate for default users
     inline static constexpr float conservativeWeightR = 0.1f; // Weight update rate for conservative users
     inline static constexpr float earlyAdopterWeightR = 0.25f; // Weight update rate for early adopters
     inline static constexpr float tryerR = 0.25f; // Tryer score update rate
@@ -137,16 +139,14 @@ private:
     QString m_name;
     int m_picture = 0;
     UserCategory m_category = UserCategory::Default;
-    QList<Beverage*> m_beverages; // The sorted list of beverages of the user, with his potential ingredient modifications
+    WeightedSortedList<Beverage*> m_weightedBeverages; // Weighted sorted list of beverages
 
     // Recomendation system data/parameters
-    int m_numBeverages = 0; // Number of beverages the user has selected
-    QVector<float> m_beveragesW; // Weights for each beverage, for recommendation purposes. (Should be) synced with m_beverages
-    QList<Beverage*> m_displayBeverages;
+    QList<Beverage*> m_displayBeverages;; // Beverages to display in the UI, ordered per user category rules
+    int m_numBeverages = 0; // Number of beverages the user has ordered
     float m_tryerScore = 0.0f; // Score for how much the user tries new beverages
     float m_customizerScore = 0.0f; // Score for how much the user customizes beverages
 
-    float m_weightR = 0.175f; // Update rate for the coffee weights, based on user category
     bool m_customized = false; // Wether the user has customized a drink since the last beverage selection
 };
 

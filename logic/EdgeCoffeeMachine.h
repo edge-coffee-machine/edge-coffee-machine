@@ -11,6 +11,7 @@
 
 #include "Beverage.h" // Include the Beverage class
 #include "User.h" //Include the User class
+#include "WeightedSortedList.h" // Include the WeightedSortedList template
 
 class EdgeCoffeeMachine : public QObject { // Inherit from QObject
     Q_OBJECT // Enable Qt's meta-object features
@@ -32,12 +33,15 @@ public:
     Beverage* selectedBeverage() const;
     QString status() const;
     bool isMakingDrink() const;
-    QQmlListProperty<Beverage> getBeverages();
+    QQmlListProperty<Beverage> getBeverages(); //For QML access
+    QQmlListProperty<Beverage> getPopularBeverages(); // For User access, NOT for QML access
 
 private:
+    inline static constexpr float popularityWeightR = 0.175f; // Weight update rate for the popularity list
+
     // Data members
     User* user = nullptr; // Current user
-    QList<Beverage*> beverages;
+    WeightedSortedList<Beverage*> m_weightedBeverages;
     QString m_status;
     bool m_isMakingDrink;
     Beverage* m_selectedBeverage = nullptr;

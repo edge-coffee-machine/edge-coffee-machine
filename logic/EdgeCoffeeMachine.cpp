@@ -10,16 +10,12 @@
 EdgeCoffeeMachine::EdgeCoffeeMachine(QObject *parent)
 : QObject(parent), m_status("Idle"), m_isMakingDrink(false)
 {
-
     user = new User("Test User", 0, this);
     user->test();
 
-    //beverages=Beverage::getIndependentBeverageList();
+    m_weightedBeverages = WeightedSortedList<Beverage*>(Beverage::getIndependentBeverageList(), popularityWeightR);
 
    emit beveragesChanged(); // Notify QML about the change
-
-   
-
 }
 
 // QQmlListProperty append function (not implemented for now)
@@ -59,8 +55,13 @@ QQmlListProperty<Beverage> EdgeCoffeeMachine::getBeverages()
         return user->displayBeverages();
     }
     else {
-        return QQmlListProperty<Beverage>(this, &beverages);
+        return getPopularBeverages();
     }
+}
+
+QQmlListProperty<Beverage> EdgeCoffeeMachine::getPopularBeverages()
+{
+    return QQmlListProperty<Beverage>(this, const_cast<QList<Beverage*>*>(&m_weightedBeverages.items()));
 }
 
 void EdgeCoffeeMachine::makeDrink(Beverage* beverage) {
@@ -76,12 +77,14 @@ void EdgeCoffeeMachine::makeDrink(Beverage* beverage) {
     qDebug() << "Starting to make: " << drinkName; // Debug output
 
     // Simulate work with a timer
-    QTimer::singleShot(3000, this, [this, drinkName]() {
+    QTimer::singleShot(3000, this, [this, drinkName, beverage]() {
         // In a real machine, this would involve checking ingredients,
         // dispensing, heating, etc.
         qDebug() << "Finished making: " << drinkName; // Debug output
         setStatus(drinkName + " is ready!"); // Update status
         setIsMakingDrink(false); // Reset making drink state
+        m_weightedBeverages.recordSelection(beverage); // Record selection of the made drink, for popularity tracking
+        emit beveragesChanged(); // Notify QML about the change
     });
 }
 
