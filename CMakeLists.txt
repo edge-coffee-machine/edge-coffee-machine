@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14) # Updated to a newer version for Qt6
-project(EdgeCoffeeMachineBackend VERSION 1.0 LANGUAGES CXX)
+project(EdgeCoffeeMachine VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
