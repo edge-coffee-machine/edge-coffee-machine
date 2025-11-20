@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import "../theme"
+import "text"
 
 Row {
     id: bottomAssistant
@@ -8,12 +9,13 @@ Row {
 
     Image {
         source: "../../assets/img/voice-wave.png"
-        width: 180; height: 90
+        width: 180
+        height: 90
         fillMode: Image.PreserveAspectFit
         anchors.verticalCenter: parent.verticalCenter
     }
 
-    Text {
+    TextDefault {
         text: "Brew me an Espresso without sugar..."
         anchors.verticalCenter: parent.verticalCenter
         anchors.bottomMargin: 10

@@ -1,9 +1,10 @@
 // Main.qml (rearranged into components)
 import QtQuick 2.15
 import "src/views" as Views
+import "src/theme"
 import QtQuick.Layouts 1.15
 
-Item {
+Rectangle {
     id: root
     width: 1024
     height: 600

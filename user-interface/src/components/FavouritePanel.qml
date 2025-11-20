@@ -1,14 +1,15 @@
 import QtQuick 2.15
 import "../theme"
 import "text"
+
 Column {
-    width: 350; height: 410
+    width: 350
+    height: 410
 
     // This property will receive the selected beverage object from main.qml
     property var targetBeverage: null
 
-
-    Text {
+    TextDefault {
         text: "Here's your <b>favourite.<\b>"
         color: Theme.white
         font.pixelSize: 22
@@ -16,10 +17,10 @@ Column {
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
-
     Card {
         id: favouritePanel
-        width: 350; height: 350
+        width: 350
+        height: 350
         radius: 16
         color: Theme.dark500
         anchors.bottom: parent.bottom
@@ -29,7 +30,8 @@ Column {
             Image {
                 id: espressoImg
                 source: "../../assets/img/espresso.png"
-                width: 270; height: 270
+                width: 270
+                height: 270
                 fillMode: Image.PreserveAspectFit
             }
             H1 {

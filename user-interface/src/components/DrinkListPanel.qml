@@ -1,5 +1,7 @@
 import QtQuick 2.15
 import "../theme"
+import "buttons"
+import "text"
 
 Card {
     id: root
@@ -10,33 +12,30 @@ Card {
     // This allows main.qml to assign data to it.
     property alias model: drinkListView.model
 
-
-
     Column {
         width: parent.width
-        height:300
+        height: 300
 
         spacing: 10
 
         Column {
             width: parent.width
             id: panelTitle
-            Text {
+            TextDefault {
                 text: "Just <b>for you</b>"
                 textFormat: Text.RichText
                 font.pixelSize: 22
                 color: Theme.white
             }
 
-            Text {
+            TextDefault {
                 width: parent.width
                 text: "Explore a list of drinks created just for you."
                 font.pixelSize: 15
                 color: Theme.white
                 opacity: 0.7
-                font.weight: Font.Light
+                font.weight: 400
                 wrapMode: Text.WordWrap
-
             }
         }
 
@@ -57,7 +56,11 @@ Card {
                         height: 80
                         color: mouseArea.containsMouse ? "#3A3E40" : Theme.dark500
 
-                        Behavior on color { ColorAnimation { duration: 150 } }
+                        Behavior on color {
+                            ColorAnimation {
+                                duration: 150
+                            }
+                        }
                         Row {
                             height: parent.height
                             spacing: 20
@@ -72,23 +75,20 @@ Card {
 
                             Column {
                                 anchors.verticalCenter: parent.verticalCenter
-                                Text {
+                                TextDefault {
                                     text: modelData.name // Accesses the 'name' property of the Beverage object
                                     color: Theme.white
                                     font.bold: true
                                     font.pixelSize: 20
                                 }
 
-                                Text {
+                                TextDefault {
                                     text: "€1.20" // Accesses the 'name' property of the Beverage object
                                     color: Theme.white
                                     opacity: 0.7
                                     font.pixelSize: 15
-
                                 }
                             }
-
-
                         }
 
                         MouseArea {
@@ -97,7 +97,8 @@ Card {
                             hoverEnabled: true
 
                             onClicked: {
-                                edgeCoffeeMachineController.selectBeverage(modelData.name)
+                                edgeCoffeeMachineController.selectBeverage(
+                                            modelData.name)
                             }
                         }
                     }

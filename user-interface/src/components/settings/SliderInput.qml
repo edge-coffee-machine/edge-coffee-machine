@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 
 import "../../theme"
+import "../text"
+
 Item {
     id: sliderInputRoot
     width: 240
@@ -13,9 +15,10 @@ Item {
     property double maximumValue: 1.0
     property alias label: labelText.text // Expose the text property for external setting
 
-    Text {
+    TextDefault {
         id: labelText
-        text: "Label: " + sliderInputRoot.value.toFixed(2) // Display label and current value
+        text: "Label: " + sliderInputRoot.value.toFixed(
+                  2) // Display label and current value
         color: "white"
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
@@ -36,14 +39,14 @@ Item {
 
         // Optional: Customize appearance to match original Rectangle if desired
         background: Rectangle {
-            radius: height/2
+            radius: height / 2
             color: Theme.dark600
 
             Rectangle {
                 width: actualSlider.visualPosition * (parent.width - handle.width) + handle.width
                 height: parent.height
                 color: Theme.white
-                radius: height/2
+                radius: height / 2
             }
         }
         handle: Rectangle {
@@ -51,7 +54,7 @@ Item {
             x: actualSlider.visualPosition * (actualSlider.width - width)
             implicitWidth: 12
             implicitHeight: 12
-            radius: height/2
+            radius: height / 2
             color: "white"
         }
     }

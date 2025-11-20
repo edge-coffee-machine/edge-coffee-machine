@@ -7,7 +7,7 @@ Row {
     spacing: 10
 
     // Signal emitted when "not you?" button is clicked
-    signal switchUserRequested()
+    signal switchUserRequested
 
     H1 {
         text: "Good Morning,"
@@ -28,24 +28,27 @@ Row {
     }
 
     Rectangle {
-            id: notYouBtn
-            width: 80; height: 28
-            radius: 14
-            color: Theme.dark400
-            anchors.verticalCenter: parent.verticalCenter
+        id: notYouBtn
+        width: 80
+        height: 28
+        radius: 14
+        color: Theme.dark400
+        anchors.verticalCenter: parent.verticalCenter
 
-            Text {
-                text: "Not you?"
-                color: Theme.accent
-                anchors.centerIn: parent
-                font.pixelSize: 14
-                font.weight: 300
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                onClicked: header.switchUserRequested()
-            }
+        TextDefault {
+            text: "Not you?"
+            color: Theme.accent
+            anchors.centerIn: parent
+            font.pixelSize: 14
+            font.weight: 400
         }
 
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                console.log("switch user")
+                header.switchUserRequested()
+            }
+        }
+    }
 }

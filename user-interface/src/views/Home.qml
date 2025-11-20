@@ -1,6 +1,6 @@
-// Main.qml (rearranged into components)
 import QtQuick 2.15
 import "../components" as Components
+import "../components/settings"
 import "../theme"
 import QtQuick.Layouts 1.15
 
@@ -44,7 +44,7 @@ Rectangle {
                         targetBeverage: edgeCoffeeMachineController.selectedBeverage
                     }
 
-                    Components.SettingsPanel {
+                    SettingsPanel {
                         id: settingsPanel
                         targetBeverage: edgeCoffeeMachineController.selectedBeverage // Connects the selected beverage to the panel
                     }
