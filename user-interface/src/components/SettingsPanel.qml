@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import "../theme"
+import "text"
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
@@ -22,10 +23,14 @@ Card {
             visible: targetBeverage !== null
 
             Text {
-                text: targetBeverage ? targetBeverage.name : ""
+                text: "Settings"
                 color: Theme.white
                 font.pixelSize: 24
                 font.bold: true
+            }
+
+            Subtitle {
+                text: "Customize your drink."
             }
 
             Text {
@@ -67,16 +72,19 @@ Card {
             Layout.fillHeight: true
         }
 
-        Card {
+        CardWithLoading {
             Layout.fillWidth: true
             height: 130
             color: Theme.dark400
+            isLoading: !makeButton.enabled
+
             Text {
-                text: "€ 1.20"
+                text: makeButton.enabled ? "€ 1.20" : "Brewing"
                 font.pixelSize: 40
                 font.bold: true
                 color: Theme.white
                 anchors.horizontalCenter: parent.horizontalCenter
+                anchors.top: parent.top // Ensure it stays at top
             }
 
             Item {
@@ -94,24 +102,17 @@ Card {
                     }
                     background: Rectangle {
                         // Colors more consistent with the theme
-                        color: makeButton.down ? "#4A4E50" : (makeButton.hovered ? "#3A3E40" : Theme.dark500)
+                        color: Theme.dark700
                         radius: parent.height
-                        Behavior on color { ColorAnimation { duration: 100 } }
                     }
                     contentItem: Item {
                         anchors.fill: parent
                         Text {
-                            text: makeButton.text
+                            text: makeButton.enabled ? makeButton.text : "Cancel"
                             color: Theme.white
                             font.bold: true
                             font.pixelSize: 18
                             anchors.centerIn: parent
-                            visible: makeButton.enabled // Show text only when the button is active
-                        }
-                        BusyIndicator {
-                            anchors.centerIn: parent
-                            running: !makeButton.enabled // The indicator runs when the button is disabled
-                            visible: running
                         }
                     }
                 }
