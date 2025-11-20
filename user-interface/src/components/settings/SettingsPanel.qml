@@ -1,10 +1,9 @@
 import QtQuick 2.15
-import "../../theme"
-import "../text"
-import "../"
-import "../buttons"
 import QtQuick.Layouts 1.15
-import QtQuick.Controls 2.15
+import "../"
+import "../text"
+import "../buttons"
+import "../../theme"
 
 Card {
     id: root
@@ -55,7 +54,7 @@ Card {
 
             CardWithLoading {
                 Layout.fillWidth: true
-                height: 130
+                implicitHeight: 130
                 color: Theme.dark400
                 isLoading: !makeButton.enabled
 

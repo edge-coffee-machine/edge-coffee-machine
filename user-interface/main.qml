@@ -1,8 +1,5 @@
 // Main.qml (rearranged into components)
 import QtQuick 2.15
-import "src/views" as Views
-import "src/theme"
-import QtQuick.Layouts 1.15
 
 Rectangle {
     id: root
@@ -21,25 +18,25 @@ Rectangle {
         onLoaded: {
             // Connect the switchUser signal if the loaded view has it
             if (item && item.switchUserRequested) {
-                item.switchUserRequested.connect(openUsersPanel)
+                item.switchUserRequested.connect(openUsersPanel);
             }
             // Connect the goBack signal if it exists (for UsersPanel)
             if (item && item.goBackRequested) {
-                item.goBackRequested.connect(goBack)
+                item.goBackRequested.connect(goBack);
             }
         }
     }
 
     // Function to open UsersPanel and save current view to stack
     function openUsersPanel() {
-        viewStack.push(viewLoader.source)
-        viewLoader.source = "src/views/UsersPanel.qml"
+        viewStack.push(viewLoader.source);
+        viewLoader.source = "src/views/UsersPanel.qml";
     }
 
     // Function to go back to previous view
     function goBack() {
         if (viewStack.length > 0) {
-            viewLoader.source = viewStack.pop()
+            viewLoader.source = viewStack.pop();
         }
     }
 }

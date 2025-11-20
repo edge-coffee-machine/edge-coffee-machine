@@ -2,7 +2,6 @@ import QtQuick 2.15
 import "../components" as Components
 import "../components/settings"
 import "../theme"
-import QtQuick.Layouts 1.15
 
 Rectangle {
     id: root
