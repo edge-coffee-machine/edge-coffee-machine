@@ -23,8 +23,13 @@ class EdgeCoffeeMachine : public QObject { // Inherit from QObject
     Q_PROPERTY(Beverage* selectedBeverage READ selectedBeverage NOTIFY selectedBeverageChanged)
 
 public:
-    explicit EdgeCoffeeMachine(QObject *parent = nullptr); // Constructor with QObject parent
+    // Static method to get the singleton instance
+    static EdgeCoffeeMachine& instance();
 
+    // Delete copy constructor and assignment operator to prevent copies
+    EdgeCoffeeMachine(const EdgeCoffeeMachine&) = delete;
+    EdgeCoffeeMachine& operator=(const EdgeCoffeeMachine&) = delete;
+    
     // Q_INVOKABLE methods to be called from QML
     Q_INVOKABLE void makeDrink(Beverage* beverage);
     Q_INVOKABLE void selectBeverage(Beverage* beverage);
@@ -37,6 +42,8 @@ public:
     QQmlListProperty<Beverage> getPopularBeverages(); // For User access, NOT for QML access
 
 private:
+    explicit EdgeCoffeeMachine(QObject *parent = nullptr); // Constructor with QObject parent
+
     inline static constexpr float popularityWeightR = 0.175f; // Weight update rate for the popularity list
 
     // Data members
@@ -54,7 +61,6 @@ signals:
     // Signal emitted when properties change
     void statusChanged();
     void isMakingDrinkChanged();
-    void beveragesChanged();
     void selectedBeverageChanged();
 };
 

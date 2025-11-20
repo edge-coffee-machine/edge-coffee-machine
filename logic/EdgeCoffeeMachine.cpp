@@ -5,6 +5,12 @@
 
 #include "EdgeCoffeeMachine.h" // Include the EdgeCoffeeMachine
 
+// Creation of the singleton instance
+EdgeCoffeeMachine& EdgeCoffeeMachine::instance()
+{
+    static EdgeCoffeeMachine EdgeCoffeeMachine_instance;
+    return EdgeCoffeeMachine_instance;
+}
 
 // Constructor
 EdgeCoffeeMachine::EdgeCoffeeMachine(QObject *parent)
@@ -14,8 +20,6 @@ EdgeCoffeeMachine::EdgeCoffeeMachine(QObject *parent)
     user->test();
 
     m_weightedBeverages = WeightedSortedList<Beverage*>(Beverage::getIndependentBeverageList(), popularityWeightR);
-
-   emit beveragesChanged(); // Notify QML about the change
 }
 
 // QQmlListProperty append function (not implemented for now)
@@ -85,8 +89,6 @@ void EdgeCoffeeMachine::makeDrink(Beverage* beverage) {
         setIsMakingDrink(false); // Reset making drink state
         m_weightedBeverages.recordSelection(beverage); // Record selection of the made drink, for popularity tracking
         if (user) user->beverageBrewed(beverage); // Notify user about the brewed beverage
-        emit beveragesChanged(); // Notify QML about the change
-        
     });
 }
 
