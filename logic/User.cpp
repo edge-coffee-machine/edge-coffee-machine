@@ -1,5 +1,6 @@
 #include "User.h"
 #include <QDebug>
+#include <QRandomGenerator>
 #include "EdgeCoffeeMachine.h"
 
 
@@ -20,7 +21,6 @@ void User::test()
     qInfo() << "User::test called.";
     
     beverageBrewed(m_weightedBeverages.items()[2]);
-    qInfo() << "Hello";
 
     //print result of displayBeverages
     QQmlListProperty<Beverage> displayProp = displayBeverages();
@@ -200,8 +200,9 @@ void User::updateDisplayBeverages()
 
     if (m_category == UserCategory::EarlyAdopter && n > 3)
     {
-        int randomIdx = n-1 - (rand() % std::min(3, n-1)); // Select a random index among the three less frequent beverages
-
+        // Select a random index among the three less frequent beverages using QRandomGenerator
+        int tail = std::min(3, n - 1);
+        int randomIdx = n - 1 - QRandomGenerator::global()->bounded(tail);
         Beverage* suggestion = m_displayBeverages[randomIdx];
 
         // Remove the suggestion from its current position

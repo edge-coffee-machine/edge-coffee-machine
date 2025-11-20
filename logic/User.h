@@ -50,8 +50,7 @@ class User : public QObject {
 
     Q_PROPERTY(QString name READ name CONSTANT) // User's name. Set only at creation
     Q_PROPERTY(int picture READ picture CONSTANT) // User's picture index. Set only at creation
-    Q_PROPERTY(QQmlListProperty<Beverage> displayBeverages READ displayBeverages) // Beverages sorted by recommendation (for early adopters, an unfrequent beverage appears third)
-
+    Q_PROPERTY(QQmlListProperty<Beverage> displayBeverages READ displayBeverages NOTIFY displayBeveragesChanged) // Beverages sorted by recommendation (for early adopters, an unfrequent beverage appears third)
 
 public:
     enum class UserCategory { Default, Conservative, EarlyAdopter };
@@ -59,23 +58,23 @@ public:
     explicit User(const QString& name, int picture, QObject* parent = nullptr); // Constructor
 
     /*
-    Called from QML when a beverage is selected
+    Called from edge coffee machine when a beverage is brewed
     beverage: pointer to the beverage selected by the user from QML
 
     Updates the weights of the beverages according to the user's category and selection.
     Follows an exponential decay model where the selected beverage's weight is increased
     and the others are decreased, based on the user's update rate m_r.
     */
-    Q_INVOKABLE void beverageBrewed(Beverage* beverage); 
+    void beverageBrewed(Beverage* beverage); 
 
     /*
-    Called from QML when a beverage is customized
+    Called from edge coffee machine when a beverage is customized
     beverage: pointer to the beverage customized by the user from QML
 
     Records that the user has customized a beverage for recommendation purposes.
     For the actual change in ingredients, use the Beverage methods directly.
     */
-    Q_INVOKABLE void beverageCustomized();
+    void beverageCustomized();
 
     // For QML access
     // Gets the user's name
@@ -99,28 +98,12 @@ signals:
 
 private:
     /*
-    Should only be called from beverageSelected.
-    Updates the weights after a beverage has been selected.
-    selectedIdx: index of the beverage that has been selected in m_beverages (whose weight will be increased)
-    */
-    void updateBeverageWeights(int selectedIdx);
-
-    /*
-    Should only be called from beverageSelected.
+    Should only be called from beverageBrewed.
     Updates the user scores and category based on the selected beverage.
     Resets m_customized flag.
     selectedIdx: index of the beverage that has been selected in m_beverages
     */
     void classifyUser(int selectedIdx);
-
-    /*
-    Should only be called from beverageSelected.
-    Called each time the weights change, to sort the modified beverage (and weight).
-    It does NOT do a full sort, only repositions the selectedIdx item as needed to maintain order.
-    Higher weight beverages will be earlier in the list.
-    Maintains the correspondence between m_beverages and m_beveragesW.
-    */
-    void reorderBeverage(int selectedIdx);
 
     /*
     Updates m_displayBeverages based on the current user category and beverage list.
@@ -142,11 +125,10 @@ private:
     WeightedSortedList<Beverage*> m_weightedBeverages; // Weighted sorted list of beverages
 
     // Recomendation system data/parameters
-    QList<Beverage*> m_displayBeverages;; // Beverages to display in the UI, ordered per user category rules
-    int m_numBeverages = 0; // Number of beverages the user has ordered
+    QList<Beverage*> m_displayBeverages; // Beverages to display in the UI, sorted by user category rules
+    int m_numBeverages = 0; // Number of beverages the user has brewed
     float m_tryerScore = 0.0f; // Score for how much the user tries new beverages
     float m_customizerScore = 0.0f; // Score for how much the user customizes beverages
-
     bool m_customized = false; // Wether the user has customized a drink since the last beverage selection
 };
 

@@ -35,11 +35,13 @@ public:
     const QVector<float>& weights() const { return m_weights; } // parallel normalized weights
     int indexOf(const T& item) const { return m_items.indexOf(item); }
 
+    // Get weight by item
     float weightFor(const T& item) const {
         int idx = indexOf(item);
         return (idx >= 0 && idx < m_weights.size()) ? m_weights[idx] : 0.0f;
     }
 
+    // Get weight by index
     float weightAt(int index) const {
         if (index < 0 || index >= m_weights.size()) return 0.0f;
         return m_weights[index];
@@ -59,7 +61,7 @@ public:
     }
 
     // Configuration
-    void setWeightR(float r) { m_weightR = r; }
+    void setWeightR(float r) { m_weightR = std::clamp(r, 0.0f, 1.0f); }
     float weightR() const { return m_weightR; }
 
 private:
@@ -67,6 +69,7 @@ private:
     QVector<float> m_weights; // normalized, parallel to m_items
     float m_weightR = 0.175f;
 
+    // Apply exponential decay weight update
     void applyExponentialDecay(int selectedIdx) {
         for (int i = 0; i < m_weights.size(); ++i) {
             if (i == selectedIdx) {
@@ -75,24 +78,15 @@ private:
                 m_weights[i] = (1.0f - m_weightR) * m_weights[i];
             }
         }
-        normalizeWeights();
     }
 
+    // Insert-sort the selected item upward based on updated weights
     void insertSortUp(int selectedIdx) {
         int i = selectedIdx;
         while (i > 0 && m_weights[i] > m_weights[i - 1]) {
             std::swap(m_items[i], m_items[i - 1]);
             std::swap(m_weights[i], m_weights[i - 1]);
             --i;
-        }
-    }
-
-    // Force normalization if needed
-    void normalizeWeights() {
-        float sum = 0.0f;
-        for (float w : m_weights) sum += w;
-        if (sum > 0.0f) {
-            for (int i = 0; i < m_weights.size(); ++i) m_weights[i] /= sum;
         }
     }
 };
