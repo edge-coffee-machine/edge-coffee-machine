@@ -105,7 +105,6 @@ Card {
             }
         }
         CustomButton {
-            anchors.bottom: drinkListView.bottom
             text: "All drinks"
         }
     }

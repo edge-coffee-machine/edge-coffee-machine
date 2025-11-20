@@ -2,7 +2,7 @@ import QtQuick 2.15
 import "../theme"
 import "text"
 
-Column {
+Item {
     width: 350
     height: 410
 
@@ -10,7 +10,7 @@ Column {
     property var targetBeverage: null
 
     TextDefault {
-        text: "Here's your <b>favourite.<\b>"
+        text: "Here's your <b>favourite.</b>"
         color: Theme.white
         font.pixelSize: 22
         textFormat: Text.RichText
