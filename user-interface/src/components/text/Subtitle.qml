@@ -1,4 +1,5 @@
 import QtQuick 2.15
+
 TextDefault {
     width: parent.width
     font.pixelSize: 15

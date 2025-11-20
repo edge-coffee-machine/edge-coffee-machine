@@ -11,14 +11,13 @@ Rectangle {
     color: Theme.dark500
 
     // Signal to notify parent that user switch is requested
-    signal switchUserRequested()
+    signal switchUserRequested
 
     Rectangle {
         anchors.fill: parent
         anchors.margins: 30
         anchors.horizontalCenter: parent.horizontalCenter
         color: "transparent"
-
 
         Components.Header {
             id: header
@@ -49,10 +48,7 @@ Rectangle {
                         targetBeverage: edgeCoffeeMachineController.selectedBeverage // Connects the selected beverage to the panel
                     }
                 }
-
-
             }
-
 
             Components.DrinkListPanel {
                 id: drinkListPanel
@@ -60,14 +56,11 @@ Rectangle {
             }
         }
 
-
-
         // Bottom assistant (moved to component)
         Components.BottomAssistant {
             id: bottomAssistant
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
         }
-
     }
 }

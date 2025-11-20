@@ -3,7 +3,8 @@ import "../theme"
 
 Rectangle {
     id: card
-    width: 300; height: 400
+    width: 300
+    height: 400
     radius: 16
     color: Theme.dark700
 

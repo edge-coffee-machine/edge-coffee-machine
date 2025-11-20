@@ -19,8 +19,8 @@ Card {
         spacing: 10
 
         Column {
-            width: parent.width
             id: panelTitle
+            width: parent.width
             TextDefault {
                 text: "Just <b>for you</b>"
                 textFormat: Text.RichText
@@ -97,8 +97,7 @@ Card {
                             hoverEnabled: true
 
                             onClicked: {
-                                edgeCoffeeMachineController.selectBeverage(
-                                            modelData.name)
+                                edgeCoffeeMachineController.selectBeverage(modelData.name);
                             }
                         }
                     }

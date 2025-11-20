@@ -36,8 +36,7 @@ Card {
             }
             Repeater {
                 // Object.keys() creates a list of ingredient names from the map
-                model: targetBeverage ? Object.keys(
-                                            targetBeverage.ingredients) : []
+                model: targetBeverage ? Object.keys(targetBeverage.ingredients) : []
                 delegate: SliderInput {
                     label: modelData
                 }
@@ -78,8 +77,7 @@ Card {
                     textWeight: 700
                     enabled: !edgeCoffeeMachineController.isMakingDrink
                     onClick: {
-                        edgeCoffeeMachineController.makeDrink(
-                                    targetBeverage.name)
+                        edgeCoffeeMachineController.makeDrink(targetBeverage.name);
                     }
                 }
             }

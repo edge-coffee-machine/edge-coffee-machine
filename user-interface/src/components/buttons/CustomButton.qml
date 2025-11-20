@@ -7,7 +7,7 @@ Rectangle {
     property alias textColor: textItem.color
     property alias textWeight: textItem.font.weight
     property bool pressed: false
-    signal click()
+    signal click
 
     height: 40
     color: "#212223"

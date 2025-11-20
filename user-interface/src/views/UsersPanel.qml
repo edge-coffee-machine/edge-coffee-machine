@@ -19,6 +19,7 @@ Rectangle {
         color: "transparent"
         anchors.margins: 100
 
+        // --- 2. CLOSE BUTTON ---
         Rectangle {
             width: 40
             height: 40
@@ -62,8 +63,6 @@ Rectangle {
                     font.weight: 300
                 }
             }
-
-            // --- 2. CLOSE BUTTON ---
 
             // --- 3. CONTENT AREA (Holds List + Fixed Button) ---
             Item {
@@ -212,8 +211,7 @@ Rectangle {
                         Text {
                             anchors.centerIn: parent
                             // Auto Initials
-                            text: firstName.charAt(
-                                      0) + (lastName ? lastName.charAt(0) : "")
+                            text: firstName.charAt(0) + (lastName ? lastName.charAt(0) : "")
                             font.pixelSize: 42
                             font.bold: true
                             color: "#FFFFFF"

@@ -46,8 +46,8 @@ Row {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                console.log("switch user")
-                header.switchUserRequested()
+                console.log("switch user");
+                header.switchUserRequested();
             }
         }
     }

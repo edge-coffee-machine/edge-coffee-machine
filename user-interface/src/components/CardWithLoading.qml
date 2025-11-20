@@ -3,7 +3,8 @@ import "../theme"
 
 Rectangle {
     id: card
-    width: 300; height: 400
+    width: 300
+    height: 400
     radius: 16
     color: Theme.dark700
     clip: true
@@ -43,8 +44,6 @@ Rectangle {
             }
         }
     }
-
-
 
     // Allow placing arbitrary children inside the card by making 'content' the
     // default property that maps to an internal Item's data.

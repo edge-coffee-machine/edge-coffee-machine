@@ -17,8 +17,7 @@ Item {
 
     TextDefault {
         id: labelText
-        text: "Label: " + sliderInputRoot.value.toFixed(
-                  2) // Display label and current value
+        text: "Label: " + sliderInputRoot.value.toFixed(2) // Display label and current value
         color: "white"
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter

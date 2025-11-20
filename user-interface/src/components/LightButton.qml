@@ -6,7 +6,7 @@ Rectangle {
     property alias text: textItem.text
     property alias textColor: textItem.color
     property bool pressed: false
-    signal click()
+    signal click
 
     width: textItem.width + 20
     height: textItem.height + 10
