@@ -1,8 +1,11 @@
-cmake_minimum_required(VERSION 3.14) # Updated to a newer version for Qt6
+cmake_minimum_required(VERSION 3.21) # Qt 6.2 requires CMake 3.21 or higher
 project(EdgeCoffeeMachine VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+# Enable QML Language Server configuration generation
+set(QT_QML_GENERATE_QMLLS_INI ON)
 
 # Find Qt6 packages
 # If CMake struggles to find Qt6, you might need to set CMAKE_PREFIX_PATH or Qt6_DIR.
