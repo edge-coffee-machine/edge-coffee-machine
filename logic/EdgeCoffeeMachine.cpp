@@ -5,21 +5,63 @@
 
 #include "EdgeCoffeeMachine.h" // Include the EdgeCoffeeMachine
 
+EdgeCoffeeMachine* EdgeCoffeeMachine::m_instance = nullptr; // Definition of the static singleton pointer
+
 // Creation of the singleton instance
 EdgeCoffeeMachine& EdgeCoffeeMachine::instance()
 {
-    static EdgeCoffeeMachine EdgeCoffeeMachine_instance;
-    return EdgeCoffeeMachine_instance;
+    if (EdgeCoffeeMachine::m_instance == nullptr) {
+        qInfo() << "[ECM] Creating EdgeCoffeeMachine singleton instance.";
+        EdgeCoffeeMachine::m_instance = new EdgeCoffeeMachine();
+    }
+
+    return *EdgeCoffeeMachine::m_instance;
 }
 
 // Constructor
 EdgeCoffeeMachine::EdgeCoffeeMachine(QObject *parent)
 : QObject(parent), m_status("Idle"), m_isMakingDrink(false)
 {
+    m_weightedBeverages = WeightedSortedList<Beverage*>(Beverage::getIndependentBeverageList(), popularityWeightR);
+
+    // print weighted beverages
+    qDebug() << "[ECM] Initial popular beverages and weights:";
+    const QList<Beverage*>& beverages = m_weightedBeverages.items();
+    const QVector<float>& weights = m_weightedBeverages.weights();
+    for (int i = 0; i < beverages.size(); ++i) {
+        qDebug() << "   Beverage [" << i << "]: " << beverages[i]->name()
+                 << ", weight =" << weights[i];
+    }
+}
+
+void EdgeCoffeeMachine::test()
+{
     user = new User("Test User", 0, this);
     user->test();
+}
 
-    m_weightedBeverages = WeightedSortedList<Beverage*>(Beverage::getIndependentBeverageList(), popularityWeightR);
+void EdgeCoffeeMachine::recordBeverageSelection(QString name)
+{
+    QList<Beverage*> items = m_weightedBeverages.items();
+    for (int i = 0; i < items.size(); ++i) {
+        if (items[i]->name() == name) {
+            m_weightedBeverages.recordSelectionAt(i);
+
+            qInfo() << "[ECM] Recorded beverage selection: " << name;
+
+            //Print weights
+            const QList<Beverage*>& beverages = m_weightedBeverages.items();
+            const QVector<float>& weights = m_weightedBeverages.weights();
+            for (int j = 0; j < beverages.size(); ++j) {
+                qInfo() << "   Beverage [" << j << "]: " << beverages[j]
+                        << ", weight =" << weights[j];
+            }
+
+            return;
+        }
+    }
+
+    qWarning() << "Beverage name not found in popularity list: " << name;
 }
 
 // QQmlListProperty append function (not implemented for now)

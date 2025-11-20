@@ -29,6 +29,9 @@ public:
     // Delete copy constructor and assignment operator to prevent copies
     EdgeCoffeeMachine(const EdgeCoffeeMachine&) = delete;
     EdgeCoffeeMachine& operator=(const EdgeCoffeeMachine&) = delete;
+
+    void test();
+    void recordBeverageSelection(QString name);
     
     // Q_INVOKABLE methods to be called from QML
     Q_INVOKABLE void makeDrink(Beverage* beverage);
@@ -45,6 +48,7 @@ private:
     explicit EdgeCoffeeMachine(QObject *parent = nullptr); // Constructor with QObject parent
 
     inline static constexpr float popularityWeightR = 0.175f; // Weight update rate for the popularity list
+    static EdgeCoffeeMachine* m_instance;
 
     // Data members
     User* user = nullptr; // Current user
@@ -62,6 +66,7 @@ signals:
     void statusChanged();
     void isMakingDrinkChanged();
     void selectedBeverageChanged();
+    void beveragesChanged();
 };
 
 #endif // EDGE_COFFEE_MACHINE_H

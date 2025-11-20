@@ -1,5 +1,7 @@
 #include "User.h"
 #include <QDebug>
+#include "EdgeCoffeeMachine.h"
+
 
 // Constructor, receives user name, picture index and optional parent QObject
 User::User(const QString& name, int picture, QObject* parent)
@@ -16,27 +18,96 @@ int User::picture() const { return m_picture; }
 void User::test()
 {
     qInfo() << "User::test called.";
+    
+    beverageBrewed(m_weightedBeverages.items()[2]);
+    qInfo() << "Hello";
+
+    //print result of displayBeverages
+    QQmlListProperty<Beverage> displayProp = displayBeverages();
+    QList<Beverage*>* displayList = static_cast<QList<Beverage*>*>(displayProp.data);
+    qInfo() << "   Display beverages:";
+    for (int i = 0; i < displayList->size(); i++) {
+        Beverage* b = (*displayList)[i];
+        qInfo() << "      Beverage [" << i << "]: " << b->name()
+                << ", weight =" << m_weightedBeverages.weightFor(b);
+    }
 
     //Select beverages
     beverageBrewed(m_weightedBeverages.items()[0]);
-    beverageBrewed(m_weightedBeverages.items()[2]);
+
+    displayProp = displayBeverages();
+    displayList = static_cast<QList<Beverage*>*>(displayProp.data);
+    qInfo() << "   Display beverages:";
+    for (int i = 0; i < displayList->size(); i++) {
+        Beverage* b = (*displayList)[i];
+        qInfo() << "      Beverage [" << i << "]: " << b->name()
+                << ", weight =" << m_weightedBeverages.weightFor(b);
+    }
+
     beverageBrewed(m_weightedBeverages.items()[4]);
+
+    displayProp = displayBeverages();
+    displayList = static_cast<QList<Beverage*>*>(displayProp.data);
+    qInfo() << "   Display beverages:";
+    for (int i = 0; i < displayList->size(); i++) {
+        Beverage* b = (*displayList)[i];
+        qInfo() << "      Beverage [" << i << "]: " << b->name()
+                << ", weight =" << m_weightedBeverages.weightFor(b);
+    }
+
     beverageBrewed(m_weightedBeverages.items()[2]);
     beverageBrewed(m_weightedBeverages.items()[3]);
     beverageBrewed(m_weightedBeverages.items()[1]);
 }
 
-// TODO: For default users, it should return the list of beverages by global popularity (populatiy list in EdgeCoffeeMachine, weightedBeverages.items())
 QQmlListProperty<Beverage> User::displayBeverages()
 {
-    return QQmlListProperty<Beverage>(this, &m_displayBeverages);
+    qInfo() << "=== User::displayBeverages called. ===";
+    if (m_category != UserCategory::Default) {
+        return QQmlListProperty<Beverage>(this, &m_displayBeverages);
+    } 
+    else {
+        // Obtener la lista de popularidad global (QQmlListProperty::data es un void* al QList)
+        QQmlListProperty<Beverage> popularProp = EdgeCoffeeMachine::instance().getPopularBeverages();
+        QList<Beverage*>* popularList = static_cast<QList<Beverage*>*>(popularProp.data);
+
+        if (!popularList) {
+            // Fallback: usar la lista local ordenada por peso
+            m_displayBeverages = m_weightedBeverages.items();
+            return QQmlListProperty<Beverage>(this, &m_displayBeverages);
+        }
+
+        // Mapear las bebidas del usuario por nombre para búsqueda rápida
+        QList<Beverage*> userItems = m_weightedBeverages.items();
+        QHash<QString, Beverage*> nameMap;
+        for (Beverage* b : userItems) {
+            if (b) nameMap.insert(b->name(), b);
+        }
+
+        // Construir la lista ordenada según la lista de popularidad global
+        QList<Beverage*> ordered;
+        ordered.reserve(popularList->size());
+        for (Beverage* p : *popularList) {
+            if (!p) continue;
+            Beverage* match = nameMap.value(p->name(), nullptr);
+            if (match) ordered.append(match);
+        }
+
+        // Añadir cualquier bebida del usuario que no apareciese en la lista de popularidad
+        for (Beverage* b : userItems) {
+            if (b && !ordered.contains(b)) ordered.append(b);
+        }
+
+        m_displayBeverages = ordered;
+        return QQmlListProperty<Beverage>(this, &m_displayBeverages);
+    }
 }
 
 void User::beverageBrewed(Beverage* beverage)
 {
     if (!beverage) return;
 
-    qInfo() << "User::beverageBrewed called for beverage:" << beverage->name();
+    qInfo() << "=== User::beverageBrewed called for beverage:" << beverage->name() << "===";
 
     // Locate the beverage index
     int idx = m_weightedBeverages.indexOf(beverage);
@@ -48,7 +119,6 @@ void User::beverageBrewed(Beverage* beverage)
 
     classifyUser(idx);
     m_weightedBeverages.recordSelectionAt(idx);
-    updateDisplayBeverages();
 
     //print the beverage weights for debugging
     qInfo() << "   Beverage weights after selection:";
@@ -56,6 +126,9 @@ void User::beverageBrewed(Beverage* beverage)
         qInfo() << "      Beverage [" << i << "]: " << m_weightedBeverages.items()[i]->name()
                 << ", weight =" << m_weightedBeverages.weightAt(i);
     }
+
+    updateDisplayBeverages();
+    EdgeCoffeeMachine::instance().recordBeverageSelection(beverage->name());
 
     m_numBeverages++;
 }
