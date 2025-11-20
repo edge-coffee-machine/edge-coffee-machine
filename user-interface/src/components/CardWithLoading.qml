@@ -28,7 +28,6 @@ Rectangle {
 
     Rectangle {
         id: progressFill
-        // Connect width directly to the button's enabled state (inverted)
         width: parent.width
         height: isLoading ? parent.width : 0
         radius: 16

@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import "../theme"
 import "text"
+import "settings"
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
@@ -32,40 +33,19 @@ Card {
             Subtitle {
                 text: "Customize your drink."
             }
-
-            Text {
-                text: "Ingredients:"
-                color: "#A0A0A0"
-                font.pixelSize: 16
-                Layout.topMargin: 10
-            }
+            Repeater {
+                        // Object.keys() creates a list of ingredient names from the map
+                        model: targetBeverage ? Object.keys(targetBeverage.ingredients) : []
+                        delegate: SliderInput {
+                            label: modelData
+                        }
+                    }
 
             // We use a Repeater to iterate over the ingredients map
             ColumnLayout {
                 id: ingredientsRepeater
                 Layout.fillWidth: true
                 Layout.leftMargin: 20
-
-                Repeater {
-                    // Object.keys() creates a list of ingredient names from the map
-                    model: targetBeverage ? Object.keys(targetBeverage.ingredients) : []
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Text {
-                            text: modelData // 'modelData' here is the ingredient name (the key)
-                            color: "#E0E0E0"
-                            font.pixelSize: 18
-                        }
-                        Item { Layout.fillWidth: true } // Spacer
-                        Text {
-                            // We access the map value using the key
-                            text: targetBeverage.ingredients[modelData] + "g"
-                            color: "#A0A0A0"
-                            font.pixelSize: 16
-                        }
-                    }
-                }
             }
 
         Item {
