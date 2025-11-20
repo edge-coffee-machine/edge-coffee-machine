@@ -8,6 +8,9 @@ Rectangle {
     height: 480
     color: "#050505"
 
+    // Signal to request going back to previous view
+    signal goBackRequested()
+
     // --- 1. HEADER SECTION ---
     Column {
         id: headerContainer
@@ -39,7 +42,7 @@ Rectangle {
         color: "#333333"
         anchors { top: parent.top; right: parent.right; margins: 20 }
         Text { anchors.centerIn: parent; text: "✕"; color: "white"; font.pixelSize: 16 }
-        MouseArea { anchors.fill: parent; onClicked: console.log("Close") }
+        MouseArea { anchors.fill: parent; onClicked: root.goBackRequested() }
     }
 
     // --- 3. CONTENT AREA (Holds List + Fixed Button) ---

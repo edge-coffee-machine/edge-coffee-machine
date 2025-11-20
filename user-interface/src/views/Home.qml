@@ -10,6 +10,9 @@ Rectangle {
     height: 600
     color: Theme.dark500
 
+    // Signal to notify parent that user switch is requested
+    signal switchUserRequested()
+
     Rectangle {
         anchors.fill: parent
         anchors.margins: 30
@@ -20,6 +23,7 @@ Rectangle {
         Components.Header {
             id: header
             height: 60
+            onSwitchUserRequested: root.switchUserRequested()
         }
 
         // Main content as three components

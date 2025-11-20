@@ -6,6 +6,9 @@ Row {
     id: header
     spacing: 10
 
+    // Signal emitted when "not you?" button is clicked
+    signal switchUserRequested()
+
     H1 {
         text: "Good Morning,"
         anchors.verticalCenter: parent.verticalCenter
@@ -41,7 +44,7 @@ Row {
 
             MouseArea {
                 anchors.fill: parent
-                onClicked: console.log("Switch user")
+                onClicked: header.switchUserRequested()
             }
         }
 
