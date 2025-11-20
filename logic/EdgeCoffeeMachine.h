@@ -31,32 +31,32 @@ public:
     EdgeCoffeeMachine& operator=(const EdgeCoffeeMachine&) = delete;
 
     void test();
-    void recordBeverageSelection(QString name);
     
     // Q_INVOKABLE methods to be called from QML
     Q_INVOKABLE void makeDrink(Beverage* beverage);
     Q_INVOKABLE void selectBeverage(Beverage* beverage);
-
+    
     // Getter methods for properties
     Beverage* selectedBeverage() const;
     QString status() const;
     bool isMakingDrink() const;
     QQmlListProperty<Beverage> getBeverages(); //For QML access
-    QQmlListProperty<Beverage> getPopularBeverages(); // For User access, NOT for QML access
-
+    const QList<Beverage*>& getPopularBeverages(); // For User access, NOT for QML access
+    
 private:
     explicit EdgeCoffeeMachine(QObject *parent = nullptr); // Constructor with QObject parent
+    
+    void recordBeverageSelection(const QString name);
 
     inline static constexpr float popularityWeightR = 0.175f; // Weight update rate for the popularity list
-    static EdgeCoffeeMachine* m_instance;
-
+    
     // Data members
     User* user = nullptr; // Current user
     WeightedSortedList<Beverage*> m_weightedBeverages;
     QString m_status;
     bool m_isMakingDrink;
     Beverage* m_selectedBeverage = nullptr;
-
+    
     // Setter methods for properties
     void setStatus(const QString& status);
     void setIsMakingDrink(bool making);

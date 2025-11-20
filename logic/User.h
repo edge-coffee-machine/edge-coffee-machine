@@ -53,8 +53,6 @@ class User : public QObject {
     Q_PROPERTY(QQmlListProperty<Beverage> displayBeverages READ displayBeverages NOTIFY displayBeveragesChanged) // Beverages sorted by recommendation (for early adopters, an unfrequent beverage appears third)
 
 public:
-    enum class UserCategory { Default, Conservative, EarlyAdopter };
-
     explicit User(const QString& name, int picture, QObject* parent = nullptr); // Constructor
 
     /*
@@ -97,6 +95,8 @@ signals:
     void displayBeveragesChanged(); // Emitted when the beverage list changes, to notify QML
 
 private:
+    enum class UserCategory { Default, Conservative, EarlyAdopter };
+    
     /*
     Should only be called from beverageBrewed.
     Updates the user scores and category based on the selected beverage.

@@ -10,7 +10,6 @@ User::User(const QString& name, int picture, QObject* parent)
 {
     m_weightedBeverages = WeightedSortedList<Beverage*>(Beverage::getIndependentBeverageList(), defaultWeightR);
     updateDisplayBeverages();
-    emit displayBeveragesChanged();
 }
 
 QString User::name() const { return m_name; }
@@ -67,33 +66,26 @@ QQmlListProperty<Beverage> User::displayBeverages()
         return QQmlListProperty<Beverage>(this, &m_displayBeverages);
     } 
     else {
-        // Obtener la lista de popularidad global (QQmlListProperty::data es un void* al QList)
-        QQmlListProperty<Beverage> popularProp = EdgeCoffeeMachine::instance().getPopularBeverages();
-        QList<Beverage*>* popularList = static_cast<QList<Beverage*>*>(popularProp.data);
+        // Get the global popularity list
+        const QList<Beverage*>& popularList = EdgeCoffeeMachine::instance().getPopularBeverages();
 
-        if (!popularList) {
-            // Fallback: usar la lista local ordenada por peso
-            m_displayBeverages = m_weightedBeverages.items();
-            return QQmlListProperty<Beverage>(this, &m_displayBeverages);
-        }
-
-        // Mapear las bebidas del usuario por nombre para búsqueda rápida
+        // Map user's beverages by name for quick lookup
         QList<Beverage*> userItems = m_weightedBeverages.items();
         QHash<QString, Beverage*> nameMap;
         for (Beverage* b : userItems) {
             if (b) nameMap.insert(b->name(), b);
         }
 
-        // Construir la lista ordenada según la lista de popularidad global
+        // Build ordered display list based on global popularity
         QList<Beverage*> ordered;
-        ordered.reserve(popularList->size());
-        for (Beverage* p : *popularList) {
+        ordered.reserve(popularList.size());
+        for (Beverage* p : popularList) {
             if (!p) continue;
             Beverage* match = nameMap.value(p->name(), nullptr);
             if (match) ordered.append(match);
         }
 
-        // Añadir cualquier bebida del usuario que no apareciese en la lista de popularidad
+        // Add any user beverages not in the popularity list at the end
         for (Beverage* b : userItems) {
             if (b && !ordered.contains(b)) ordered.append(b);
         }
@@ -128,7 +120,6 @@ void User::beverageBrewed(Beverage* beverage)
     }
 
     updateDisplayBeverages();
-    EdgeCoffeeMachine::instance().recordBeverageSelection(beverage->name());
 
     m_numBeverages++;
 }

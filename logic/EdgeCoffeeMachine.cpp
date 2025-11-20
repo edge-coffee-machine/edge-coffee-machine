@@ -5,17 +5,11 @@
 
 #include "EdgeCoffeeMachine.h" // Include the EdgeCoffeeMachine
 
-EdgeCoffeeMachine* EdgeCoffeeMachine::m_instance = nullptr; // Definition of the static singleton pointer
-
 // Creation of the singleton instance
 EdgeCoffeeMachine& EdgeCoffeeMachine::instance()
 {
-    if (EdgeCoffeeMachine::m_instance == nullptr) {
-        qInfo() << "[ECM] Creating EdgeCoffeeMachine singleton instance.";
-        EdgeCoffeeMachine::m_instance = new EdgeCoffeeMachine();
-    }
-
-    return *EdgeCoffeeMachine::m_instance;
+    static EdgeCoffeeMachine instance;
+    return instance;
 }
 
 // Constructor
@@ -40,9 +34,9 @@ void EdgeCoffeeMachine::test()
     user->test();
 }
 
-void EdgeCoffeeMachine::recordBeverageSelection(QString name)
+void EdgeCoffeeMachine::recordBeverageSelection(const QString name)
 {
-    QList<Beverage*> items = m_weightedBeverages.items();
+    const QList<Beverage*> items = m_weightedBeverages.items();
     for (int i = 0; i < items.size(); ++i) {
         if (items[i]->name() == name) {
             m_weightedBeverages.recordSelectionAt(i);
@@ -56,18 +50,13 @@ void EdgeCoffeeMachine::recordBeverageSelection(QString name)
                 qInfo() << "   Beverage [" << j << "]: " << beverages[j]
                         << ", weight =" << weights[j];
             }
-
+            
+            emit beveragesChanged(); // Notify QML that the beverage list has changed
             return;
         }
     }
 
     qWarning() << "Beverage name not found in popularity list: " << name;
-}
-
-// QQmlListProperty append function (not implemented for now)
-static void append_beverage(QQmlListProperty<Beverage>* list, Beverage* beverage) {
-    Q_UNUSED(list);
-    Q_UNUSED(beverage);
 }
 
 // Q_PROPERTY getters
@@ -101,18 +90,23 @@ QQmlListProperty<Beverage> EdgeCoffeeMachine::getBeverages()
         return user->displayBeverages();
     }
     else {
-        return getPopularBeverages();
+        return QQmlListProperty<Beverage>(this, const_cast<QList<Beverage*>*>(&m_weightedBeverages.items()));
     }
 }
 
-QQmlListProperty<Beverage> EdgeCoffeeMachine::getPopularBeverages()
+const QList<Beverage*>& EdgeCoffeeMachine::getPopularBeverages()
 {
-    return QQmlListProperty<Beverage>(this, const_cast<QList<Beverage*>*>(&m_weightedBeverages.items()));
+    return m_weightedBeverages.items();
 }
 
 void EdgeCoffeeMachine::makeDrink(Beverage* beverage) {
     if (m_isMakingDrink) {
         setStatus("Already making a drink. Please wait.");
+        return;
+    }
+
+    if (!beverage) {
+        setStatus("Invalid beverage.");
         return;
     }
     
@@ -129,7 +123,7 @@ void EdgeCoffeeMachine::makeDrink(Beverage* beverage) {
         qDebug() << "Finished making: " << drinkName; // Debug output
         setStatus(drinkName + " is ready!"); // Update status
         setIsMakingDrink(false); // Reset making drink state
-        m_weightedBeverages.recordSelection(beverage); // Record selection of the made drink, for popularity tracking
+        recordBeverageSelection(drinkName); // Record selection of the made drink, for popularity tracking
         if (user) user->beverageBrewed(beverage); // Notify user about the brewed beverage
     });
 }
