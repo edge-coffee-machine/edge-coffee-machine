@@ -1,17 +1,19 @@
 import QtQuick 2.15
+import "../theme"
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 
 Card {
     id: root
-    color: "#1A1B1C"
+    width: 275
+    height: 390
+    color: Theme.dark500
 
     // This property will receive the selected beverage object from main.qml
     property var targetBeverage: null
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 15
         spacing: 10
 
         // This content is only visible when a beverage is selected
@@ -21,10 +23,9 @@ Card {
 
             Text {
                 text: targetBeverage ? targetBeverage.name : ""
-                color: "white"
+                color: Theme.white
                 font.pixelSize: 24
                 font.bold: true
-                Layout.alignment: Qt.AlignHCenter
             }
 
             Text {
@@ -68,14 +69,13 @@ Card {
 
         Card {
             Layout.fillWidth: true
-            height: 150
-            color: "#212223"
+            height: 130
+            color: Theme.dark400
             Text {
-                y: 20
                 text: "€ 1.20"
                 font.pixelSize: 40
                 font.bold: true
-                color: "white"
+                color: Theme.white
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -94,7 +94,7 @@ Card {
                     }
                     background: Rectangle {
                         // Colors more consistent with the theme
-                        color: makeButton.down ? "#4A4E50" : (makeButton.hovered ? "#3A3E40" : "#1A1B1C")
+                        color: makeButton.down ? "#4A4E50" : (makeButton.hovered ? "#3A3E40" : Theme.dark500)
                         radius: parent.height
                         Behavior on color { ColorAnimation { duration: 100 } }
                     }
@@ -102,7 +102,7 @@ Card {
                         anchors.fill: parent
                         Text {
                             text: makeButton.text
-                            color: "white"
+                            color: Theme.white
                             font.bold: true
                             font.pixelSize: 18
                             anchors.centerIn: parent

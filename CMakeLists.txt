@@ -28,6 +28,7 @@ target_include_directories(coffee_machine_app PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 
 # Find all QML files recursively
 file(GLOB_RECURSE QML_FILES "${CMAKE_CURRENT_SOURCE_DIR}/user-interface/*.qml")
+file(GLOB_RECURSE QMLDIR_FILES "${CMAKE_CURRENT_SOURCE_DIR}/user-interface/*/qmldir")
 
 # Find all asset files recursively
 file(GLOB_RECURSE ASSET_FILES "${CMAKE_CURRENT_SOURCE_DIR}/user-interface/assets/*")
@@ -36,7 +37,7 @@ file(GLOB_RECURSE ASSET_FILES "${CMAKE_CURRENT_SOURCE_DIR}/user-interface/assets
 qt_add_resources(coffee_machine_app "EdgeCoffeeMachine"
     PREFIX "/EdgeCoffeeMachine"
     BASE "${CMAKE_CURRENT_SOURCE_DIR}/user-interface"
-    FILES ${QML_FILES} ${ASSET_FILES}
+    FILES ${QML_FILES} ${ASSET_FILES} ${QMLDIR_FILES}
 )
 
 # Link Qt libraries to the executable

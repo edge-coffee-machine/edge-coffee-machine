@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>assets/img/cappuccino.png</file>
-        <file>components/CustomButton.qml</file>
-    </qresource>
-</RCC>

@@ -1,4 +1,5 @@
 import QtQuick
+import "../theme"
 
 Rectangle {
     id: root
@@ -10,12 +11,12 @@ Rectangle {
     width: textItem.width + 20
     height: textItem.height + 10
     radius: height / 2
-    color: pressed ? "#1f1f1f" : "#212223"
+    color: pressed ? "#1f1f1f" : Theme.gray
 
     Text {
         id: textItem
         anchors.centerIn: parent
-        color: "#D9A569"
+        color: Theme.accent
     }
 
     MouseArea {
