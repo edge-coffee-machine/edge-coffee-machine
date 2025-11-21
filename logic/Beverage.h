@@ -3,15 +3,10 @@
 
 
 #define MAX_COFFEE_BEANS 100.0f
-#define MIN_COFFEE_BEANS 0.0f
 #define MAX_COCOA_POWDER 100.0f
-#define MIN_COCOA_POWDER 0.0f
 #define MAX_WATER 1000.0f
-#define MIN_WATER 0.0f
 #define MAX_FOAM 200.0f
-#define MIN_FOAM 0.0f
 #define MAX_MILK 500.0f
-#define MIN_MILK 0.0f
 
 
 
@@ -69,21 +64,11 @@ class Beverage : public QObject { // Inherit from QObject
     Q_PROPERTY(float milk READ milk WRITE setMilk NOTIFY milkChanged) // Amount of milk in the coffee
     
     Q_PROPERTY(float maxCoffeeBeans READ maxCoffeeBeans CONSTANT) // Maximum amount of coffee beans in the coffee
-    Q_PROPERTY(float minCoffeeBeans READ minCoffeeBeans CONSTANT) // Minimum amount of coffee beans in the coffee
-    
     Q_PROPERTY(float maxCocoaPowder READ maxCocoaPowder CONSTANT) // Maximum amount of cocoaPowder in the coffee
-    Q_PROPERTY(float minCocoaPowder READ minCocoaPowder CONSTANT) // Minimum amount of cocoaPowder in the coffee
-    
     Q_PROPERTY(float maxWater READ maxWater CONSTANT) // Maximum amount of water in the coffee
-    Q_PROPERTY(float minWater READ minWater CONSTANT) // Minimum amount of water in the coffee
-
     Q_PROPERTY(float maxFoam READ maxFoam CONSTANT) // Maximum amount of foam in the coffee
-    Q_PROPERTY(float minFoam READ minFoam CONSTANT) // Minimum amount of foam in the coffee
-
     Q_PROPERTY(float maxMilk READ maxMilk CONSTANT) // Maximum amount of milk in the coffee
-    Q_PROPERTY(float minMilk READ minMilk CONSTANT) // Minimum amount of milk in the coffee
 
-    Q_PROPERTY(QQmlListProperty<Beverage> defaultBeverageList READ defaultBeverageList NOTIFY defaultBeverageListChanged) // Static list of default beverages
 
 public:
     explicit Beverage(const QString& name, float coffeeBeans, float cocoaPowder, float water, float foam, float milk, QObject *parent = nullptr); // Constructor
@@ -100,66 +85,51 @@ public:
     float milk() const;
     void setMilk(float milk);
     float maxCoffeeBeans() const;
-    float minCoffeeBeans() const;
     float maxCocoaPowder() const;
-    float minCocoaPowder() const;
     float maxWater() const;
-    float minWater() const;
     float maxFoam() const;
-    float minFoam() const;
     float maxMilk() const;
-    float minMilk() const;
     float getDefaultCoffeeBeans() const;
     float getDefaultCocoaPowder() const;
     float getDefaultWater() const;
     float getDefaultFoam() const;
     float getDefaultMilk() const;
-    QQmlListProperty<Beverage> defaultBeverageList();
 
     Q_INVOKABLE void resetIngredients();// Method to reset ingredients to default values
-    static void initDefaultBeveragesList();
+    static void initDefaultBeveragesList(); // Initializes the static default beverage list
     static QList<Beverage*> getIndependentBeverageList(); // Returns a deep copy of the default beverage list, with new Beverage instances.
+    float brewingTime(); // Method to calculate brewing time based on ingredients
 
 private:
     // Data members
     QString m_name;
 
-    float m_coffeeBeans;
-    float m_cocoaPowder;
-    float m_water;
-    float m_foam;
-    float m_milk;
+    float m_coffeeBeans; // Current normalized amount of coffee beans
+    float m_cocoaPowder; // Current normalized amount of cocoa powder
+    float m_water; // Current normalized amount of water
+    float m_foam; // Current normalized amount of foam
+    float m_milk; // Current normalized amount of milk
 
-    const float m_defaultCoffeeBeans;
-    const float m_defaultCocoaPowder;
-    const float m_defaultWater;
-    const float m_defaultFoam;
-    const float m_defaultMilk;
+    const float m_defaultCoffeeBeans;// Default normalized amount of coffee beans
+    const float m_defaultCocoaPowder;// Default normalized amount of cocoa powder
+    const float m_defaultWater;// Default normalized amount of water
+    const float m_defaultFoam;// Default normalized amount of foam
+    const float m_defaultMilk;// Default normalized amount of milk
 
     static constexpr float m_maxCoffeeBeans = MAX_COFFEE_BEANS;
-    static constexpr float m_minCoffeeBeans = MIN_COFFEE_BEANS;
-    
     static constexpr float m_maxCocoaPowder = MAX_COCOA_POWDER;
-    static constexpr float m_minCocoaPowder = MIN_COCOA_POWDER;
-
     static constexpr float m_maxWater = MAX_WATER;
-    static constexpr float m_minWater = MIN_WATER;
-
     static constexpr float m_maxFoam = MAX_FOAM;
-    static constexpr float m_minFoam = MIN_FOAM;
-
     static constexpr float m_maxMilk = MAX_MILK;
-    static constexpr float m_minMilk = MIN_MILK;
-
     static QList<Beverage*> s_defaultBeverageList; // Static list of default beverages
-signals:
 
+    
+signals:
     void coffeeBeansChanged();
     void cocoaPowderChanged();
     void waterChanged();
     void foamChanged();
     void milkChanged();
-    void defaultBeverageListChanged();
 };
 
 #endif // BEVERAGE_H

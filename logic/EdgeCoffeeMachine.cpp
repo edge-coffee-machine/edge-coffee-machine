@@ -116,8 +116,12 @@ void EdgeCoffeeMachine::makeDrink(Beverage* beverage) {
     setStatus("Making " + drinkName + "..."); // Update status
     qDebug() << "Starting to make: " << drinkName; // Debug output
 
+    double timeToBrew = beverage->brewingTime(); // calculate brewing time
+    timeToBrew *= 1000; // convert to milliseconds
+    qDebug() << "Estimated brewing time (ms): " << timeToBrew;
+
     // Simulate work with a timer
-    QTimer::singleShot(3000, this, [this, drinkName, beverage]() {
+    QTimer::singleShot((int)timeToBrew, this, [this, drinkName, beverage]() {
         // In a real machine, this would involve checking ingredients,
         // dispensing, heating, etc.
         qDebug() << "Finished making: " << drinkName; // Debug output
@@ -126,6 +130,7 @@ void EdgeCoffeeMachine::makeDrink(Beverage* beverage) {
         recordBeverageSelection(drinkName); // Record selection of the made drink, for popularity tracking
         if (user) user->beverageBrewed(beverage); // Notify user about the brewed beverage
     });
+
 }
 
 // Getter for the selected beverage property

@@ -28,7 +28,7 @@ float Beverage::coffeeBeans() const {
     return m_coffeeBeans;
 }
 void Beverage::setCoffeeBeans(float coffeeBeans) {
-    if (m_minCoffeeBeans != 0 || m_defaultCoffeeBeans != 0) { // Check if the coffee beans are present
+    if (m_defaultCoffeeBeans != 0) { // Check if the coffee beans are present
         coffeeBeans = qBound(0.0f, coffeeBeans, 1.0f);
         if (m_coffeeBeans != coffeeBeans) {
             m_coffeeBeans = coffeeBeans;
@@ -41,7 +41,7 @@ float Beverage::cocoaPowder() const {
     return m_cocoaPowder;
 }
 void Beverage::setCocoaPowder(float cocoaPowder) { 
-    if (m_minCocoaPowder != 0 || m_defaultCocoaPowder != 0) { // Check if the cocoa powder is present
+    if ( m_defaultCocoaPowder != 0) { // Check if the cocoa powder is present
         cocoaPowder = qBound(0.0f, cocoaPowder, 1.0f);
         if (m_cocoaPowder != cocoaPowder) {
             m_cocoaPowder = cocoaPowder;
@@ -53,7 +53,7 @@ float Beverage::water() const {
     return m_water;
 }
 void Beverage::setWater(float water) {
-    if (m_minWater != 0 || m_defaultWater != 0) { // Check if the water is present
+    if ( m_defaultWater != 0) { // Check if the water is present
         water = qBound(0.0f, water, 1.0f);
         if (m_water != water) {
             m_water = water;
@@ -65,7 +65,7 @@ float Beverage::foam() const {
     return m_foam;
 }
 void Beverage::setFoam(float foam) { 
-    if (m_minFoam != 0 || m_defaultFoam != 0) { // Check if the foam is present
+    if (m_defaultFoam != 0) { // Check if the foam is present
         foam = qBound(0.0f, foam, 1.0f);
         if (m_foam != foam) {
             m_foam = foam;
@@ -77,7 +77,7 @@ float Beverage::milk() const {
     return m_milk;
 }
 void Beverage::setMilk(float milk) { // Setter for milk property
-    if (m_minMilk != 0 || m_defaultMilk != 0) { // Check if the milk is present
+    if (m_defaultMilk != 0) { // Check if the milk is present
         milk = qBound(0.0f, milk, 1.0f);
         if (m_milk != milk) {
             m_milk = milk;
@@ -88,32 +88,17 @@ void Beverage::setMilk(float milk) { // Setter for milk property
 float Beverage::maxCoffeeBeans() const { 
     return m_maxCoffeeBeans;
 }
-float Beverage::minCoffeeBeans() const { 
-    return m_minCoffeeBeans;
-}
 float Beverage::maxCocoaPowder() const { 
     return m_maxCocoaPowder;
-}
-float Beverage::minCocoaPowder() const { 
-    return m_minCocoaPowder;
 }
 float Beverage::maxWater() const { 
     return m_maxWater;
 }
-float Beverage::minWater() const { 
-    return m_minWater;
-}
 float Beverage::maxFoam() const { 
     return m_maxFoam;
 }
-float Beverage::minFoam() const { 
-    return m_minFoam;
-}
 float Beverage::maxMilk() const { 
     return m_maxMilk;
-}
-float Beverage::minMilk() const { 
-    return m_minMilk;
 }
 float Beverage::getDefaultCoffeeBeans() const {
     return m_defaultCoffeeBeans;
@@ -130,19 +115,6 @@ float Beverage::getDefaultFoam() const {
 float Beverage::getDefaultMilk() const {
     return m_defaultMilk;
 }
-
-QQmlListProperty<Beverage> Beverage::defaultBeverageList(){
-    return QQmlListProperty<Beverage>(nullptr, &s_defaultBeverageList,
-        [](QQmlListProperty<Beverage>* list) -> qsizetype {
-            return reinterpret_cast<QList<Beverage*>*>(list->data)->size();
-        },
-        [](QQmlListProperty<Beverage>* list, qsizetype index) -> Beverage* {
-            return reinterpret_cast<QList<Beverage*>*>(list->data)->at(index);
-        });
-}
-
-
-
 void Beverage::resetIngredients() { // Method to reset ingredients to default values
     m_coffeeBeans=m_defaultCoffeeBeans;
     m_cocoaPowder=m_defaultCocoaPowder;
@@ -189,6 +161,30 @@ void Beverage::initDefaultBeveragesList(){
         clonedList.append(newBeverage);
     }
     return clonedList;
+}
+// Method to calculate brewing time based on ingredients. The implementation can be adjusted as needed.
+float Beverage:: brewingTime(){   
+    float time = 0.0;
+    if(m_cocoaPowder!=0){
+        time += 1+ 0.02* m_maxCocoaPowder * m_cocoaPowder;
+    }
+    if (m_coffeeBeans!=0)
+    {
+        time += 1 + 0.04 * m_maxCoffeeBeans * m_coffeeBeans;
+    }
+    if (m_water!=0)
+    {
+        time += 1 + 0.01 * m_maxWater * m_water;
+    }
+    if (m_foam!=0)  
+    {
+        time += 1 + 0.03 * m_maxFoam * m_foam;
+    }
+    if (m_milk!=0)
+    {
+        time += 1 + 0.015 * m_maxMilk * m_milk;
+    }
+    return time;
 }
 
 

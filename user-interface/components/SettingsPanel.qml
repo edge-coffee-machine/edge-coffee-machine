@@ -48,7 +48,7 @@ Card {
                     }
                     Item { Layout.fillWidth: true } 
                     Text {
-                        text: targetBeverage ? (targetBeverage.minCoffeeBeans + targetBeverage.coffeeBeans * (targetBeverage.maxCoffeeBeans - targetBeverage.minCoffeeBeans)).toFixed(2) + "g" : "0g"
+                        text: targetBeverage ? (targetBeverage.coffeeBeans * targetBeverage.maxCoffeeBeans).toFixed(2) + "g" : "0g"
                         color: "#A0A0A0"
                         font.pixelSize: 16
                     }
@@ -63,7 +63,7 @@ Card {
                     }
                     Item { Layout.fillWidth: true }
                     Text {
-                        text: targetBeverage ? (targetBeverage.minCocoaPowder + targetBeverage.cocoaPowder * (targetBeverage.maxCocoaPowder - targetBeverage.minCocoaPowder)).toFixed(2) + "g" : "0g"
+                        text: targetBeverage ? (targetBeverage.cocoaPowder * targetBeverage.maxCocoaPowder).toFixed(2) + "g" : "0g"
                         color: "#A0A0A0"
                         font.pixelSize: 16
                     }
@@ -78,7 +78,7 @@ Card {
                     }
                     Item { Layout.fillWidth: true } 
                     Text {
-                        text: targetBeverage ? (targetBeverage.minWater + targetBeverage.water * (targetBeverage.maxWater - targetBeverage.minWater)).toFixed(2) + "ml" : "0ml"
+                        text: targetBeverage ? (targetBeverage.water * targetBeverage.maxWater).toFixed(2) + "ml" : "0ml"
                         color: "#A0A0A0"
                         font.pixelSize: 16
                     }
@@ -93,7 +93,7 @@ Card {
                     }
                     Item { Layout.fillWidth: true } 
                     Text {
-                        text: targetBeverage ? (targetBeverage.minFoam + targetBeverage.foam * (targetBeverage.maxFoam - targetBeverage.minFoam)).toFixed(2) + "ml" : "0ml"
+                        text: targetBeverage ? (targetBeverage.foam * targetBeverage.maxFoam).toFixed(2) + "ml" : "0ml"
                         color: "#A0A0A0"
                         font.pixelSize: 16
                     }
@@ -108,7 +108,7 @@ Card {
                     }
                     Item { Layout.fillWidth: true } // Espaciador
                     Text {
-                        text: targetBeverage ? (targetBeverage.minMilk + targetBeverage.milk * (targetBeverage.maxMilk - targetBeverage.minMilk)).toFixed(2) + "ml" : "0ml"
+                        text: targetBeverage ? (targetBeverage.milk * targetBeverage.maxMilk).toFixed(2) + "ml" : "0ml"
                         color: "#A0A0A0"
                         font.pixelSize: 16
                     }
