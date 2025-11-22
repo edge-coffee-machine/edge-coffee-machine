@@ -53,26 +53,26 @@ void EdgeCoffeeMachine::addBeverage(const QString& name) {
     auto newBeverage = std::make_unique<Beverage>(name);
     // Add some default ingredients based on the beverage name
     if (name == "Espresso") {
-        newBeverage->addIngredient("Coffee Beans", 10);
-        newBeverage->addIngredient("Water", 30);
+        newBeverage->addIngredient("Coffee", 10);
+        newBeverage->addIngredient("Foam", 30);
     } else if (name == "Cappuccino") {
-        newBeverage->addIngredient("Coffee Beans", 10);
-        newBeverage->addIngredient("Water", 30);
+        newBeverage->addIngredient("Coffee", 10);
+        newBeverage->addIngredient("Foam", 30);
         newBeverage->addIngredient("Milk", 100);
     } else if (name == "Latte") {
-        newBeverage->addIngredient("Coffee Beans", 10);
+        newBeverage->addIngredient("Coffee", 10);
         newBeverage->addIngredient("Water", 30);
         newBeverage->addIngredient("Milk", 150);
     } else if (name == "Americano") {
-        newBeverage->addIngredient("Coffee Beans", 10);
+        newBeverage->addIngredient("Coffee", 10);
         newBeverage->addIngredient("Water", 100);
     } else if (name == "Mocha") {
-        newBeverage->addIngredient("Coffee Beans", 10);
+        newBeverage->addIngredient("Coffee", 10);
         newBeverage->addIngredient("Water", 30);
         newBeverage->addIngredient("Milk", 120);
-        newBeverage->addIngredient("Chocolate Syrup", 20);
+        newBeverage->addIngredient("Powder", 20);
     } else if (name == "Tea") {
-        newBeverage->addIngredient("Tea Leaves", 5);
+        newBeverage->addIngredient("Tea", 5);
         newBeverage->addIngredient("Water", 200);
     }
 
