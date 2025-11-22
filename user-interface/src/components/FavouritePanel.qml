@@ -9,6 +9,23 @@ Item {
     // This property will receive the selected beverage object from main.qml
     property var targetBeverage: null
 
+    function getImage(targetBeverage) {
+        if (targetBeverage !== null) {
+            if (targetBeverage.name === "Cappuccino") {
+                return "../../assets/img/featured-cappuccino.png"
+            }
+
+            if (targetBeverage.name === "Latte") {
+                return "../../assets/img/featured-latte.png"
+            }
+
+            if (targetBeverage.name === "Tea") {
+                return "../../assets/img/featured-tea.png"
+            }
+        }
+        return "../../assets/img/espresso.png"
+    }
+
     TextDefault {
         text: "Here's your <b>favourite.</b>"
         color: Theme.white
@@ -29,7 +46,7 @@ Item {
             anchors.centerIn: parent
             Image {
                 id: espressoImg
-                source: "../../assets/img/espresso.png"
+                source: getImage(targetBeverage)
                 width: 270
                 height: 270
                 fillMode: Image.PreserveAspectFit
