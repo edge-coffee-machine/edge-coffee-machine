@@ -21,10 +21,43 @@ Rectangle {
 
     Image {
         source: "../../assets/img/wave.png"
-        width: parent.width
+        width: isLoading ? (parent.width + 200) : parent.width + 100
         height: 90
         anchors.bottom: progressFill.top
         anchors.bottomMargin: -50
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        Behavior on width {
+            NumberAnimation {
+                duration: 3000
+                easing.type: Easing.InOutQuad
+            }
+        }
+
+        SequentialAnimation on rotation {
+            // Run the animation automatically
+            running: isLoading
+
+            // Make it spin forever
+            loops: Animation.Infinite
+
+            RotationAnimation {
+                // Start where the previous loop ended (or at 0 on the first run)
+                from: -5
+                to: 5
+                duration: 500 // Speed of the tilt (0.5 seconds)
+                // Use Easing.InOutQuad for a smoother start and stop at the edges
+                easing.type: Easing.InOutQuad
+            }
+
+            RotationAnimation {
+                // Starts where the previous animation ended (20 degrees)
+                from: 5
+                to: -5
+                duration: 500 // Must match the first duration for symmetry
+                easing.type: Easing.InOutQuad
+            }
+        }
     }
 
     Rectangle {
