@@ -15,13 +15,63 @@ Item {
     property double maximumValue: 1.0
     property alias label: labelText.text // Expose the text property for external setting
 
-    TextDefault {
-        id: labelText
-        text: "Label: " + sliderInputRoot.value.toFixed(2) // Display label and current value
-        color: "white"
-        anchors.left: parent.left
+    function getIcon(label) {
+        if (label === "Coffee" || label === "Powder") {
+            return "../../../assets/icons/coffee.png"
+        }
+
+        if (label === "Foam") {
+            return "../../../assets/icons/foam.png"
+        }
+
+        if (label === "Water") {
+            return "../../../assets/icons/water.png"
+        }
+
+        if (label === "Milk") {
+            return "../../../assets/icons/milk.png"
+        }
+
+        return "../../../assets/icons/coffee.png"
+    }
+
+    Rectangle {
         anchors.verticalCenter: parent.verticalCenter
-        width: parent.width - actualSlider.width - 10 // Adjust width to make space for slider
+        Image {
+            id: icon
+            source: getIcon(label)
+            width: 25
+            height: 25
+            fillMode: Image.PreserveAspectFit
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+        }
+
+        Item {
+            anchors {
+                left: icon.right
+                leftMargin: 5
+            }
+
+            TextDefault {
+                y: -13
+                id: labelText
+                color: "white"
+                font.weight: 600
+            }
+
+            TextDefault {
+                id: quantity
+                text: 10 + sliderInputRoot.value.toFixed(
+                          1) * 15 + " ml" // Display label and current value
+                color: "white"
+                anchors {
+                    top: labelText.bottom
+                }
+                opacity: 0.6
+                font.weight: 400
+            }
+        }
     }
 
     Slider {
