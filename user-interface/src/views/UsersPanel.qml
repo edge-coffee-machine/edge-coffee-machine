@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import "../theme"
 import "../components/text"
+import "../components"
 
 Rectangle {
     id: root
@@ -10,44 +11,30 @@ Rectangle {
 
     // Signal to request going back to previous view
     signal goBackRequested
+    property int p_spacing: 20
 
     // --- 1. HEADER SECTION ---
     Rectangle {
         anchors.fill: parent
         color: "transparent"
-        anchors.margins: 100
+        anchors.margins: 30
 
         // --- 2. CLOSE BUTTON ---
-        Rectangle {
-            width: 40
-            height: 40
-            radius: 20
-            color: Theme.white
-            anchors {
-                top: parent.top
-                right: parent.right
-            }
-            Text {
-                anchors.centerIn: parent
-                text: "✕"
-                color: Theme.dark700
-                font.pixelSize: 32
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: root.goBackRequested()
-            }
+        CloseButton {
+            onGoBackRequested: root.goBackRequested()
         }
 
         Rectangle {
-            width: parent.width
+            width: parent.width - 100
             height: 280
-            anchors.verticalCenter: parent.verticalCenter
+            anchors.centerIn: parent
             color: "transparent"
 
             Column {
                 id: headerContainer
                 anchors.top: parent.top
+                x: left_fader.width
+
                 spacing: 2
 
                 H1 {
@@ -79,6 +66,7 @@ Rectangle {
                     width: 100
                     height: 200
                     anchors.right: parent.right
+                    anchors.rightMargin: left_fader.width // Ensure centering
                     anchors.top: parent.top
                     z: 10 // Ensure it sits above scrolling content if overlap occurs
 
@@ -127,6 +115,25 @@ Rectangle {
                     }
                 }
 
+                Image {
+                    id: fader
+                    source: "../../assets/img/fade-out.png"
+                    width: 50
+                    height: 200
+                    anchors.right: fixedNewUser.left
+                    anchors.rightMargin: p_spacing
+                    z: 1
+                }
+
+                Image {
+                    id: left_fader
+                    source: "../../assets/img/fade-out.png"
+                    width: 25
+                    height: 200
+                    anchors.left: userList.left
+                    z: 1
+                    scale: -1
+                }
                 // B. THE SCROLLABLE LIST (Left Aligned, fills space up to New User)
                 ListView {
                     id: userList
@@ -136,12 +143,12 @@ Rectangle {
 
                     // Anchor right side to the New User button with spacing
                     anchors.right: fixedNewUser.left
-                    anchors.rightMargin: 30
+                    anchors.rightMargin: 20
 
                     clip: true // Clips items when they scroll towards the New User button
 
                     orientation: ListView.Horizontal
-                    spacing: 30
+                    spacing: p_spacing
 
                     // Centering Logic (Applies only within the list area)
                     // If users fit in the space, center them. If not, scroll.
@@ -153,6 +160,18 @@ Rectangle {
 
                     flickableDirection: Flickable.HorizontalFlick
                     boundsBehavior: Flickable.StopAtBounds
+
+                    header: Item {
+                        // This Item acts as the right-side padding/spacer.
+                        width: left_fader.width
+                        height: 0
+                    }
+
+                    footer: Item {
+                        // This Item acts as the right-side padding/spacer.
+                        width: fader.width
+                        height: 0
+                    }
                 }
             }
 
@@ -184,6 +203,10 @@ Rectangle {
                     firstName: "Elena"
                     lastName: "Ricci"
                 }
+                ListElement {
+                    firstName: "John"
+                    lastName: "White"
+                }
             }
 
             // --- 5. DELEGATE (Users Only) ---
@@ -209,7 +232,8 @@ Rectangle {
                         Text {
                             anchors.centerIn: parent
                             // Auto Initials
-                            text: firstName.charAt(0) + (lastName ? lastName.charAt(0) : "")
+                            text: firstName.charAt(
+                                      0) + (lastName ? lastName.charAt(0) : "")
                             font.pixelSize: 42
                             font.bold: true
                             color: "#FFFFFF"
