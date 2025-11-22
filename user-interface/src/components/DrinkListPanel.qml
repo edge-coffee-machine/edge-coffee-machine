@@ -8,6 +8,8 @@ Card {
     width: 270
     height: 420
 
+    signal drinksListRequested
+
     // Expose the ListView's model property as a property of DrinkListPanel
     // This allows main.qml to assign data to it.
     property alias model: drinkListView.model
@@ -97,7 +99,8 @@ Card {
                             hoverEnabled: true
 
                             onClicked: {
-                                edgeCoffeeMachineController.selectBeverage(modelData.name);
+                                edgeCoffeeMachineController.selectBeverage(
+                                            modelData.name)
                             }
                         }
                     }
@@ -106,6 +109,7 @@ Card {
         }
         CustomButton {
             text: "All drinks"
+            onClick: drinksListRequested()
         }
     }
 }

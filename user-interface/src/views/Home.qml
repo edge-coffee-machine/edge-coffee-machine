@@ -12,6 +12,9 @@ Rectangle {
     // Signal to notify parent that user switch is requested
     signal switchUserRequested
 
+    // Signal to notify parent that drinksList is requested
+    signal drinksListRequested
+
     Rectangle {
         anchors.fill: parent
         anchors.margins: 30
@@ -52,6 +55,7 @@ Rectangle {
             Components.DrinkListPanel {
                 id: drinkListPanel
                 model: edgeCoffeeMachineController.beverages // Passes the list of beverages from C++ to the panel's model
+                onDrinksListRequested: root.drinksListRequested()
             }
         }
 

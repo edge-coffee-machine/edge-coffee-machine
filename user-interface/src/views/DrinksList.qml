@@ -9,36 +9,55 @@ Rectangle {
     height: 600
     color: Theme.dark500
 
+    // Signal to request going back to previous view
+    signal goBackRequested
+    // Signal to notify parent that user switch is requested
+    signal switchUserRequested
+
     Rectangle {
         anchors.fill: parent
         anchors.margins: 30
         anchors.horizontalCenter: parent.horizontalCenter
         color: "transparent"
 
+        CloseButton {
+            onGoBackRequested: root.goBackRequested()
+        }
+
         Header {
             id: header
             height: 60
+            onSwitchUserRequested: root.switchUserRequested()
         }
 
         Card {
             anchors.top: header.bottom
             width: parent.width
+            height: 450
 
-            Column {
-                TextDefault {
-                    text: "Explore <b>our drinks selection.<\b>"
-                    color: Theme.white
-                    font.pixelSize: 22
-                    textFormat: Text.RichText
-                }
+            TextDefault {
+                id: title
+                text: "Explore <b>our drinks selection.<\b>"
+                color: Theme.white
+                font.pixelSize: 22
+                textFormat: Text.RichText
+            }
 
-                TextDefault {
-                    text: "Explore a curated collection of drinks designed just for you."
-                }
+            TextDefault {
+                id: description
+                text: "Discover a curated collection of drinks designed just for you."
+                anchors.top: title.bottom
+            }
 
-                Card {
-                    color: Theme.dark500
+            Card {
+                anchors.top: description.bottom
+                anchors.topMargin: 10
+                color: Theme.dark500
+                width: parent.width
+                height: 370
 
+                Column {
+                    spacing: 10
                     TextDefault {
                         text: "Coffee Based"
                         font.weight: 700
@@ -46,31 +65,46 @@ Rectangle {
                     }
 
                     Row {
-                        height: parent.height
-                        spacing: 20
-
-                        // Note: In the future we should look at .qrt files for the resources
-                        Image {
-                            source: "../../assets/img/cappuccino.png"
-                            width: 60
-                            height: 60
-                            anchors.verticalCenter: parent.verticalCenter
+                        spacing: 10
+                        CoffeeTileSquare {
+                            imageSource: "../../assets/img/cappuccino.png"
+                            name: "Cappuccino"
+                            price: "€1.20"
                         }
 
                         Column {
-                            anchors.verticalCenter: parent.verticalCenter
-                            TextDefault {
-                                text: modelData.name // Accesses the 'name' property of the Beverage object
-                                color: Theme.white
-                                font.bold: true
-                                font.pixelSize: 20
+                            spacing: 10
+
+                            Row {
+                                spacing: 10
+
+                                CoffeeTile {
+                                    imageSource: "../../assets/img/cappuccino.png"
+                                    name: "Cappuccino"
+                                    price: "€1.20"
+                                }
+
+                                CoffeeTile {
+                                    imageSource: "../../assets/img/cappuccino.png"
+                                    name: "Cappuccino"
+                                    price: "€1.20"
+                                }
+
+                                CoffeeTile {
+                                    imageSource: "../../assets/img/cappuccino.png"
+                                    name: "Cappuccino"
+                                    price: "€1.20"
+                                }
                             }
 
-                            TextDefault {
-                                text: "€1.20" // Accesses the 'name' property of the Beverage object
-                                color: Theme.white
-                                opacity: 0.7
-                                font.pixelSize: 15
+                            Row {
+                                spacing: 10
+
+                                CoffeeTile {
+                                    imageSource: "../../assets/img/cappuccino.png"
+                                    name: "Cappuccino"
+                                    price: "€1.20"
+                                }
                             }
                         }
                     }
