@@ -30,8 +30,8 @@ EdgeCoffeeMachine::EdgeCoffeeMachine(QObject *parent)
 
 void EdgeCoffeeMachine::test()
 {
-    user = new User("Test User", 0, this);
-    user->test();
+    m_user = new User("Test User", 0, this);
+    m_user->test();
 }
 
 void EdgeCoffeeMachine::recordBeverageSelection(const QString name)
@@ -86,8 +86,8 @@ void EdgeCoffeeMachine::setIsMakingDrink(bool making) {
 // Q_PROPERTY getter for QQmlListProperty<Beverage>
 QQmlListProperty<Beverage> EdgeCoffeeMachine::getBeverages()
 {
-    if (user) {
-        return user->displayBeverages();
+    if (m_user) {
+        return m_user->displayBeverages();
     }
     else {
         return QQmlListProperty<Beverage>(this, const_cast<QList<Beverage*>*>(&m_weightedBeverages.items()));
@@ -97,6 +97,10 @@ QQmlListProperty<Beverage> EdgeCoffeeMachine::getBeverages()
 const QList<Beverage*>& EdgeCoffeeMachine::getPopularBeverages()
 {
     return m_weightedBeverages.items();
+}
+
+User* EdgeCoffeeMachine::user() const {
+    return m_user;
 }
 
 void EdgeCoffeeMachine::makeDrink(Beverage* beverage) {
@@ -124,11 +128,15 @@ void EdgeCoffeeMachine::makeDrink(Beverage* beverage) {
     QTimer::singleShot((int)timeToBrew, this, [this, drinkName, beverage]() {
         // In a real machine, this would involve checking ingredients,
         // dispensing, heating, etc.
-        qDebug() << "Finished making: " << drinkName; // Debug output
+        recordBeverageSelection(drinkName); // Record selection of the made drink, for popularity tracking
+        if (m_user){
+            m_user->beverageBrewed(beverage); // Notify user about the brewed beverage
+            m_user = nullptr; // Logout user after brewing
+            emit userChanged();
+        }
         setStatus(drinkName + " is ready!"); // Update status
         setIsMakingDrink(false); // Reset making drink state
-        recordBeverageSelection(drinkName); // Record selection of the made drink, for popularity tracking
-        if (user) user->beverageBrewed(beverage); // Notify user about the brewed beverage
+        qDebug() << "Finished making: " << drinkName; // Debug output
     });
 
 }

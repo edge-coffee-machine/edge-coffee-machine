@@ -21,6 +21,7 @@ class EdgeCoffeeMachine : public QObject { // Inherit from QObject
     Q_PROPERTY(bool isMakingDrink READ isMakingDrink WRITE setIsMakingDrink NOTIFY isMakingDrinkChanged)
     Q_PROPERTY(QQmlListProperty<Beverage> beverages READ getBeverages NOTIFY beveragesChanged)
     Q_PROPERTY(Beverage* selectedBeverage READ selectedBeverage NOTIFY selectedBeverageChanged)
+    Q_PROPERTY(User* user READ user NOTIFY userChanged) // Expose current user to QML (may be nullptr if no user logged in)
 
 public:
     // Static method to get the singleton instance
@@ -42,6 +43,7 @@ public:
     bool isMakingDrink() const;
     QQmlListProperty<Beverage> getBeverages(); //For QML access
     const QList<Beverage*>& getPopularBeverages(); // For User access, NOT for QML access
+    User* user() const; // Getter for QML user property
     
 private:
     explicit EdgeCoffeeMachine(QObject *parent = nullptr); // Constructor with QObject parent
@@ -51,7 +53,7 @@ private:
     inline static constexpr float popularityWeightR = 0.175f; // Weight update rate for the popularity list
     
     // Data members
-    User* user = nullptr; // Current user
+    User* m_user = nullptr; // Current user
     WeightedSortedList<Beverage*> m_weightedBeverages;
     QString m_status;
     bool m_isMakingDrink;
@@ -67,6 +69,7 @@ signals:
     void isMakingDrinkChanged();
     void selectedBeverageChanged();
     void beveragesChanged();
+    void userChanged();
 };
 
 #endif // EDGE_COFFEE_MACHINE_H
