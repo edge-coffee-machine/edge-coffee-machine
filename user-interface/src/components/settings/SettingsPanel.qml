@@ -95,7 +95,7 @@ Card {
                             return
                         switch (modelData) {
                         case "Coffee":
-                            targetBeverage.setCoffeeBeans(value)
+                            targetBeverage.coffeeBeans = value
                             break
                         case "Cocoa":
                             targetBeverage.cocoaPowder = value
