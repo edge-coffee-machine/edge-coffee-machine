@@ -10,6 +10,8 @@ Rectangle {
     clip: true
 
     property bool isLoading: false
+    property int brewingTime
+    property int waveBottomMargins: 25
 
     // Mask over the laoding animation
     Image {
@@ -20,16 +22,17 @@ Rectangle {
     }
 
     Image {
+        id: wave
         source: "../../assets/img/wave.png"
         width: isLoading ? (parent.width + 200) : parent.width + 100
         height: 90
         anchors.bottom: progressFill.top
-        anchors.bottomMargin: -50
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: -waveBottomMargins
 
         Behavior on width {
             NumberAnimation {
-                duration: 3000
+                duration: brewingTime
                 easing.type: Easing.InOutQuad
             }
         }
@@ -45,7 +48,7 @@ Rectangle {
                 // Start where the previous loop ended (or at 0 on the first run)
                 from: -5
                 to: 5
-                duration: 500 // Speed of the tilt (0.5 seconds)
+                duration: brewingTime / 6 // Speed of the tilt (0.5 seconds)
                 // Use Easing.InOutQuad for a smoother start and stop at the edges
                 easing.type: Easing.InOutQuad
             }
@@ -54,7 +57,7 @@ Rectangle {
                 // Starts where the previous animation ended (20 degrees)
                 from: 5
                 to: -5
-                duration: 500 // Must match the first duration for symmetry
+                duration: brewingTime / 6 // Must match the first duration for symmetry
                 easing.type: Easing.InOutQuad
             }
         }
@@ -63,16 +66,16 @@ Rectangle {
     Rectangle {
         id: progressFill
         width: parent.width
-        height: isLoading ? parent.width : 0
+        height: isLoading ? (parent.height + 35) : 10
         radius: 16
         color: Theme.accent // Or a distinct color like green
         opacity: 1
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: -50
+        anchors.bottomMargin: -wave.height + waveBottomMargins
 
         Behavior on height {
             NumberAnimation {
-                duration: 3000
+                duration: brewingTime
                 easing.type: Easing.InOutQuad
             }
         }
