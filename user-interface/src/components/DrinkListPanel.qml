@@ -100,7 +100,7 @@ Card {
 
                             onClicked: {
                                 edgeCoffeeMachineController.selectBeverage(
-                                            modelData.name)
+                                            modelData)
                             }
                         }
                     }
