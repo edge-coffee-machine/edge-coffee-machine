@@ -20,8 +20,9 @@ class EdgeCoffeeMachine : public QObject { // Inherit from QObject
     Q_PROPERTY(QString status READ status WRITE setStatus NOTIFY statusChanged)
     Q_PROPERTY(bool isMakingDrink READ isMakingDrink WRITE setIsMakingDrink NOTIFY isMakingDrinkChanged)
     Q_PROPERTY(QQmlListProperty<Beverage> beverages READ getBeverages NOTIFY beveragesChanged)
+    Q_PROPERTY(QQmlListProperty<User> users READ getUsers CONSTANT)
     Q_PROPERTY(Beverage* selectedBeverage READ selectedBeverage NOTIFY selectedBeverageChanged)
-    Q_PROPERTY(User* user READ user NOTIFY userChanged) // Expose current user to QML (may be nullptr if no user logged in)
+    Q_PROPERTY(User* user READ user WRITE setUser NOTIFY userChanged) // Expose current user to QML (may be nullptr if no user logged in)
 
 public:
     // Static method to get the singleton instance
@@ -36,6 +37,7 @@ public:
     // Q_INVOKABLE methods to be called from QML
     Q_INVOKABLE void makeDrink(Beverage* beverage);
     Q_INVOKABLE void selectBeverage(Beverage* beverage);
+    Q_INVOKABLE void setUser(User* user);
     
     // Getter methods for properties
     Beverage* selectedBeverage() const;
@@ -43,6 +45,7 @@ public:
     bool isMakingDrink() const;
     QQmlListProperty<Beverage> getBeverages(); //For QML access
     const QList<Beverage*>& getPopularBeverages(); // For User access, NOT for QML access
+    QQmlListProperty<User> getUsers();
     User* user() const; // Getter for QML user property
     
 private:
@@ -54,6 +57,7 @@ private:
     
     // Data members
     User* m_user = nullptr; // Current user
+    QList<User*> m_users;
     WeightedSortedList<Beverage*> m_weightedBeverages;
     QString m_status;
     bool m_isMakingDrink;

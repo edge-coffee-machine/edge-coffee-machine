@@ -99,7 +99,19 @@ const QList<Beverage *> &EdgeCoffeeMachine::getPopularBeverages() {
   return m_weightedBeverages.items();
 }
 
+QQmlListProperty<User> EdgeCoffeeMachine::getUsers() {
+  return QQmlListProperty<User>(this, &m_users);
+}
+
 User *EdgeCoffeeMachine::user() const { return m_user; }
+
+void EdgeCoffeeMachine::setUser(User *user) {
+  if (m_user != user) {
+    m_user = user;
+    emit userChanged();
+    emit beveragesChanged();
+  }
+}
 
 void EdgeCoffeeMachine::makeDrink(Beverage *beverage) {
   if (m_isMakingDrink) {
