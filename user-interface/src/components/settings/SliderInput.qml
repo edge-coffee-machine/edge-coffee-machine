@@ -12,7 +12,8 @@ Item {
     // Public properties for the slider
     property double value: 0.5
     property double minimumValue: 0.0
-    property double maximumValue: 1.0
+    property double maximumValue: 100.0
+    property string unitOfM: "ml"
     property alias label: labelText.text // Expose the text property for external setting
 
     function getIcon(label) {
@@ -62,8 +63,8 @@ Item {
 
             TextDefault {
                 id: quantity
-                text: 10 + sliderInputRoot.value.toFixed(
-                          1) * 15 + " ml" // Display label and current value
+                text: sliderInputRoot.value.toFixed(
+                          1) + " " + unitOfM // Display label and current value
                 color: "white"
                 anchors {
                     top: labelText.bottom
@@ -82,6 +83,7 @@ Item {
         to: sliderInputRoot.maximumValue
         value: sliderInputRoot.value
         width: 150
+        stepSize: 10
 
         // Bind the slider's value back to the root item's value property
         onValueChanged: sliderInputRoot.value = actualSlider.value

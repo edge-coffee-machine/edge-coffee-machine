@@ -14,6 +14,12 @@ Card {
     // This property will receive the selected beverage object from main.qml
     property var targetBeverage: null
 
+    onTargetBeverageChanged: {
+        // Force re-render to update the values
+        sliderGroup.model = null
+        sliderGroup.model = ["Coffee", "Cocoa", "Water", "Foam", "Milk"]
+    }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: 10
@@ -34,10 +40,77 @@ Card {
                 text: "Customize your drink."
             }
             Repeater {
-                // Object.keys() creates a list of ingredient names from the map
-                model: targetBeverage ? Object.keys(targetBeverage.ingredients) : []
+                id: sliderGroup
                 delegate: SliderInput {
                     label: modelData
+                    maximumValue: {
+                        if (!targetBeverage)
+                            return 0
+                        switch (modelData) {
+                        case "Coffee":
+                            return targetBeverage.maxCoffeeBeans
+                        case "Cocoa":
+                            return targetBeverage.maxCocoaPowder
+                        case "Water":
+                            return targetBeverage.maxWater
+                        case "Foam":
+                            return targetBeverage.maxFoam
+                        case "Milk":
+                            return targetBeverage.maxMilk
+                        default:
+                            return 0
+                        }
+                    }
+
+                    unitOfM: {
+                        if (modelData == "Cocoa")
+                            return "g"
+                        else
+                            return "ml"
+                    }
+
+                    // Bind value based on the ingredient name
+                    value: {
+                        if (!targetBeverage)
+                            return 0
+                        switch (modelData) {
+                        case "Coffee":
+                            return targetBeverage.coffeeBeans
+                        case "Cocoa":
+                            return targetBeverage.cocoaPowder
+                        case "Water":
+                            return targetBeverage.water
+                        case "Foam":
+                            return targetBeverage.foam
+                        case "Milk":
+                            return targetBeverage.milk
+                        default:
+                            return 0
+                        }
+                    }
+
+                    // Update the beverage property when slider changes
+                    onValueChanged: {
+                        if (!targetBeverage)
+                            return
+                        switch (modelData) {
+                        case "Coffee":
+                            targetBeverage.setCoffeeBeans(value)
+                            break
+                        case "Cocoa":
+                            targetBeverage.cocoaPowder = value
+                            break
+                        case "Water":
+                            targetBeverage.water = value
+                            break
+                        case "Foam":
+                            targetBeverage.foam = value
+                            break
+                        case "Milk":
+                            targetBeverage.milk = value
+                            break
+                        }
+                    }
                 }
             }
 
@@ -57,6 +130,7 @@ Card {
                 implicitHeight: 130
                 color: Theme.dark400
                 isLoading: !makeButton.enabled
+                brewingTime: targetBeverage.brewingTime()
 
                 TextDefault {
                     text: makeButton.enabled ? "€ 1.20" : "Brewing"
@@ -76,7 +150,7 @@ Card {
                     textWeight: 700
                     enabled: !edgeCoffeeMachineController.isMakingDrink
                     onClick: {
-                        edgeCoffeeMachineController.makeDrink(targetBeverage.name);
+                        edgeCoffeeMachineController.makeDrink(targetBeverage)
                     }
                 }
             }
