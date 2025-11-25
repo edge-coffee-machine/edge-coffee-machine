@@ -1,4 +1,4 @@
-    import QtQuick 2.15
+import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import "../"
 import "../text"
@@ -34,35 +34,10 @@ Card {
                 text: "Customize your drink."
             }
             Repeater {
-                // Define the list of ingredients explicitly since they are now properties
-                model: targetBeverage ? ["Coffee", "Cocoa", "Water", "Foam", "Milk"] : []
+                // Object.keys() creates a list of ingredient names from the map
+                model: targetBeverage ? Object.keys(targetBeverage.ingredients) : []
                 delegate: SliderInput {
                     label: modelData
-                    
-                    // Bind value based on the ingredient name
-                    value: {
-                        if (!targetBeverage) return 0;
-                        switch(modelData) {
-                            case "Coffee": return targetBeverage.coffeeBeans;
-                            case "Cocoa": return targetBeverage.cocoaPowder;
-                            case "Water": return targetBeverage.water;
-                            case "Foam": return targetBeverage.foam;
-                            case "Milk": return targetBeverage.milk;
-                            default: return 0;
-                        }
-                    }
-
-                    // Update the beverage property when slider changes
-                    onValueChanged: {
-                        if (!targetBeverage) return;
-                        switch(modelData) {
-                            case "Coffee": targetBeverage.coffeeBeans = value; break;
-                            case "Cocoa": targetBeverage.cocoaPowder = value; break;
-                            case "Water": targetBeverage.water = value; break;
-                            case "Foam": targetBeverage.foam = value; break;
-                            case "Milk": targetBeverage.milk = value; break;
-                        }
-                    }
                 }
             }
 
