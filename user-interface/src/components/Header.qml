@@ -15,7 +15,7 @@ Row {
     }
 
     H1 {
-        text: "Matteo"
+        text: edgeCoffeeMachineController.user ? edgeCoffeeMachineController.user.name : "Guest"
         font.weight: 400
         anchors.verticalCenter: parent.verticalCenter
     }
@@ -29,14 +29,15 @@ Row {
 
     Rectangle {
         id: notYouBtn
-        width: 80
+        width: btnText.width + 30
         height: 28
         radius: 14
         color: Theme.dark400
         anchors.verticalCenter: parent.verticalCenter
 
         TextDefault {
-            text: "Not you?"
+            id: btnText
+            text: edgeCoffeeMachineController.user ? "Not you?" : "Remember me"
             color: Theme.accent
             anchors.centerIn: parent
             font.pixelSize: 14
@@ -46,8 +47,8 @@ Row {
         MouseArea {
             anchors.fill: parent
             onClicked: {
-                console.log("switch user");
-                header.switchUserRequested();
+                console.log("switch user")
+                header.switchUserRequested()
             }
         }
     }
