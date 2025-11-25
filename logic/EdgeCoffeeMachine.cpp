@@ -5,23 +5,58 @@
 
 #include "EdgeCoffeeMachine.h" // Include the EdgeCoffeeMachine
 
+// Creation of the singleton instance
+EdgeCoffeeMachine& EdgeCoffeeMachine::instance()
+{
+    static EdgeCoffeeMachine instance;
+    return instance;
+}
+
 // Constructor
 EdgeCoffeeMachine::EdgeCoffeeMachine(QObject *parent)
 : QObject(parent), m_status("Idle"), m_isMakingDrink(false)
 {
-    // Initialize with some default beverages
-    addBeverage("Espresso");
-    addBeverage("Cappuccino");
-    addBeverage("Latte");
-    addBeverage("Americano");
-    addBeverage("Mocha");
-    addBeverage("Tea");
+    m_weightedBeverages = WeightedSortedList<Beverage*>(Beverage::getIndependentBeverageList(), popularityWeightR);
+
+    // print weighted beverages
+    qDebug() << "[ECM] Initial popular beverages and weights:";
+    const QList<Beverage*>& beverages = m_weightedBeverages.items();
+    const QVector<float>& weights = m_weightedBeverages.weights();
+    for (int i = 0; i < beverages.size(); ++i) {
+        qDebug() << "   Beverage [" << i << "]: " << beverages[i]->name()
+                 << ", weight =" << weights[i];
+    }
 }
 
-// QQmlListProperty append function (not implemented for now)
-static void append_beverage(QQmlListProperty<Beverage>* list, Beverage* beverage) {
-    Q_UNUSED(list);
-    Q_UNUSED(beverage);
+void EdgeCoffeeMachine::test()
+{
+    m_user = new User("Test User", 0, this);
+    m_user->test();
+}
+
+void EdgeCoffeeMachine::recordBeverageSelection(const QString name)
+{
+    const QList<Beverage*> items = m_weightedBeverages.items();
+    for (int i = 0; i < items.size(); ++i) {
+        if (items[i]->name() == name) {
+            m_weightedBeverages.recordSelectionAt(i);
+
+            qInfo() << "[ECM] Recorded beverage selection: " << name;
+
+            //Print weights
+            const QList<Beverage*>& beverages = m_weightedBeverages.items();
+            const QVector<float>& weights = m_weightedBeverages.weights();
+            for (int j = 0; j < beverages.size(); ++j) {
+                qInfo() << "   Beverage [" << j << "]: " << beverages[j]
+                        << ", weight =" << weights[j];
+            }
+            
+            emit beveragesChanged(); // Notify QML that the beverage list has changed
+            return;
+        }
+    }
+
+    qWarning() << "Beverage name not found in popularity list: " << name;
 }
 
 // Q_PROPERTY getters
@@ -48,101 +83,62 @@ void EdgeCoffeeMachine::setIsMakingDrink(bool making) {
     }
 }
 
-// Q_INVOKABLE methods
-void EdgeCoffeeMachine::addBeverage(const QString& name) {
-    auto newBeverage = std::make_unique<Beverage>(name);
-    // Add some default ingredients based on the beverage name
-    if (name == "Espresso") {
-        newBeverage->addIngredient("Coffee", 10);
-        newBeverage->addIngredient("Foam", 30);
-    } else if (name == "Cappuccino") {
-        newBeverage->addIngredient("Coffee", 10);
-        newBeverage->addIngredient("Foam", 30);
-        newBeverage->addIngredient("Milk", 100);
-    } else if (name == "Latte") {
-        newBeverage->addIngredient("Coffee", 10);
-        newBeverage->addIngredient("Water", 30);
-        newBeverage->addIngredient("Milk", 150);
-    } else if (name == "Americano") {
-        newBeverage->addIngredient("Coffee", 10);
-        newBeverage->addIngredient("Water", 100);
-    } else if (name == "Mocha") {
-        newBeverage->addIngredient("Coffee", 10);
-        newBeverage->addIngredient("Water", 30);
-        newBeverage->addIngredient("Milk", 120);
-        newBeverage->addIngredient("Powder", 20);
-    } else if (name == "Tea") {
-        newBeverage->addIngredient("Tea", 5);
-        newBeverage->addIngredient("Water", 200);
-    }
-
-    beverages.push_back(std::move(newBeverage)); // Add to the list
-    qDebug() << "Added beverage: " << name; // Debug output
-    emit beveragesChanged(); // Notify QML about the change
-}
-
-void EdgeCoffeeMachine::removeBeverage(const QString& name) {
-    auto it = std::remove_if(beverages.begin(), beverages.end(),
-                             [&](const std::unique_ptr<Beverage>& b) {
-                                 return b->name() == name;
-                             }); // Find beverage by name
-    if (it != beverages.end()) {
-        beverages.erase(it, beverages.end()); // Remove from the list
-        qDebug() << "Removed beverage: " << name; // Debug output
-    } else {
-        qDebug() << "Beverage not found: " << name; // Debug output if not found
-    }
-    emit beveragesChanged(); // Notify QML about the change
-}
-
-// Internal helper to get Beverage*
-Beverage* EdgeCoffeeMachine::getBeverage(const QString& name) {
-    // Find beverage by name
-    for (const auto& b : beverages) {
-        if (b->name().toStdString() == name) {
-            return b.get(); // Return raw pointer
-        }
-    }
-    return nullptr; // Not found
-}
-
 // Q_PROPERTY getter for QQmlListProperty<Beverage>
 QQmlListProperty<Beverage> EdgeCoffeeMachine::getBeverages()
 {
-    return QQmlListProperty<Beverage>(this, this,
-        // Modern way using lambdas
-        [](QQmlListProperty<Beverage>* list) -> qsizetype {
-            return reinterpret_cast<EdgeCoffeeMachine*>(list->data)->beverages.size();
-        }, // Count of beverages
-        [](QQmlListProperty<Beverage>* list, qsizetype index) -> Beverage* {
-            return reinterpret_cast<EdgeCoffeeMachine*>(list->data)->beverages.at(index).get();
-        }); // Access beverage at index
+    if (m_user) {
+        return m_user->displayBeverages();
+    }
+    else {
+        return QQmlListProperty<Beverage>(this, const_cast<QList<Beverage*>*>(&m_weightedBeverages.items()));
+    }
 }
 
-void EdgeCoffeeMachine::makeDrink(const QString& drinkName) {
+const QList<Beverage*>& EdgeCoffeeMachine::getPopularBeverages()
+{
+    return m_weightedBeverages.items();
+}
+
+User* EdgeCoffeeMachine::user() const {
+    return m_user;
+}
+
+void EdgeCoffeeMachine::makeDrink(Beverage* beverage) {
     if (m_isMakingDrink) {
         setStatus("Already making a drink. Please wait.");
         return;
     }
 
-    Beverage* beverageToMake = getBeverage(drinkName);
-    if (!beverageToMake) { // Not found
-        setStatus("Error: " + drinkName + " not found.");
+    if (!beverage) {
+        setStatus("Invalid beverage.");
         return;
     }
+    
+    QString drinkName = beverage->name();
 
     setIsMakingDrink(true); // Set making drink state
     setStatus("Making " + drinkName + "..."); // Update status
     qDebug() << "Starting to make: " << drinkName; // Debug output
 
+    double timeToBrew = beverage->brewingTime(); // calculate brewing time
+    timeToBrew *= 1000; // convert to milliseconds
+    qDebug() << "Estimated brewing time (ms): " << timeToBrew;
+
     // Simulate work with a timer
-    QTimer::singleShot(3000, this, [this, drinkName]() {
+    QTimer::singleShot((int)timeToBrew, this, [this, drinkName, beverage]() {
         // In a real machine, this would involve checking ingredients,
         // dispensing, heating, etc.
-        qDebug() << "Finished making: " << drinkName; // Debug output
+        recordBeverageSelection(drinkName); // Record selection of the made drink, for popularity tracking
+        if (m_user){
+            m_user->beverageBrewed(beverage); // Notify user about the brewed beverage
+            m_user = nullptr; // Logout user after brewing
+            emit userChanged();
+        }
         setStatus(drinkName + " is ready!"); // Update status
         setIsMakingDrink(false); // Reset making drink state
+        qDebug() << "Finished making: " << drinkName; // Debug output
     });
+
 }
 
 // Getter for the selected beverage property
@@ -152,10 +148,9 @@ Beverage* EdgeCoffeeMachine::selectedBeverage() const
 }
 
 // Method to select a beverage by name
-void EdgeCoffeeMachine::selectBeverage(const QString& name) {
-    Beverage* beverageToSelect = getBeverage(name);
-    if (m_selectedBeverage != beverageToSelect) {
-        m_selectedBeverage = beverageToSelect;
+void EdgeCoffeeMachine::selectBeverage(Beverage* beverage) {
+    if (m_selectedBeverage != beverage) {
+        m_selectedBeverage = beverage;
         emit selectedBeverageChanged(); // Notify QML that the selection has changed
     }
 }

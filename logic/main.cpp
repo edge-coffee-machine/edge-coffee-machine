@@ -9,12 +9,14 @@
 
 int main(int argc, char *argv[]) {
     using namespace Qt::StringLiterals;
+    Beverage::initDefaultBeveragesList();
 
     QGuiApplication app(argc, argv); // Create the application instance
     QQmlApplicationEngine engine; // Create the QML engine to load QML files and draw the UI
 
-    EdgeCoffeeMachine edgeCoffeeMachine;
+    EdgeCoffeeMachine& edgeCoffeeMachine = EdgeCoffeeMachine::instance();
     qmlRegisterType<Beverage>("com.example.coffeemachine", 1, 0, "Beverage"); // Register Beverage type with QML
+    edgeCoffeeMachine.test(); // Run test to initialize user and beverages
     engine.rootContext()->setContextProperty("edgeCoffeeMachineController", &edgeCoffeeMachine); // Expose EdgeCoffeeMachine to QML
 
     const QUrl url(u"qrc:/EdgeCoffeeMachine/main.qml"_s); // URL of the main QML file
