@@ -12,7 +12,6 @@ QtObject {
 
     // Colors
     property color dark700: "#161818"
-    property color gray: "#2C2D2E"
     property int h1: 32
 
     // Layout
