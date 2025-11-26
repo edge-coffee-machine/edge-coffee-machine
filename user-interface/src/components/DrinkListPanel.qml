@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick
 import "../theme"
 import "buttons"
 import "text"
@@ -109,7 +109,7 @@ Card {
         }
         CustomButton {
             text: "All drinks"
-            onClick: drinksListRequested()
+            onClick: root.drinksListRequested()
         }
     }
 }

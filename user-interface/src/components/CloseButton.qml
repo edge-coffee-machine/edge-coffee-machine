@@ -1,7 +1,8 @@
-import QtQuick 2.15
+import QtQuick
 import "../theme"
 
 Rectangle {
+    id: root
     width: 40
     height: 40
     radius: 20
@@ -36,6 +37,6 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
-        onClicked: goBackRequested()
+        onClicked: root.goBackRequested()
     }
 }

@@ -1,5 +1,5 @@
-import QtQuick 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Controls
 
 import "../../theme"
 import "../text"
@@ -40,7 +40,7 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         Image {
             id: icon
-            source: getIcon(label)
+            source: sliderInputRoot.getIcon(sliderInputRoot.label)
             width: 25
             height: 25
             fillMode: Image.PreserveAspectFit
@@ -64,7 +64,7 @@ Item {
             TextDefault {
                 id: quantity
                 text: sliderInputRoot.value.toFixed(
-                          1) + " " + unitOfM // Display label and current value
+                          1) + " " + sliderInputRoot.unitOfM // Display label and current value
                 color: "white"
                 anchors {
                     top: labelText.bottom

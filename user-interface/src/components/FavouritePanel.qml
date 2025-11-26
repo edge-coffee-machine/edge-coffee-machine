@@ -1,8 +1,10 @@
-import QtQuick 2.15
+import QtQuick
 import "../theme"
 import "text"
 
 Item {
+    id: root
+
     width: 350
     height: 410
 
@@ -46,13 +48,13 @@ Item {
             anchors.centerIn: parent
             Image {
                 id: espressoImg
-                source: getImage(targetBeverage)
+                source: root.getImage(root.targetBeverage)
                 width: 270
                 height: 270
                 fillMode: Image.PreserveAspectFit
             }
             H1 {
-                text: targetBeverage ? targetBeverage.name : "Espresso"
+                text: root.targetBeverage ? root.targetBeverage.name : "Espresso"
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
             }

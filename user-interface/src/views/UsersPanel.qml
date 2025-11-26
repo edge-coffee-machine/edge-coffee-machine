@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick
 import "../theme"
 import "../components/text"
 import "../components"
@@ -121,7 +121,7 @@ Rectangle {
                     width: 50
                     height: 200
                     anchors.right: fixedNewUser.left
-                    anchors.rightMargin: p_spacing
+                    anchors.rightMargin: root.p_spacing
                     z: 1
                 }
 
@@ -148,7 +148,7 @@ Rectangle {
                     clip: true // Clips items when they scroll towards the New User button
 
                     orientation: ListView.Horizontal
-                    spacing: p_spacing
+                    spacing: root.p_spacing
 
                     // Centering Logic (Applies only within the list area)
                     // If users fit in the space, center them. If not, scroll.
@@ -178,7 +178,6 @@ Rectangle {
             // --- 4. DATA MODEL (Real Users Only) ---
             ListModel {
                 id: userModel
-                // Guest Removed, New User Removed (it's now a fixed item)
                 ListElement {
                     firstName: "Matteo"
                     lastName: "Rossi"

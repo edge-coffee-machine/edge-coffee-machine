@@ -18,7 +18,7 @@ Rectangle {
         id: textItem
         anchors.centerIn: parent
         color: "white"
-        font.weight: textWeight
+        font.weight: root.textWeight
         font.pixelSize: 16
     }
 

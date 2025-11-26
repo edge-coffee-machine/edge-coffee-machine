@@ -1,5 +1,5 @@
-import QtQuick 2.15
-import QtQuick.Layouts 1.15
+import QtQuick
+import QtQuick.Layouts
 import "../"
 import "../text"
 import "../buttons"
@@ -27,7 +27,7 @@ Card {
         // This content is only visible when a beverage is selected
         ColumnLayout {
             Layout.fillWidth: true
-            visible: targetBeverage !== null
+            visible: root.targetBeverage !== null
 
             TextDefault {
                 text: "Settings"
@@ -39,6 +39,7 @@ Card {
             Subtitle {
                 text: "Customize your drink."
             }
+
             Repeater {
                 id: sliderGroup
                 delegate: SliderInput {
@@ -130,7 +131,7 @@ Card {
                 implicitHeight: 130
                 color: Theme.dark400
                 isLoading: !makeButton.enabled
-                brewingTime: targetBeverage.brewingTime()
+                brewingTime: root.targetBeverage.brewingTime()
 
                 TextDefault {
                     text: makeButton.enabled ? "€ 1.20" : "Brewing"
@@ -150,7 +151,8 @@ Card {
                     textWeight: 700
                     enabled: !edgeCoffeeMachineController.isMakingDrink
                     onClick: {
-                        edgeCoffeeMachineController.makeDrink(targetBeverage)
+                        edgeCoffeeMachineController.makeDrink(
+                                    root.targetBeverage)
                     }
                 }
             }
@@ -162,7 +164,7 @@ Card {
                 font.pixelSize: 18
                 wrapMode: Text.WordWrap
                 Layout.alignment: Qt.AlignCenter // Use Layout.alignment to center
-                visible: targetBeverage === null
+                visible: root.targetBeverage === null
             }
         }
     }

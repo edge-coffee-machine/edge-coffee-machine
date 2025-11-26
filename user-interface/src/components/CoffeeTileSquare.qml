@@ -1,8 +1,10 @@
-import QtQuick 2.15
+import QtQuick
 import "text"
 import "../theme"
 
 Card {
+    id: root
+
     // Props
     property string imageSource: "../../assets/img/cappuccino.png"
     property string price: "€1.20"
@@ -18,7 +20,7 @@ Card {
         height: parent.height
 
         Image {
-            source: imageSource
+            source: root.imageSource
             width: 90
             height: 90
             anchors.horizontalCenter: parent.horizontalCenter
@@ -29,7 +31,7 @@ Card {
             spacing: 5
 
             TextDefault {
-                text: name
+                text: root.name
                 color: Theme.white
                 font.bold: true
                 font.pixelSize: 20
@@ -37,7 +39,7 @@ Card {
             }
 
             TextDefault {
-                text: price
+                text: root.price
                 color: Theme.white
                 opacity: 0.7
                 font.pixelSize: 15
