@@ -9,20 +9,25 @@ Item {
     property var targetBeverage: null
 
     function getImage(targetBeverage) {
-        if (targetBeverage !== null) {
-            if (targetBeverage.name === "Cappuccino") {
-                return "../../assets/img/featured-cappuccino.png";
-            }
-
-            if (targetBeverage.name === "Latte") {
-                return "../../assets/img/featured-latte.png";
-            }
-
-            if (targetBeverage.name === "Tea") {
-                return "../../assets/img/featured-tea.png";
-            }
+        if (targetBeverage === undefined || targetBeverage === null) {
+            return "../../assets/img/featured-espresso.png";
         }
-        return "../../assets/img/espresso.png";
+        switch (targetBeverage.name) {
+        case "Cappuccino":
+            return "../../assets/img/featured-cappuccino.png";
+        case "Latte":
+            return "../../assets/img/featured-latte.png";
+        case "Tea":
+            return "../../assets/img/featured-tea.png";
+        case "Mocha":
+            return "../../assets/img/featured-mocha.png";
+        case "Americano":
+            return "../../assets/img/featured-americano.png";
+        case "Milk":
+            return "../../assets/img/featured-milk.png";
+        default:
+            return "../../assets/img/featured-espresso.png";
+        }
     }
 
     height: 410
