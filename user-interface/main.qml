@@ -14,38 +14,35 @@ Rectangle {
         anchors.fill: parent
         source: "src/views/Home.qml"
 
-        onLoaded: {
-            // Connect the switchUser signal if the loaded view has it
-            if (item && item.switchUserRequested) {
-                item.switchUserRequested.connect(openUsersPanel)
+        // Use Connections to bind to optional signals on the loaded view.
+        // If a signal is not present on the target, QML silently ignores the handler
+        // and avoids missing-property warnings.
+        Connections {
+            // `target` becomes the currently loaded view instance.
+            target: viewLoader.item
+            ignoreUnknownSignals: true
+
+            // Triggered by views that expose `signal switchUserRequested()`.
+            function onSwitchUserRequested() {
+                // Open the Users Panel and push current view to the stack.
+                root.viewStack.push(viewLoader.source);
+                viewLoader.source = "src/views/UsersPanel.qml";
             }
 
-            if (item && item.drinksListRequested) {
-                item.drinksListRequested.connect(openDrinksList)
+            // Triggered by views that expose `signal drinksListRequested()`.
+            function onDrinksListRequested() {
+                // Open the Drinks List view and push current view to the stack.
+                root.viewStack.push(viewLoader.source);
+                viewLoader.source = "src/views/DrinksList.qml";
             }
 
-            // Connect the goBack signal if it exists (for UsersPanel)
-            if (item && item.goBackRequested) {
-                item.goBackRequested.connect(goBack)
+            // Triggered by views that expose `signal goBackRequested()`.
+            function onGoBackRequested() {
+                // Navigate back to the previous view, if any.
+                if (root.viewStack.length > 0) {
+                    viewLoader.source = root.viewStack.pop();
+                }
             }
-        }
-    }
-
-    // Function to open UsersPanel and save current view to stack
-    function openUsersPanel() {
-        viewStack.push(viewLoader.source)
-        viewLoader.source = "src/views/UsersPanel.qml"
-    }
-
-    function openDrinksList() {
-        viewStack.push(viewLoader.source)
-        viewLoader.source = "src/views/DrinksList.qml"
-    }
-
-    // Function to go back to previous view
-    function goBack() {
-        if (viewStack.length > 0) {
-            viewLoader.source = viewStack.pop()
         }
     }
 }
