@@ -12,7 +12,7 @@ set(QT_QML_GENERATE_QMLLS_INI ON)
 # For example, on Windows, if Qt is installed in C:\Qt\6.x.x\msvc2019_64, you might set:
 # set(CMAKE_PREFIX_PATH "C:/Qt/6.x.x/msvc2019_64")
 # or set the environment variable Qt6_DIR to point to the Qt6Config.cmake file.
-find_package(Qt6 6.2 COMPONENTS Quick Qml Core Gui REQUIRED)
+find_package(Qt6 6.2 COMPONENTS Quick Qml Core Gui QuickControls2 REQUIRED)
 
 # Enable automatic MOC, UIC, and RCC processing
 set(CMAKE_AUTOUIC ON)
@@ -48,6 +48,7 @@ qt_add_resources(coffee_machine_app "EdgeCoffeeMachine"
 target_link_libraries(coffee_machine_app
     PRIVATE
         Qt6::Quick
+        Qt6::QuickControls2
         Qt6::Qml
         Qt6::Core
         Qt6::Gui

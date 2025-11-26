@@ -55,8 +55,8 @@ Item {
             }
 
             TextDefault {
-                y: -13
                 id: labelText
+                y: -13
                 color: "white"
                 font.weight: 600
             }
@@ -90,6 +90,12 @@ Item {
 
         // Optional: Customize appearance to match original Rectangle if desired
         background: Rectangle {
+            x: actualSlider.leftPadding
+            y: actualSlider.topPadding + actualSlider.availableHeight / 2 - height / 2
+            implicitWidth: 200
+            implicitHeight: 12
+            width: actualSlider.availableWidth
+            height: implicitHeight
             radius: height / 2
             color: Theme.dark600
 
@@ -102,7 +108,9 @@ Item {
         }
         handle: Rectangle {
             id: handle
-            x: actualSlider.visualPosition * (actualSlider.width - width)
+            x: actualSlider.leftPadding + actualSlider.visualPosition
+               * (actualSlider.availableWidth - width)
+            y: actualSlider.topPadding + actualSlider.availableHeight / 2 - height / 2
             implicitWidth: 12
             implicitHeight: 12
             radius: height / 2

@@ -3,11 +3,13 @@
 #include <QQmlContext> // Provides context for QML engine to access C++ objects
 #include <QQmlEngine> // Core QML engine functionalities
 #include <QDebug> // Debugging utilities
+#include <QQuickStyle> // Allows setting the application style
 
 #include "EdgeCoffeeMachine.h" // Include the EdgeCoffeeMachine header
 #include "Beverage.h" // Include the Beverage header
 
 int main(int argc, char *argv[]) {
+    QQuickStyle::setStyle("Basic"); // Use Basic style for customization
     using namespace Qt::StringLiterals;
     Beverage::initDefaultBeveragesList();
 
