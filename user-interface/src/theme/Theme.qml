@@ -1,5 +1,6 @@
 pragma Singleton
-import QtQuick 2.15
+
+import QtQuick
 
 QtObject {
     id: appTheme
@@ -11,6 +12,7 @@ QtObject {
     property color dark400: "#212223"
     property color accent: "#D9A569"
     property color white: "#FFFFFF"
+    property color gray: "#2C2D2E"
 
     property color textPrimary: "white"
     property color textSecondary: "#D9A569"
