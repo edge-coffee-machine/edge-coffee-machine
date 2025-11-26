@@ -1,7 +1,7 @@
 import QtQuick
-import "../theme"
 import "../components/text"
 import "../components"
+import "../theme"
 
 Rectangle {
     id: root
@@ -118,7 +118,10 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
 
-                        onClicked: console.log("Create User")
+                        onClicked: {
+                            console.log("Create User");
+                            console.log(edgeCoffeeMachineController.users);
+                        }
                     }
                 }
 
@@ -166,7 +169,7 @@ Rectangle {
 
                     delegate: userDelegate
                     flickableDirection: Flickable.HorizontalFlick
-                    model: userModel
+                    model: edgeCoffeeMachineController.users
                     orientation: ListView.Horizontal
                     spacing: root.p_spacing
 
@@ -180,46 +183,6 @@ Rectangle {
                         // This Item acts as the right-side padding/spacer.
                         width: left_fader.width
                     }
-                }
-            }
-
-            // --- 4. DATA MODEL (Real Users Only) ---
-            ListModel {
-                id: userModel
-
-                ListElement {
-                    firstName: "Matteo"
-                    lastName: "Rossi"
-                }
-
-                ListElement {
-                    firstName: "Sophie"
-                    lastName: "Carter"
-                }
-
-                ListElement {
-                    firstName: "Lucas"
-                    lastName: "Bennet"
-                }
-
-                ListElement {
-                    firstName: "Anna"
-                    lastName: "Lee"
-                }
-
-                ListElement {
-                    firstName: "John"
-                    lastName: "Doe"
-                }
-
-                ListElement {
-                    firstName: "Elena"
-                    lastName: "Ricci"
-                }
-
-                ListElement {
-                    firstName: "John"
-                    lastName: "White"
                 }
             }
 
@@ -249,7 +212,7 @@ Rectangle {
                             font.bold: true
                             font.pixelSize: 42
                             // Auto Initials
-                            text: firstName.charAt(0) + (lastName ? lastName.charAt(0) : "")
+                            text: name.charAt(0).toUpperCase() + name.charAt(1).toUpperCase()
                         }
                     }
 
@@ -266,17 +229,7 @@ Rectangle {
                             font.bold: true
                             font.pixelSize: 18
                             horizontalAlignment: Text.AlignHCenter
-                            text: firstName
-                            width: parent.width
-                        }
-
-                        Text {
-                            color: "#AAAAAA"
-                            elide: Text.ElideRight
-                            font.pixelSize: 14
-                            horizontalAlignment: Text.AlignHCenter
-                            text: lastName
-                            visible: lastName !== ""
+                            text: model.name
                             width: parent.width
                         }
                     }
@@ -284,7 +237,11 @@ Rectangle {
                     MouseArea {
                         anchors.fill: parent
 
-                        onClicked: console.log("Selected", firstName)
+                        onClicked: {
+                            edgeCoffeeMachineController.setUser(modelData);
+                            console.log("Selected", model.name);
+                            root.goBackRequested();
+                        }
                     }
                 }
             }
