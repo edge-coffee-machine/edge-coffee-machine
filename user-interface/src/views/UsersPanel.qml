@@ -5,19 +5,21 @@ import "../components"
 
 Rectangle {
     id: root
-    width: 1024
-    height: 600
-    color: Theme.dark500
+
+    property int p_spacing: 20
 
     // Signal to request going back to previous view
     signal goBackRequested
-    property int p_spacing: 20
+
+    color: Theme.dark500
+    height: 600
+    width: 1024
 
     // --- 1. HEADER SECTION ---
     Rectangle {
         anchors.fill: parent
-        color: "transparent"
         anchors.margins: 30
+        color: "transparent"
 
         // --- 2. CLOSE BUTTON ---
         CloseButton {
@@ -25,33 +27,34 @@ Rectangle {
         }
 
         Rectangle {
-            width: parent.width - 100
-            height: 280
             anchors.centerIn: parent
             color: "transparent"
+            height: 280
+            width: parent.width - 100
 
             Column {
                 id: headerContainer
-                anchors.top: parent.top
-                x: left_fader.width
 
+                anchors.top: parent.top
                 spacing: 2
+                x: left_fader.width
 
                 H1 {
                     text: "Good Morning,"
                 }
 
                 Text {
-                    text: "Who’s having a coffee?"
                     color: "#AAAAAA"
                     font.pixelSize: 28
                     font.weight: 300
+                    text: "Who’s having a coffee?"
                 }
             }
 
             // --- 3. CONTENT AREA (Holds List + Fixed Button) ---
             Item {
                 id: contentArea
+
                 // Position: Below header, fixed height
                 anchors.top: headerContainer.bottom
                 anchors.topMargin: 30
@@ -63,114 +66,119 @@ Rectangle {
                 // A. THE FIXED NEW USER BUTTON (Right Aligned)
                 Item {
                     id: fixedNewUser
-                    width: 100
-                    height: 200
+
                     anchors.right: parent.right
                     anchors.rightMargin: left_fader.width // Ensure centering
                     anchors.top: parent.top
+                    height: 200
+                    width: 100
                     z: 10 // Ensure it sits above scrolling content if overlap occurs
 
                     // Draw a rectangle (don't use text as it can't be centered properly)
                     Rectangle {
                         id: newUserBubble
-                        width: 100
+
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
+                        color: "#EFA968" // The Orange Color
                         height: 100
                         radius: 50
-                        color: "#EFA968" // The Orange Color
-                        anchors.top: parent.top
-                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: 100
 
                         // 2. The Geometric Plus (Perfectly Centered White Lines)
                         Rectangle {
-                            width: 36
+                            anchors.centerIn: parent
+                            color: "#FFFFFF"
                             height: 5
-                            color: "#FFFFFF"
                             radius: 2
-                            anchors.centerIn: parent
+                            width: 36
                         }
+
                         Rectangle {
-                            width: 5
-                            height: 36
-                            color: "#FFFFFF"
-                            radius: 2
                             anchors.centerIn: parent
+                            color: "#FFFFFF"
+                            height: 36
+                            radius: 2
+                            width: 5
                         }
                     }
 
                     Text {
+                        anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: newUserBubble.bottom
                         anchors.topMargin: 15
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        text: "New\nUser"
                         color: "#FFFFFF"
-                        font.pixelSize: 16
                         font.bold: true
+                        font.pixelSize: 16
                         horizontalAlignment: Text.AlignHCenter
                         lineHeight: 1.1
+                        text: "New\nUser"
                     }
 
                     MouseArea {
                         anchors.fill: parent
+
                         onClicked: console.log("Create User")
                     }
                 }
 
                 Image {
                     id: fader
-                    source: "../../assets/img/fade-out.png"
-                    width: 50
-                    height: 200
+
                     anchors.right: fixedNewUser.left
                     anchors.rightMargin: root.p_spacing
+                    height: 200
+                    source: "../../assets/img/fade-out.png"
+                    width: 50
                     z: 1
                 }
 
                 Image {
                     id: left_fader
+
+                    anchors.left: userList.left
+                    height: 200
+                    scale: -1
                     source: "../../assets/img/fade-out.png"
                     width: 25
-                    height: 200
-                    anchors.left: userList.left
                     z: 1
-                    scale: -1
                 }
+
                 // B. THE SCROLLABLE LIST (Left Aligned, fills space up to New User)
                 ListView {
                     id: userList
-                    anchors.left: parent.left
-                    anchors.top: parent.top
-                    anchors.bottom: parent.bottom
 
-                    // Anchor right side to the New User button with spacing
-                    anchors.right: fixedNewUser.left
-                    anchors.rightMargin: 20
-
-                    clip: true // Clips items when they scroll towards the New User button
-
-                    orientation: ListView.Horizontal
-                    spacing: root.p_spacing
+                    property real contentRealWidth: count * (itemWidth + spacing) - spacing
 
                     // Centering Logic (Applies only within the list area)
                     // If users fit in the space, center them. If not, scroll.
                     property real itemWidth: 100
-                    property real contentRealWidth: count * (itemWidth + spacing) - spacing
 
-                    model: userModel
-                    delegate: userDelegate
+                    anchors.bottom: parent.bottom
+                    anchors.left: parent.left
 
-                    flickableDirection: Flickable.HorizontalFlick
+                    // Anchor right side to the New User button with spacing
+                    anchors.right: fixedNewUser.left
+                    anchors.rightMargin: 20
+                    anchors.top: parent.top
                     boundsBehavior: Flickable.StopAtBounds
+                    clip: true // Clips items when they scroll towards the New User button
 
-                    header: Item {
-                        // This Item acts as the right-side padding/spacer.
-                        width: left_fader.width
-                        height: 0
-                    }
+                    delegate: userDelegate
+                    flickableDirection: Flickable.HorizontalFlick
+                    model: userModel
+                    orientation: ListView.Horizontal
+                    spacing: root.p_spacing
 
                     footer: Item {
+                        height: 0
                         // This Item acts as the right-side padding/spacer.
                         width: fader.width
+                    }
+                    header: Item {
                         height: 0
+                        // This Item acts as the right-side padding/spacer.
+                        width: left_fader.width
                     }
                 }
             }
@@ -178,30 +186,37 @@ Rectangle {
             // --- 4. DATA MODEL (Real Users Only) ---
             ListModel {
                 id: userModel
+
                 ListElement {
                     firstName: "Matteo"
                     lastName: "Rossi"
                 }
+
                 ListElement {
                     firstName: "Sophie"
                     lastName: "Carter"
                 }
+
                 ListElement {
                     firstName: "Lucas"
                     lastName: "Bennet"
                 }
+
                 ListElement {
                     firstName: "Anna"
                     lastName: "Lee"
                 }
+
                 ListElement {
                     firstName: "John"
                     lastName: "Doe"
                 }
+
                 ListElement {
                     firstName: "Elena"
                     lastName: "Ricci"
                 }
+
                 ListElement {
                     firstName: "John"
                     lastName: "White"
@@ -213,62 +228,62 @@ Rectangle {
                 id: userDelegate
 
                 Item {
-                    width: 100
                     height: 200
+                    width: 100
 
                     Rectangle {
                         id: avatarBubble
-                        width: 100
+
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: parent.top
+                        border.color: "#444444"
+                        border.width: 2
+                        color: "#252525"
                         height: 100
                         radius: 50
-                        anchors.top: parent.top
-                        anchors.horizontalCenter: parent.horizontalCenter
-
-                        color: "#252525"
-                        border.width: 2
-                        border.color: "#444444"
+                        width: 100
 
                         Text {
                             anchors.centerIn: parent
-                            // Auto Initials
-                            text: firstName.charAt(
-                                      0) + (lastName ? lastName.charAt(0) : "")
-                            font.pixelSize: 42
-                            font.bold: true
                             color: "#FFFFFF"
+                            font.bold: true
+                            font.pixelSize: 42
+                            // Auto Initials
+                            text: firstName.charAt(0) + (lastName ? lastName.charAt(0) : "")
                         }
                     }
 
                     Column {
+                        anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: avatarBubble.bottom
                         anchors.topMargin: 15
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        width: parent.width
                         spacing: 4
+                        width: parent.width
 
                         Text {
-                            text: firstName
                             color: "#FFFFFF"
-                            font.pixelSize: 18
-                            font.bold: true
-                            horizontalAlignment: Text.AlignHCenter
-                            width: parent.width
                             elide: Text.ElideRight
+                            font.bold: true
+                            font.pixelSize: 18
+                            horizontalAlignment: Text.AlignHCenter
+                            text: firstName
+                            width: parent.width
                         }
 
                         Text {
-                            visible: lastName !== ""
-                            text: lastName
                             color: "#AAAAAA"
+                            elide: Text.ElideRight
                             font.pixelSize: 14
                             horizontalAlignment: Text.AlignHCenter
+                            text: lastName
+                            visible: lastName !== ""
                             width: parent.width
-                            elide: Text.ElideRight
                         }
                     }
 
                     MouseArea {
                         anchors.fill: parent
+
                         onClicked: console.log("Selected", firstName)
                     }
                 }

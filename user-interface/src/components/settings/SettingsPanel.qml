@@ -7,28 +7,30 @@ import "../../theme"
 
 Card {
     id: root
-    width: 275
-    height: 390
-    color: Theme.dark500
 
     // This property will receive the selected beverage object from main.qml
     property var targetBeverage: null
 
+    color: Theme.dark500
+    height: 390
+    width: 275
+
     // Header (fixed at top)
     Column {
         id: header
-        anchors.top: parent.top
+
         anchors.left: parent.left
-        anchors.right: parent.right
         anchors.margins: 10
+        anchors.right: parent.right
+        anchors.top: parent.top
         spacing: 5
         visible: root.targetBeverage !== null
 
         TextDefault {
-            text: "Settings"
             color: Theme.white
-            font.pixelSize: 24
             font.bold: true
+            font.pixelSize: 24
+            text: "Settings"
         }
 
         Subtitle {
@@ -39,30 +41,32 @@ Card {
     // Scrollable settings area
     Flickable {
         id: flickable
-        anchors.top: header.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: bottomCard.top
-        anchors.topMargin: 10
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        anchors.bottomMargin: 10
-        visible: root.targetBeverage !== null
-        clip: true
 
+        anchors.bottom: bottomCard.top
+        anchors.bottomMargin: 10
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        anchors.top: header.bottom
+        anchors.topMargin: 10
+        clip: true
         contentHeight: settingsColumn.height
         contentWidth: width
+        visible: root.targetBeverage !== null
 
         Column {
             id: settingsColumn
-            width: parent.width
+
             spacing: 0
+            width: parent.width
 
             Repeater {
                 id: sliderGroup
+
                 model: ["Coffee", "Cocoa", "Water", "Foam", "Milk"]
+
                 delegate: SliderInput {
-                    width: settingsColumn.width
                     label: modelData
                     maximumValue: {
                         if (!targetBeverage)
@@ -82,7 +86,6 @@ Card {
                             return 0;
                         }
                     }
-
                     unitOfM: {
                         if (modelData == "Cocoa")
                             return "g";
@@ -109,6 +112,7 @@ Card {
                             return 0;
                         }
                     }
+                    width: settingsColumn.width
 
                     // Update the beverage property when slider changes
                     onValueChanged: {
@@ -140,33 +144,36 @@ Card {
     // Bottom card (fixed at bottom)
     CardWithLoading {
         id: bottomCard
+
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.right: parent.right
         anchors.margins: 10
-        height: 130
-        color: Theme.dark400
-        visible: root.targetBeverage !== null
-        isLoading: !makeButton.enabled
+        anchors.right: parent.right
         brewingTime: root.targetBeverage ? root.targetBeverage.brewingTime() : 0
+        color: Theme.dark400
+        height: 130
+        isLoading: !makeButton.enabled
+        visible: root.targetBeverage !== null
 
         TextDefault {
-            text: makeButton.enabled ? "€ 1.20" : "Brewing"
-            font.pixelSize: 40
-            font.bold: true
-            color: Theme.white
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 6
+            color: Theme.white
+            font.bold: true
+            font.pixelSize: 40
+            text: makeButton.enabled ? "€ 1.20" : "Brewing"
         }
 
         CustomButton {
             id: makeButton
+
             anchors.bottom: parent.bottom
             color: Theme.dark700
+            enabled: !edgeCoffeeMachineController.isMakingDrink
             text: makeButton.enabled ? ("Make " + (targetBeverage ? targetBeverage.name : "")) : "Cancel"
             textWeight: 700
-            enabled: !edgeCoffeeMachineController.isMakingDrink
+
             onClick: {
                 edgeCoffeeMachineController.makeDrink(root.targetBeverage);
             }
@@ -175,11 +182,11 @@ Card {
 
     // Placeholder for when no beverage is selected
     TextDefault {
-        text: "Select a drink to see details"
+        anchors.centerIn: parent
         color: "#808080"
         font.pixelSize: 18
-        wrapMode: Text.WordWrap
-        anchors.centerIn: parent
+        text: "Select a drink to see details"
         visible: root.targetBeverage === null
+        wrapMode: Text.WordWrap
     }
 }

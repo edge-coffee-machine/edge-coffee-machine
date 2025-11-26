@@ -1,4 +1,4 @@
 TextDefault {
-    font.weight: 900
     font.pixelSize: 32
+    font.weight: 900
 }

@@ -7,23 +7,23 @@ Card {
 
     // Props
     property string imageSource: "../../assets/img/cappuccino.png"
-    property string price: "€1.20"
     property string name: "Cappuccino"
+    property string price: "€1.20"
 
     color: Theme.dark400
     height: 170
     width: 170
 
     Column {
+        height: parent.height
         spacing: 10
         width: parent.width
-        height: parent.height
 
         Image {
+            anchors.horizontalCenter: parent.horizontalCenter
+            height: 90
             source: root.imageSource
             width: 90
-            height: 90
-            anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Column {
@@ -31,19 +31,19 @@ Card {
             spacing: 5
 
             TextDefault {
-                text: root.name
+                anchors.horizontalCenter: parent.horizontalCenter
                 color: Theme.white
                 font.bold: true
                 font.pixelSize: 20
-                anchors.horizontalCenter: parent.horizontalCenter
+                text: root.name
             }
 
             TextDefault {
-                text: root.price
-                color: Theme.white
-                opacity: 0.7
-                font.pixelSize: 15
                 anchors.horizontalCenter: parent.horizontalCenter
+                color: Theme.white
+                font.pixelSize: 15
+                opacity: 0.7
+                text: root.price
             }
         }
     }

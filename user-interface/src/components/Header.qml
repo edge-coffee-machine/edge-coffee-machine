@@ -4,51 +4,55 @@ import "text"
 
 Row {
     id: header
-    spacing: 10
 
     // Signal emitted when "not you?" button is clicked
     signal switchUserRequested
 
+    spacing: 10
+
     H1 {
-        text: "Good Morning,"
         anchors.verticalCenter: parent.verticalCenter
+        text: "Good Morning,"
     }
 
     H1 {
-        text: edgeCoffeeMachineController.user ? edgeCoffeeMachineController.user.name : "Guest"
-        font.weight: 400
         anchors.verticalCenter: parent.verticalCenter
+        font.weight: 400
+        text: edgeCoffeeMachineController.user ? edgeCoffeeMachineController.user.name : "Guest"
     }
 
     Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         height: 20
-        width: 1
         opacity: 0.2
+        width: 1
     }
 
     Rectangle {
         id: notYouBtn
-        width: btnText.width + 30
+
+        anchors.verticalCenter: parent.verticalCenter
+        color: Theme.dark400
         height: 28
         radius: 14
-        color: Theme.dark400
-        anchors.verticalCenter: parent.verticalCenter
+        width: btnText.width + 30
 
         TextDefault {
             id: btnText
-            text: edgeCoffeeMachineController.user ? "Not you?" : "Remember me"
-            color: Theme.accent
+
             anchors.centerIn: parent
+            color: Theme.accent
             font.pixelSize: 14
             font.weight: 400
+            text: edgeCoffeeMachineController.user ? "Not you?" : "Remember me"
         }
 
         MouseArea {
             anchors.fill: parent
+
             onClicked: {
-                console.log("switch user")
-                header.switchUserRequested()
+                console.log("switch user");
+                header.switchUserRequested();
             }
         }
     }

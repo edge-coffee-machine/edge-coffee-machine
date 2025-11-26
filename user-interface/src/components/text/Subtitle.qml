@@ -1,9 +1,9 @@
 import QtQuick
 
 TextDefault {
-    width: parent.width
     font.pixelSize: 15
-    opacity: 0.7
     font.weight: 400
+    opacity: 0.7
+    width: parent.width
     wrapMode: Text.WordWrap
 }

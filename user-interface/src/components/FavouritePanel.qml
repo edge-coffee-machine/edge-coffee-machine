@@ -5,58 +5,63 @@ import "text"
 Item {
     id: root
 
-    width: 350
-    height: 410
-
     // This property will receive the selected beverage object from main.qml
     property var targetBeverage: null
 
     function getImage(targetBeverage) {
         if (targetBeverage !== null) {
             if (targetBeverage.name === "Cappuccino") {
-                return "../../assets/img/featured-cappuccino.png"
+                return "../../assets/img/featured-cappuccino.png";
             }
 
             if (targetBeverage.name === "Latte") {
-                return "../../assets/img/featured-latte.png"
+                return "../../assets/img/featured-latte.png";
             }
 
             if (targetBeverage.name === "Tea") {
-                return "../../assets/img/featured-tea.png"
+                return "../../assets/img/featured-tea.png";
             }
         }
-        return "../../assets/img/espresso.png"
+        return "../../assets/img/espresso.png";
     }
 
+    height: 410
+    width: 350
+
     TextDefault {
-        text: "Here's your <b>favourite.</b>"
+        anchors.horizontalCenter: parent.horizontalCenter
         color: Theme.white
         font.pixelSize: 22
+        text: "Here's your <b>favourite.</b>"
         textFormat: Text.RichText
-        anchors.horizontalCenter: parent.horizontalCenter
     }
 
     Card {
         id: favouritePanel
-        width: 350
-        height: 350
-        radius: 16
-        color: Theme.dark500
+
         anchors.bottom: parent.bottom
         anchors.margins: Theme.spacing
+        color: Theme.dark500
+        height: 350
+        radius: 16
+        width: 350
+
         Column {
             anchors.centerIn: parent
+
             Image {
                 id: espressoImg
+
+                fillMode: Image.PreserveAspectFit
+                height: 270
                 source: root.getImage(root.targetBeverage)
                 width: 270
-                height: 270
-                fillMode: Image.PreserveAspectFit
             }
+
             H1 {
+                horizontalAlignment: Text.AlignHCenter
                 text: root.targetBeverage ? root.targetBeverage.name : "Espresso"
                 width: parent.width
-                horizontalAlignment: Text.AlignHCenter
             }
         }
     }
