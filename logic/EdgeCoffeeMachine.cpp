@@ -37,8 +37,13 @@ EdgeCoffeeMachine::EdgeCoffeeMachine(QObject *parent)
 }
 
 void EdgeCoffeeMachine::test() {
-  m_user = new User("Test User", 0, this);
-  m_user->test();
+  m_users.append(new User("Matteo", 0, this));
+  m_users.append(new User("Piervito", 0, this));
+  m_users.append(new User("Maxime", 0, this));
+  m_users.append(new User("Jorge", 0, this));
+  m_users.append(new User("Emiliano", 0, this));
+  m_users.append(new User("Balsa", 0, this));
+  m_users.append(new User("Javier", 0, this));
 }
 
 void EdgeCoffeeMachine::recordBeverageSelection(const QString name) {
