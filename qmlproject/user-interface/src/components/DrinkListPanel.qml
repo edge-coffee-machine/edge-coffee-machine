@@ -1,0 +1,160 @@
+import QtQuick
+import Theme
+import "buttons"
+import "text"
+
+Rectangle {
+    id: root
+
+    // TODO: add property model
+    signal drinksListRequested
+
+    color: Theme.dark700
+    height: 420
+    radius: Theme.cardRadius
+    width: 270
+
+    ListModel {
+        id: drinkListModel
+
+        // Example data; in practice, this will be populated from C++
+        ListElement { name: "Cappuccino" }
+        ListElement { name: "Latte" }
+        ListElement { name: "Espresso" }
+        ListElement { name: "Americano" }
+        ListElement { name: "Mocha" }
+    }
+
+    Item {
+        anchors.fill: parent
+        anchors.margins: Theme.cardMargin
+
+        Column {
+            height: 300
+            spacing: 10
+            width: parent.width
+
+            Column {
+                id: panelTitle
+
+                width: parent.width
+
+                Row {
+
+                    TextDefault {
+                        color: Theme.white
+                        font.pixelSize: 22
+                        text: "Just "
+                        textFormat: Text.RichText
+                    }
+
+                    TextDefault {
+                        color: Theme.white
+                        font.pixelSize: 22
+                        text: "for you"
+                        font.weight: 700
+                        textFormat: Text.RichText
+                    }
+                }
+
+                
+
+                TextDefault {
+                    color: Theme.white
+                    font.pixelSize: 15
+                    font.weight: 400
+                    opacity: 0.7
+                    text: "Explore a list of drinks created just for you."
+                    width: parent.width
+                    wrapMode: Text.WordWrap
+                }
+            }
+
+            Item {
+                id: drinkListContainer
+                height: 268
+                width: parent.width
+
+                ListView {
+                    id: drinkListView
+                    model: drinkListModel
+
+                    clip: true // Prevents items from going out of bounds
+
+                    height: parent.height
+                    spacing: 10
+                    width: parent.width
+
+                    // A custom delegate for a better look
+                    delegate: Rectangle {
+                            color: Theme.dark500
+                            height: 80
+                            radius: Theme.cardRadius
+                            //width: drinkListView.width
+
+                            Behavior on color {
+                                ColorAnimation {
+                                    duration: 150
+                                }
+                            }
+
+                            Item {
+                                anchors.fill: parent
+                                anchors.margins: Theme.cardMargin
+
+                                Row {
+                                    height: parent.height
+                                    spacing: 20
+
+                                    // Note: In the future we should look at .qrt files for the resources
+                                    Image {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        height: 60
+                                        source: "assets/images/cappuccino.png"
+                                        width: 60
+                                    }
+
+                                    Column {
+                                        anchors.verticalCenter: parent.verticalCenter
+
+                                        TextDefault {
+                                            color: Theme.white
+                                            font.bold: true
+                                            font.pixelSize: 20
+                                            text: "Cappuccino" //drinkName.name // Accesses the 'name' property of the Beverage object
+                                        }
+
+                                        TextDefault {
+                                            color: Theme.white
+                                            font.pixelSize: 15
+                                            opacity: 0.7
+                                            text: "€1.20" // Accesses the 'name' property of the Beverage object
+                                        }
+                                    }
+                                }
+
+                                MouseArea {
+                                    id: mouseArea
+
+                                    anchors.fill: parent
+
+                                    onClicked: {
+                                        console.log("Selected drink: Cappuccino");
+                                        //edgeCoffeeMachineController.selectBeverage(modelData);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            CustomButton {
+                anchors.bottom: parent.bottom
+                width: parent.width
+                text: "All drinks"
+
+                onClick: root.drinksListRequested()
+            }
+        }
+}

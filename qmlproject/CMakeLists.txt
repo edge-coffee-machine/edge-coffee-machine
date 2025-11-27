@@ -1,0 +1,3 @@
+
+qul_add_target(edge_coffe_machine QML_PROJECT edge_coffe_machine.qmlproject GENERATE_ENTRYPOINT)
+app_target_setup_os(edge_coffe_machine)
