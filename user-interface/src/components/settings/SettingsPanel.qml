@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Layouts
 import "../"
 import "../text"
 import "../buttons"
@@ -20,7 +19,6 @@ Card {
         id: header
 
         anchors.left: parent.left
-        anchors.margins: 10
         anchors.right: parent.right
         anchors.top: parent.top
         spacing: 5
@@ -147,7 +145,6 @@ Card {
 
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        anchors.margins: 10
         anchors.right: parent.right
         brewingTime: root.targetBeverage ? root.targetBeverage.brewingTime() : 0
         color: Theme.dark400
