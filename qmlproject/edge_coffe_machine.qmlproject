@@ -89,7 +89,6 @@ Project {
 
     FontFiles {
         files: [
-            "user-interface/assets/fonts/DejaVuSansMono.ttf",
             "user-interface/assets/fonts/Gilroy-Black.ttf",
             "user-interface/assets/fonts/Gilroy-BlackItalic.ttf",
             "user-interface/assets/fonts/Gilroy-Bold.ttf",
