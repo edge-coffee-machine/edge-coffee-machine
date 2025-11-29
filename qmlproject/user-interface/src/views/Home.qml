@@ -48,7 +48,7 @@ Rectangle {
                     anchors.margins: Theme.cardMargin
 
                     Row {
-                        spacing: Theme.spacing
+                        spacing: 15
                         
                         Components.FavouritePanel {
                             id: favouritePanel

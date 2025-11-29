@@ -92,12 +92,6 @@ Rectangle {
                             radius: Theme.cardRadius
                             //width: drinkListView.width
 
-                            Behavior on color {
-                                ColorAnimation {
-                                    duration: 150
-                                }
-                            }
-
                             Item {
                                 anchors.fill: parent
                                 anchors.margins: Theme.cardMargin

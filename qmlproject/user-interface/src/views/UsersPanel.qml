@@ -168,12 +168,6 @@ Rectangle {
                 ListView {
                     id: userList
 
-                    property real contentRealWidth: count * (itemWidth + spacing) - spacing
-
-                    // Centering Logic (Applies only within the list area)
-                    // If users fit in the space, center them. If not, scroll.
-                    property real itemWidth: 100
-
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
 
@@ -188,7 +182,7 @@ Rectangle {
                     flickableDirection: Flickable.HorizontalFlick
                     model: usersListModel //edgeCoffeeMachineController.users
                     orientation: Qt.Horizontal
-                    spacing: root.p_spacing
+                    //spacing: root.p_spacing
 /*
                     footer: Item {
                         height: 0
@@ -209,7 +203,7 @@ Rectangle {
 
                 Item {
                     height: 200
-                    width: 100
+                    width: 100 + root.p_spacing
 
                     Rectangle {
                         id: avatarBubble

@@ -46,9 +46,9 @@ Rectangle {
         anchors.bottom: bottomCard.top
         anchors.bottomMargin: 10
         anchors.left: parent.left
-        anchors.leftMargin: 25
+        anchors.leftMargin: 15
         anchors.right: parent.right
-        anchors.rightMargin: 25
+        anchors.rightMargin: 15
         anchors.top: header.bottom
         anchors.topMargin: 10
         clip: true
@@ -87,6 +87,9 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
+        anchors.leftMargin: 15
+        anchors.rightMargin: 15
+        anchors.bottomMargin: 15
         brewingTime: root.targetBeverage ? root.targetBeverage.brewingTime() : 0
         color: Theme.dark400
         height: 130
