@@ -12,23 +12,14 @@ Rectangle {
     width: 40
 
     // Rectangular Bar 1 (Rotated 45 degrees)
-    Rectangle {
-        anchors.centerIn: parent
-        color: Theme.dark700 // Color of the 'X' lines
-        height: 2.5 // Thickness of the bar
-        radius: 2
-        //rotation: 45
-        width: 22 // Length of the bar
-    }
-
-    // Rectangular Bar 2 (Rotated -45 degrees)
-    Rectangle {
-        anchors.centerIn: parent
-        color: Theme.dark700 // Color of the 'X' lines
-        height: 2.5 // Thickness should match Bar 1
-        radius: 2
-        //rotation: -45
-        width: 22 // Length should match Bar 1
+    Image {
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            verticalCenter: parent.verticalCenter
+        }
+        source: "assets/icons/close-icon.png"
+        width: 16
+        height: 16
     }
 
     MouseArea {
