@@ -16,9 +16,10 @@ Project {
 
         // Global settings for image properties. Can be overridden for selected resources in ImageFiles nodes.
         resourceImagePixelFormat: "Automatic"
-        resourceCachePolicy: "NoCaching"
-        resourceCompression: false
-
+        resourceCachePolicy: "OnDemand"
+        resourceCompression: true  // Allow compression
+        maxResourceCacheSize: 2097152  
+        
         // Font engine selection
         fontEngine: "Static" // alternative option: "Spark".
 
@@ -50,16 +51,15 @@ Project {
 
     /* Images */
     ImageFiles {
-        files: ["user-interface/assets/images/icon.png", "user-interface/assets/images/voice-wave.png", "user-interface/assets/icons/coffee.png", "user-interface/assets/icons/foam.png", "user-interface/assets/icons/water.png", "user-interface/assets/icons/milk.png", "user-interface/assets/images/cappuccino.png", "user-interface/assets/images/fade-out.png", "user-interface/assets/images/featured-americano.png", "user-interface/assets/images/featured-cappuccino.png", "user-interface/assets/images/featured-espresso.png", , "user-interface/assets/images/featured-latte.png", "user-interface/assets/images/featured-milk.png", "user-interface/assets/images/featured-mocha.png", "user-interface/assets/images/featured-tea.png", "user-interface/assets/images/border.png", "user-interface/assets/images/wave.png", "user-interface/assets/icons/close-icon.png"]
+        files: ["user-interface/assets/images/icon.png", "user-interface/assets/images/voice-wave.png", "user-interface/assets/icons/coffee.png", "user-interface/assets/icons/foam.png", "user-interface/assets/icons/water.png", "user-interface/assets/icons/milk.png", "user-interface/assets/images/fade-out.png", "user-interface/assets/images/featured-americano.png", "user-interface/assets/images/featured-cappuccino.png", "user-interface/assets/images/featured-espresso.png", "user-interface/assets/images/featured-milk.png", "user-interface/assets/images/featured-mocha.png", "user-interface/assets/images/border.png", "user-interface/assets/images/wave.png", "user-interface/assets/icons/close-icon.png", "user-interface/assets/images/missing_texture.png"]
         MCU.base: "user-interface"
-
-        MCU.resourceCompression: false
+        MCU.resourceCompression: true // Allow compression
         MCU.resourceImagePixelFormat: "Automatic"
         MCU.resourceOptimizeForRotation: false
         MCU.resourceOptimizeForScale: false
+        MCU.resourceCachePolicy: "OnDemand" // Uncomment to override the default cache policy for these images.
 
         // Uncomment to override the default values for images in this node
-        // MCU.resourceCachePolicy: "NoCaching" // Uncomment to override the default cache policy for these images.
         // MCU.resourceStorageSection: "QulResourceData" // Uncomment to override the default storage section for these images
 
         // Uncomment the following properties as needed when adding image files for an animated sprite:
@@ -93,29 +93,12 @@ Project {
         ]
         MCU.qmlImports: ["QtQuick"]
     }
-
+    
     FontFiles {
         files: [
-            "user-interface/assets/fonts/Gilroy-Black.ttf",
-            "user-interface/assets/fonts/Gilroy-BlackItalic.ttf",
-            "user-interface/assets/fonts/Gilroy-Bold.ttf",
-            "user-interface/assets/fonts/Gilroy-BoldItalic.ttf",
-            "user-interface/assets/fonts/Gilroy-Extrabold.ttf",
-            "user-interface/assets/fonts/Gilroy-ExtraboldItalic.ttf",
-            "user-interface/assets/fonts/Gilroy-Heavy.ttf",
-            "user-interface/assets/fonts/Gilroy-HeavyItalic.ttf",
-            "user-interface/assets/fonts/Gilroy-Light.ttf",
-            "user-interface/assets/fonts/Gilroy-LightItalic.ttf",
-            "user-interface/assets/fonts/Gilroy-Medium.ttf",
-            "user-interface/assets/fonts/Gilroy-MediumItalic.ttf",
             "user-interface/assets/fonts/Gilroy-Regular.ttf",
-            "user-interface/assets/fonts/Gilroy-RegularItalic.ttf",
-            "user-interface/assets/fonts/Gilroy-Semibold.ttf",
-            "user-interface/assets/fonts/Gilroy-SemiboldItalic.ttf",
-            "user-interface/assets/fonts/Gilroy-Thin.ttf",
-            "user-interface/assets/fonts/Gilroy-ThinItalic.ttf",
-            "user-interface/assets/fonts/Gilroy-UltraLight.ttf",
-            "user-interface/assets/fonts/Gilroy-UltraLightItalic.ttf"
+            "user-interface/assets/fonts/Gilroy-Bold.ttf",
+            "user-interface/assets/fonts/Gilroy-Medium.ttf",
         ]
     }
 }

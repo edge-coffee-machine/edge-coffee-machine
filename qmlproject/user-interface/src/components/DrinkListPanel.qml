@@ -104,7 +104,7 @@ Rectangle {
                                     Image {
                                         anchors.verticalCenter: parent.verticalCenter
                                         height: 60
-                                        source: "assets/images/cappuccino.png"
+                                        source: "assets/images/missing_texture.png"
                                         width: 60
                                     }
 

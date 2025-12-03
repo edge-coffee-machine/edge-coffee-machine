@@ -19,9 +19,9 @@ Item {
         case "Cappuccino":
             return "assets/images/featured-cappuccino.png";
         case "Latte":
-            return "assets/images/featured-latte.png";
+            return "assets/images/missing_texture.png";
         case "Tea":
-            return "assets/images/featured-tea.png";
+            return "assets/images/missing_texture.png";
         case "Mocha":
             return "assets/images/featured-mocha.png";
         case "Americano":
