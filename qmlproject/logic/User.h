@@ -1,11 +1,11 @@
 #ifndef USER_H
 #define USER_H
 
-#include <QObject>
-#include <QString>
-#include <QQmlListProperty>
-#include <QList>
-#include <QVector>
+#include <Qul/Object.h>
+#include <Qul/Property.h>
+#include <string>
+#include <vector>
+
 #include "Beverage.h"
 #include "WeightedSortedList.h"
 
@@ -45,91 +45,85 @@
  *   category. Classification affects future weight update rates.
  */
 
-class User : public QObject {
-    Q_OBJECT
+namespace Logic
+{
+    class User : public Qul::Object
+    {
+    public:
+        enum class UserCategory
+        {
+            Default,
+            Conservative,
+            EarlyAdopter
+        };
 
-    Q_PROPERTY(QString name READ name CONSTANT) // User's name. Set only at creation
-    Q_PROPERTY(int picture READ picture CONSTANT) // User's picture index. Set only at creation
-    Q_PROPERTY(QQmlListProperty<Beverage> displayBeverages READ displayBeverages NOTIFY displayBeveragesChanged) // Beverages sorted by recommendation (for early adopters, an unfrequent beverage appears third)
+        User(const std::string &nameVal, int pictureVal, const std::vector<Beverage *> &personalRecipes);
 
-public:
-    explicit User(const QString& name, int picture, QObject* parent = nullptr); // Constructor
+        ~User();
 
-    /*
-    Called from edge coffee machine when a beverage is brewed
-    beverage: pointer to the beverage selected by the user from QML
+        Qul::Property<std::string> name;
+        Qul::Property<int> picture;
+        
+         /*
+        Called from edge coffee machine when a beverage is brewed
+        beverage: pointer to the beverage selected by the user from QML
 
-    Updates the weights of the beverages according to the user's category and selection.
-    Follows an exponential decay model where the selected beverage's weight is increased
-    and the others are decreased, based on the user's update rate m_r.
-    */
-    void beverageBrewed(Beverage* beverage); 
+        Updates the weights of the beverages according to the user's category and selection.
+        Follows an exponential decay model where the selected beverage's weight is increased
+        and the others are decreased, based on the user's update rate m_r.
+        */
+        void beverageBrewed(Beverage *beverage);
 
-    /*
-    Called from edge coffee machine when a beverage is customized
-    beverage: pointer to the beverage customized by the user from QML
+        /*
+        Called from edge coffee machine when a beverage is customized
+        beverage: pointer to the beverage customized by the user from QML
 
-    Records that the user has customized a beverage for recommendation purposes.
-    For the actual change in ingredients, use the Beverage methods directly.
-    */
-    void beverageCustomized();
+        Records that the user has customized a beverage for recommendation purposes.
+        For the actual change in ingredients, use the Beverage methods directly.
+        */
+        void beverageCustomized();
 
-    // For QML access
-    // Gets the user's name
-    QString name() const;
+        /*
+        Gets the list of user's beverages to display for QML access.
+        For conservative users, the list is sorted by recommendation weight, so that 
+        more recommended beverages appear earlier in the list.
+        For early adopters, the third beverage in the list is always an unfrequent beverage.
+        */
+        const std::vector<Beverage *> &getDisplayBeverages() const;
 
-    // Gets the user's picture index
-    int picture() const;
+        UserCategory category() const { return m_category; }
 
-    void test();
+    private:
+        static constexpr float defaultWeightR = 0.175f;
+        static constexpr float conservativeWeightR = 0.1f;
+        static constexpr float earlyAdopterWeightR = 0.25f;
+        static constexpr float tryerR = 0.25f;
+        static constexpr float customizerR = 0.225f;
+        static constexpr float tryerToCustomizerRatio = 0.8f;
+        static constexpr float earlyAdopterThreshold = 0.5f;
 
-    /*
-    Gets the list of user's beverages to display for QML access.
-    For conservative users, the list is sorted by recommendation weight, so that 
-    more recommended beverages appear earlier in the list.
-    For early adopters, the third beverage in the list is always an unfrequent beverage.
-    */
-    QQmlListProperty<Beverage> displayBeverages();
+        UserCategory m_category = UserCategory::Default;
+        WeightedSortedList<Beverage *> m_weightedBeverages;
+        std::vector<Beverage*> m_displayBeverages;
+        
+        int m_numBeverages = 0;
+        float m_tryerScore = 0.0f;
+        float m_customizerScore = 0.0f;
+        bool m_customized = false;
 
-signals:
-    void displayBeveragesChanged(); // Emitted when the beverage list changes, to notify QML
+        /*
+        Should only be called from beverageBrewed.
+        Updates the user scores and category based on the selected beverage.
+        Resets m_customized flag.
+        selectedIdx: index of the beverage that has been selected in m_beverages
+        */
+        void classifyUser(int selectedIdx);
 
-private:
-    enum class UserCategory { Default, Conservative, EarlyAdopter };
-    
-    /*
-    Should only be called from beverageBrewed.
-    Updates the user scores and category based on the selected beverage.
-    Resets m_customized flag.
-    selectedIdx: index of the beverage that has been selected in m_beverages
-    */
-    void classifyUser(int selectedIdx);
-
-    /*
-    Updates m_displayBeverages based on the current user category and beverage list.
-    */
-    void updateDisplayBeverages();
-
-    inline static constexpr float defaultWeightR = 0.175f; // Weight update rate for default users
-    inline static constexpr float conservativeWeightR = 0.1f; // Weight update rate for conservative users
-    inline static constexpr float earlyAdopterWeightR = 0.25f; // Weight update rate for early adopters
-    inline static constexpr float tryerR = 0.25f; // Tryer score update rate
-    inline static constexpr float customizerR = 0.225f; // Customizer score update rate
-    inline static constexpr float tryerToCustomizerRatio = 0.8f; // How much more important is the tryer score vs the customizer score in classifying users
-    inline static constexpr float earlyAdopterTreshold = 0.5f; // Treshold for early adopter classification
-
-    // Basic properties
-    QString m_name;
-    int m_picture = 0;
-    UserCategory m_category = UserCategory::Default;
-    WeightedSortedList<Beverage*> m_weightedBeverages; // Weighted sorted list of beverages
-
-    // Recomendation system data/parameters
-    QList<Beverage*> m_displayBeverages; // Beverages to display in the UI, sorted by user category rules
-    int m_numBeverages = 0; // Number of beverages the user has brewed
-    float m_tryerScore = 0.0f; // Score for how much the user tries new beverages
-    float m_customizerScore = 0.0f; // Score for how much the user customizes beverages
-    bool m_customized = false; // Wether the user has customized a drink since the last beverage selection
-};
+        /*
+        Updates m_displayBeverages based on the current user category and beverage list.
+        */
+        void updateDisplayBeverages();
+    };
+}
 
 #endif

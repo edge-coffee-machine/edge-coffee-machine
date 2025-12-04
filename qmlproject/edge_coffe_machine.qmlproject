@@ -83,7 +83,14 @@ Project {
 
     /* Interfaces */
     InterfaceFiles {
-        files: ["logic/BackendObject.h"]
+        files: [
+            "logic/Beverage.h",
+            "logic/BeverageListModel.h",
+            "logic/EdgeCoffeeMachine.h",
+            "logic/IngredientInfo.h",
+            "logic/User.h",
+            "logic/UserListModel.h"
+        ]
         MCU.qmlImports: ["QtQuick"]
     }
 

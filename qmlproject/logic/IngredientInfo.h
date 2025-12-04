@@ -1,8 +1,8 @@
 #ifndef INGREDIENTINFO_H
 #define INGREDIENTINFO_H
 
-#include <QObject>
-#include <QVariantMap>
+#include <Qul/Object.h>
+#include <Qul/Property.h>
 
 /* Struct to hold information about an ingredient
  * Current and def variables are normalized values between 0 and 1, where:
@@ -25,25 +25,40 @@
  * - **def**: The default normalized amount of the ingredient (0 to 1).
 */
 
-struct IngredientInfo {
-    Q_GADGET
-    Q_PROPERTY(float current READ current)
-    Q_PROPERTY(float min READ min)
-    Q_PROPERTY(float max READ max)
-    Q_PROPERTY(float def READ def)
+namespace Logic{
+    class IngredientInfo : public Qul::Object
+    {
+    public:
+            // Constructor
+            IngredientInfo() : m_current(0.0f), m_min(0.0f), m_max(0.0f), m_def(0.0f) {
+                current.setValue(m_current);
+                min.setValue(m_min);
+                max.setValue(m_max);
+                def.setValue(m_def);
+            }
 
-public:
-    float current() const { return m_current; }
-    float min() const { return m_min; }
-    float max() const { return m_max; }
-    float def() const { return m_def; }
+            void setup(float minVal, float maxVal, float defVal) {
+                m_min = minVal;
+                m_max = maxVal;
+                m_def = defVal;
+                m_current = defVal;
 
-    float m_current = 0.0f;
-    float m_min = 0.0f;
-    float m_max = 0.0f;
-    float m_def = 0.0f;
-};
+                min.setValue(m_min);
+                max.setValue(m_max);
+                def.setValue(m_def);
+                current.setValue(m_current);
+            }
 
-Q_DECLARE_METATYPE(IngredientInfo)
+            Qul::Property<float> current;
+            Qul::Property<float> min;
+            Qul::Property<float> max;
+            Qul::Property<float> def;
 
+        private:
+            float m_current;
+            float m_min;
+            float m_max;
+            float m_def;
+    };
+}
 #endif // INGREDIENTINFO_H

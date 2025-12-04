@@ -1,169 +1,193 @@
-#include <QDebug>     // Debugging utilities
-#include <QQmlEngine> // For QQmlListProperty
-#include <QTimer>     // Timer for simulating drink making
-#include <algorithm>  // For std::remove_if
+#include "EdgeCoffeeMachine.h"
 
-#include "EdgeCoffeeMachine.h" // Include the EdgeCoffeeMachine
+#include "BeverageListModel.h"
+#include "UserModel.h"
+#include "User.h"
+#include <Qul/Log.h>
 
-// Creation of the singleton instance
-EdgeCoffeeMachine &EdgeCoffeeMachine::instance() {
-  static EdgeCoffeeMachine instance;
-  return instance;
-}
+#include <algorithm>
+#include <cstdio>
 
-// Constructor
-EdgeCoffeeMachine::EdgeCoffeeMachine(QObject *parent)
-    : QObject(parent), m_status("Idle"), m_isMakingDrink(false) {
-  m_weightedBeverages = WeightedSortedList<Beverage *>(
-      Beverage::getIndependentBeverageList(), popularityWeightR);
+namespace Logic
+{
+  EdgeCoffeeMachine::EdgeCoffeeMachine()
+  {
+    m_brewTimer.setSingleShot(true);
+    m_brewTimer.onTimeout([this]()
+                          { this->finishBrewing(); });
 
-  // print weighted beverages
-  qDebug() << "[ECM] Initial popular beverages and weights:";
-  const QList<Beverage *> &beverages = m_weightedBeverages.items();
-  const QVector<float> &weights = m_weightedBeverages.weights();
-  for (int i = 0; i < beverages.size(); ++i) {
-    qDebug() << "   Beverage [" << i << "]: " << beverages[i]->name()
-             << ", weight =" << weights[i];
+    status.setValue("Idle");
+    isMakingDrink.setValue(false);
+    selectedBeverage.setValue(nullptr);
+    user.setValue(nullptr);
+
+    std::vector<Beverage *> recipes = RecipeDatabase::getAllDefaultRecipes();
+
+    m_weightedBeverages = WeightedSortedList<Beverage *>(recipes, popularityWeightR);
+
+    Qul::PlatformInterface::log("[ECM] Initial popular beverages and weights:\n");
+
+    const std::vector<Beverage *> &beverages = m_weightedBeverages.items();
+    const std::vector<float> &weights = m_weightedBeverages.weights();
+
+    for (size_t i = 0; i < beverages.size(); ++i)
+    {
+      Qul::PlatformInterface::log("   Beverage [%d]: %s, weight = %f\n",
+                                  static_cast<int>(i),
+                                  beverages[i]->name.value().c_str(),
+                                  static_cast<double>(weights[i]));
+    }
+
+    if (!m_weightedBeverages.items().empty())
+    {
+      selectBeverage(m_weightedBeverages.items().front());
+    }
+    else
+    {
+      Qul::PlatformInterface::log("[ECM] Warning: initialized with an empty beverage list!\n");
+      selectedBeverage.setValue(nullptr);
+    }
+
+    updateModels();
   }
 
-  // Select a default beverage if the list is not empty
-  if (m_weightedBeverages.size() != 0) {
-    // Set the most popular beverage as the default selection
-    m_selectedBeverage = m_weightedBeverages.items().first();
-  } else {
-    qWarning("EdgeCoffeeMachine initialized with an empty beverage list!");
-    m_selectedBeverage = nullptr; // Remains nullptr if no drinks are available
-  }
-}
-
-void EdgeCoffeeMachine::test() {
-  m_users.append(new User("Matteo", 0, this));
-  m_users.append(new User("Piervito", 0, this));
-  m_users.append(new User("Maxime", 0, this));
-  m_users.append(new User("Jorge", 0, this));
-  m_users.append(new User("Emiliano", 0, this));
-  m_users.append(new User("Balsa", 0, this));
-  m_users.append(new User("Javier", 0, this));
-}
-
-void EdgeCoffeeMachine::recordBeverageSelection(const QString name) {
-  const QList<Beverage *> items = m_weightedBeverages.items();
-  for (int i = 0; i < items.size(); ++i) {
-    if (items[i]->name() == name) {
-      m_weightedBeverages.recordSelectionAt(i);
-
-      qInfo() << "[ECM] Recorded beverage selection: " << name;
-
-      // Print weights
-      const QList<Beverage *> &beverages = m_weightedBeverages.items();
-      const QVector<float> &weights = m_weightedBeverages.weights();
-      for (int j = 0; j < beverages.size(); ++j) {
-        qInfo() << "   Beverage [" << j << "]: " << beverages[j]
-                << ", weight =" << weights[j];
-      }
-
-      emit beveragesChanged(); // Notify QML that the beverage list has changed
+  void EdgeCoffeeMachine::recordBeverageSelection(Beverage *drink)
+  {
+    if (!drink)
+    {
+      Qul::PlatformInterface::log("[ECM] Warning: Selected beverage is null.\n");
       return;
     }
-  }
 
-  qWarning() << "Beverage name not found in popularity list: " << name;
-}
+    m_weightedBeverages.recordSelection(drink);
 
-// Q_PROPERTY getters
-QString EdgeCoffeeMachine::status() const { return m_status; }
+    Qul::PlatformInterface::log("[ECM] Recorded beverage selection: %s\n",
+                                drink->name.value().c_str());
 
-bool EdgeCoffeeMachine::isMakingDrink() const { return m_isMakingDrink; }
+    const std::vector<Beverage *> &items = m_weightedBeverages.items();
+    const std::vector<float> &weights = m_weightedBeverages.weights();
 
-// Private setters with signal emission
-void EdgeCoffeeMachine::setStatus(const QString &status) {
-  if (m_status != status) {
-    m_status = status;
-    emit statusChanged(); // Emit signal when status changes
-  }
-}
-
-void EdgeCoffeeMachine::setIsMakingDrink(bool making) {
-  if (m_isMakingDrink != making) {
-    m_isMakingDrink = making;
-    emit isMakingDrinkChanged(); // Emit signal when making drink state changes
-  }
-}
-
-// Q_PROPERTY getter for QQmlListProperty<Beverage>
-QQmlListProperty<Beverage> EdgeCoffeeMachine::getBeverages() {
-  if (m_user) {
-    return m_user->displayBeverages();
-  } else {
-    return QQmlListProperty<Beverage>(
-        this, const_cast<QList<Beverage *> *>(&m_weightedBeverages.items()));
-  }
-}
-
-const QList<Beverage *> &EdgeCoffeeMachine::getPopularBeverages() {
-  return m_weightedBeverages.items();
-}
-
-QQmlListProperty<User> EdgeCoffeeMachine::getUsers() {
-  return QQmlListProperty<User>(this, &m_users);
-}
-
-User *EdgeCoffeeMachine::user() const { return m_user; }
-
-void EdgeCoffeeMachine::setUser(User *user) {
-  if (m_user != user) {
-    m_user = user;
-    emit userChanged();
-    emit beveragesChanged();
-  }
-}
-
-void EdgeCoffeeMachine::makeDrink(Beverage *beverage) {
-  if (m_isMakingDrink) {
-    setStatus("Already making a drink. Please wait.");
-    return;
-  }
-
-  if (!beverage) {
-    setStatus("Invalid beverage.");
-    return;
-  }
-
-  QString drinkName = beverage->name();
-
-  setIsMakingDrink(true);                        // Set making drink state
-  setStatus("Making " + drinkName + "...");      // Update status
-  qDebug() << "Starting to make: " << drinkName; // Debug output
-
-  int timeToBrew = beverage->brewingTime(); // calculate brewing time
-  qDebug() << "Estimated brewing time (ms): " << timeToBrew;
-
-  // Simulate work with a timer
-  QTimer::singleShot(timeToBrew, this, [this, drinkName, beverage]() {
-    // In a real machine, this would involve checking ingredients,
-    // dispensing, heating, etc.
-    recordBeverageSelection(drinkName); // Record selection of the made drink,
-                                        // for popularity tracking
-    if (m_user) {
-      m_user->beverageBrewed(beverage); // Notify user about the brewed beverage
-      m_user = nullptr;                 // Logout user after brewing
-      emit userChanged();
+    for (size_t j = 0; j < items.size(); ++j)
+    {
+      Qul::PlatformInterface::log("   Beverage [%d]: %s, weight = %f\n",
+                                  static_cast<int>(j),
+                                  items[j]->name.value().c_str(),
+                                  static_cast<double>(weights[j]));
     }
-    setStatus(drinkName + " is ready!");          // Update status
-    setIsMakingDrink(false);                      // Reset making drink state
-    qDebug() << "Finished making: " << drinkName; // Debug output
-  });
-}
 
-// Getter for the selected beverage property
-Beverage *EdgeCoffeeMachine::selectedBeverage() const {
-  return m_selectedBeverage;
-}
+    updateModels();
+  }
 
-// Method to select a beverage by name
-void EdgeCoffeeMachine::selectBeverage(Beverage *beverage) {
-  if (m_selectedBeverage != beverage) {
-    m_selectedBeverage = beverage;
-    emit selectedBeverageChanged(); // Notify QML that the selection has changed
+  const std::vector<Beverage *> &EdgeCoffeeMachine::getPopularBeverages() const
+  {
+    return m_weightedBeverages.items();
+  }
+
+  void EdgeCoffeeMachine::setUser(User *newUser)
+  {
+    if (user.value() != newUser)
+    {
+      user.setValue(newUser);
+
+      if (newUser)
+      {
+        std::string welcome = "Welcome " + newUser->name.value();
+        status.setValue(welcome);
+
+        Qul::PlatformInterface::log("[ECM] User login: %s\n", newUser->name.value().c_str());
+      }
+      else
+      {
+        status.setValue("Ready");
+        Qul::PlatformInterface::log("[ECM] User logout.\n");
+      }
+    }
+
+    updateModels();
+    
+  }
+
+  void EdgeCoffeeMachine::makeDrink(Beverage *beverage)
+  {
+    if (isMakingDrink.value())
+    {
+      status.setValue("Already making a drink. Please wait.");
+      return;
+    }
+
+    Beverage *target = beverage ? beverage : selectedBeverage.value();
+
+    if (!target)
+    {
+      status.setValue("Invalid beverage.");
+      return;
+    }
+
+    std::string drinkName = target->name.value();
+
+    selectBeverage(target);
+
+    isMakingDrink.setValue(true);
+    status.setValue("Making " + drinkName + "...");
+
+    Qul::PlatformInterface::log("[ECM] Starting to make: %s\n", drinkName.c_str());
+
+    int timeToBrew = target->brewingTime();
+    Qul::PlatformInterface::log("[ECM] Estimated brewing time (ms): %d\n", timeToBrew);
+
+    m_brewTimer.setInterval(timeToBrew);
+    m_brewTimer.start();
+  }
+
+  void EdgeCoffeeMachine::finishBrewing()
+  {
+    Beverage *target = selectedBeverage.value();
+    if (!target)
+      return;
+
+    std::string drinkName = target->name.value();
+    User *currentUser = user.value();
+
+    beginResetModel();
+
+    if (currentUser)
+    {
+      currentUser->beverageBrewed(target);
+      user.setValue(nullptr);
+
+      Qul::PlatformInterface::log("[ECM] User brewed %s and logged out.\n", drinkName.c_str());
+    }
+    else
+    {
+      m_weightedBeverages.recordSelection(target);
+
+      Qul::PlatformInterface::log("[ECM] Guest selection recorded for %s.\n", drinkName.c_str());
+    }
+
+    endResetModel();
+
+    status.setValue(drinkName + " is ready!");
+    isMakingDrink.setValue(false);
+
+    Qul::PlatformInterface::log("[ECM] Finished making: %s\n", drinkName.c_str());
+  }
+
+  void EdgeCoffeeMachine::selectBeverage(Beverage *beverage)
+  {
+    if (selectedBeverage.value() != beverage)
+    {
+      selectedBeverage.setValue(beverage);
+
+      if (beverage)
+      {
+        status.setValue("Selected: " + beverage->name.value());
+
+        Qul::PlatformInterface::log("[ECM] Selected: %s\n", beverage->name.value().c_str());
+      }
+      else
+      {
+        status.setValue("Select a drink");
+      }
+    }
   }
 }
