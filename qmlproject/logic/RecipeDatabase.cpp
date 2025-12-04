@@ -1,12 +1,34 @@
+/**
+ * @file RecipeDatabase.cpp
+ * @brief Implementation of the static recipe factory.
+ */
+
 #include "RecipeDatabase.h"
 
 namespace Logic
 {
-
+    /**
+     * @brief Generates and returns the complete list of factory-default beverages.
+     *
+     * This static factory method instantiates the "Master" recipes available on the
+     * coffee machine. It creates `Beverage` objects on the heap, configuring each one
+     * with specific presets for ingredients (Coffee, Cocoa, Water, Foam, Milk) based
+     * on standard recipes.
+     *
+     * The following beverages are initialized:
+     * - **Espresso**: High coffee concentration, low water.
+     * - **Cappuccino**: Balanced mix of coffee, water, milk, and foam.
+     * - **Americano**: Coffee diluted with a large amount of water.
+     * - **Latte**: Coffee with a high volume of milk and some foam.
+     * - **Mocha**: A complex mix including Cocoa powder.
+     *
+     * @return A `std::vector` containing pointers to the newly allocated `Beverage` objects.
+     */
     std::vector<Beverage *> RecipeDatabase::getAllDefaultRecipes()
     {
         std::vector<Beverage *> recipes;
 
+        // Parameter order for Beverage constructor:
         // Name,
         // Coffee(val, min, max),
         // Cocoa(val, min, max),

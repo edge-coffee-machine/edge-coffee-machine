@@ -4,61 +4,85 @@
 #include <Qul/Object.h>
 #include <Qul/Property.h>
 
-/* Struct to hold information about an ingredient
- * Current and def variables are normalized values between 0 and 1, where:
- * - **0** corresponds to the minimum amount of the ingredient.
- * - **1** corresponds to the maximum amount of the ingredient.
- *
- * The normalization is based on absolute minimum and maximum values
- * The min and max variables are not normalized and represent the
- * actual limits for the ingredient in a beverage.
- * 
- * The def variable holds the default normalized value for the ingredient,which can not
- * be changed. The current variable holds the current normalized value for the ingredient,
- * which is modified when the user brews a beverage with modified ingredients through the interface. The modification is 
- * done through a function in the Beverage class.
- * 
- * ### Attributes:
- * - **current**: The current normalized amount of the ingredient (0 to 1).
- * - **min**: The absolute minimum amount of the ingredient (not normalized).
- * - **max**: The absolute maximum amount of the ingredient (not normalized).
- * - **def**: The default normalized amount of the ingredient (0 to 1).
-*/
-
-namespace Logic{
+namespace Logic
+{
+    /**
+     * @class IngredientInfo
+     * @brief Represents the configuration and state of a single beverage ingredient.
+     *
+     * This class manages the parameters for a specific ingredient (e.g., Coffee Beans, Water, Milk).
+     * It stores the values in **absolute units** (e.g., grams or milliliters) defining the
+     * acceptable range (min/max) and the current user selection.
+     */
     class IngredientInfo : public Qul::Object
     {
     public:
-            // Constructor
-            IngredientInfo() : m_current(0.0f), m_min(0.0f), m_max(0.0f), m_def(0.0f) {
-                current.setValue(m_current);
-                min.setValue(m_min);
-                max.setValue(m_max);
-                def.setValue(m_def);
-            }
+        /**
+         * @brief Default constructor.
+         *
+         * Initializes all values (current, min, max, def) to 0.0f.
+         */
+        IngredientInfo() : m_current(0.0f), m_min(0.0f), m_max(0.0f), m_def(0.0f)
+        {
+            current.setValue(m_current);
+            min.setValue(m_min);
+            max.setValue(m_max);
+            def.setValue(m_def);
+        }
 
-            void setup(float minVal, float maxVal, float defVal) {
-                m_min = minVal;
-                m_max = maxVal;
-                m_def = defVal;
-                m_current = defVal;
+        /**
+         * @brief Configures the ingredient with specific limits and a default value.
+         *
+         * Sets the absolute range and the initial value for the ingredient.
+         *
+         * @param minVal The minimum allowed amount (e.g., 5.0 grams).
+         * @param maxVal The maximum allowed amount (e.g., 20.0 grams).
+         * @param defVal The default recommended amount (e.g., 10.0 grams).
+         */
+        void setup(float minVal, float maxVal, float defVal)
+        {
+            m_min = minVal;
+            m_max = maxVal;
+            m_def = defVal;
+            m_current = defVal;
 
-                min.setValue(m_min);
-                max.setValue(m_max);
-                def.setValue(m_def);
-                current.setValue(m_current);
-            }
+            min.setValue(m_min);
+            max.setValue(m_max);
+            def.setValue(m_def);
+            current.setValue(m_current);
+        }
 
-            Qul::Property<float> current;
-            Qul::Property<float> min;
-            Qul::Property<float> max;
-            Qul::Property<float> def;
+        /**
+         * @brief The current selected amount of the ingredient.
+         *
+         * Represents the actual quantity (e.g., grams or ml) selected by the user
+         * or set by the recipe. This value is bound directly to UI controls.
+         */
+        Qul::Property<float> current;
 
-        private:
-            float m_current;
-            float m_min;
-            float m_max;
-            float m_def;
+        /**
+         * @brief The absolute minimum limit for this ingredient.
+         * Defines the lower bound of the valid range.
+         */
+        Qul::Property<float> min;
+
+        /**
+         * @brief The absolute maximum limit for this ingredient.
+         * Defines the upper bound of the valid range.
+         */
+        Qul::Property<float> max;
+
+        /**
+         * @brief The factory default amount for this ingredient.
+         * Used to restore the standard recipe settings.
+         */
+        Qul::Property<float> def;
+
+    private:
+        float m_current;
+        float m_min;
+        float m_max;
+        float m_def;
     };
 }
 #endif // INGREDIENTINFO_H

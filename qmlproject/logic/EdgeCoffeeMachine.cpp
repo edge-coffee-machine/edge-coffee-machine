@@ -1,15 +1,36 @@
-#include "EdgeCoffeeMachine.h"
+/**
+ * @file EdgeCoffeeMachine.cpp
+ * @brief Implementation of the central controller for the Edge Coffee Machine application.
+ *
+ * This file implements the core business logic, including state management,
+ * beverage selection, user session handling, and the simulation of the brewing process.
+ * It acts as the bridge between the data layer (User, Beverage, RecipeDatabase) and
+ * the presentation layer (BeverageListModel, UserListModel).
+ */
 
+#include "EdgeCoffeeMachine.h"
 #include "BeverageListModel.h"
-#include "UserModel.h"
+#include "UserListModel.h"
 #include "User.h"
-#include <Qul/Log.h>
+
+#include <platforminterface/Log.h>
 
 #include <algorithm>
 #include <cstdio>
 
 namespace Logic
 {
+  /**
+   * @brief Constructs the EdgeCoffeeMachine singleton and initializes the application state.
+   *
+   * Performs the following initialization steps:
+   * 1. Configures the brew timer for simulating drink preparation.
+   * 2. Sets initial state properties (status: Idle, isMakingDrink: false).
+   * 3. Loads the default recipe list from the `RecipeDatabase`.
+   * 4. Initializes the `WeightedSortedList` to manage beverage popularity.
+   * 5. Selects the most popular beverage by default.
+   * 6. Pushes the initial data to the UI models via `updateModels()`.
+   */
   EdgeCoffeeMachine::EdgeCoffeeMachine()
   {
     m_brewTimer.setSingleShot(true);
@@ -51,6 +72,16 @@ namespace Logic
     updateModels();
   }
 
+  /**
+   * @brief Records a beverage selection to update popularity weights.
+   *
+   * This method is called when a drink is brewed (specifically for guests) or
+   * internally to track usage statistics. It updates the weights in the
+   * `WeightedSortedList`, logs the new weights for debugging, and triggers
+   * a UI update to reflect any changes in the beverage sorting order.
+   *
+   * @param drink Pointer to the selected Beverage object. If null, the operation is ignored.
+   */
   void EdgeCoffeeMachine::recordBeverageSelection(Beverage *drink)
   {
     if (!drink)
@@ -78,11 +109,33 @@ namespace Logic
     updateModels();
   }
 
+  /**
+   * @brief Retrieves the global list of beverages sorted by popularity.
+   *
+   * This helper method provides access to the raw underlying vector of beverages,
+   * sorted according to the global (guest) popularity weights. It is primarily
+   * used by the `User` class to initialize the default beverage list for new users.
+   *
+   * @return A const reference to the vector of Beverage pointers.
+   */
   const std::vector<Beverage *> &EdgeCoffeeMachine::getPopularBeverages() const
   {
     return m_weightedBeverages.items();
   }
 
+  /**
+   * @brief Logs a user in or out of the machine.
+   *
+   * Updates the `user` property and manages the transition between the "Guest" state
+   * and a specific "User" session.
+   * - If `newUser` is valid, it logs the user in and updates the status message.
+   * - If `newUser` is nullptr, it logs the current user out and resets to "Ready".
+   *
+   * Crucially, this method calls `updateModels()` to switch the displayed beverage list
+   * from the global popularity list to the user's personalized list.
+   *
+   * @param newUser Pointer to the User object to log in, or nullptr to log out.
+   */
   void EdgeCoffeeMachine::setUser(User *newUser)
   {
     if (user.value() != newUser)
@@ -104,9 +157,20 @@ namespace Logic
     }
 
     updateModels();
-    
   }
 
+  /**
+   * @brief Initiates the brewing process for a selected beverage.
+   *
+   * Validates the machine state (must be idle) and the beverage selection.
+   * If valid, it:
+   * 1. Updates the machine state to "Making <Drink>".
+   * 2. Sets `isMakingDrink` to true.
+   * 3. Calculates the required brewing time based on ingredients.
+   * 4. Starts the simulation timer.
+   *
+   * @param beverage Optional pointer to the beverage to brew. If nullptr, uses `selectedBeverage`.
+   */
   void EdgeCoffeeMachine::makeDrink(Beverage *beverage)
   {
     if (isMakingDrink.value())
@@ -139,6 +203,15 @@ namespace Logic
     m_brewTimer.start();
   }
 
+  /**
+   * @brief Completes the brewing process when the timer expires.
+   *
+   * This slot is called automatically by `m_brewTimer`. It handles the post-brewing logic:
+   * 1. Updates user preferences (if a user is logged in) or global popularity (if guest).
+   * 2. Automatically logs out the user after brewing (session end).
+   * 3. Triggers `updateModels()` to refresh the UI with new weights/sorting.
+   * 4. Resets the machine state to "Ready" and `isMakingDrink` to false.
+   */
   void EdgeCoffeeMachine::finishBrewing()
   {
     Beverage *target = selectedBeverage.value();
@@ -147,8 +220,6 @@ namespace Logic
 
     std::string drinkName = target->name.value();
     User *currentUser = user.value();
-
-    beginResetModel();
 
     if (currentUser)
     {
@@ -162,9 +233,9 @@ namespace Logic
       m_weightedBeverages.recordSelection(target);
 
       Qul::PlatformInterface::log("[ECM] Guest selection recorded for %s.\n", drinkName.c_str());
-    }
 
-    endResetModel();
+      updateModels();
+    }
 
     status.setValue(drinkName + " is ready!");
     isMakingDrink.setValue(false);
@@ -172,6 +243,15 @@ namespace Logic
     Qul::PlatformInterface::log("[ECM] Finished making: %s\n", drinkName.c_str());
   }
 
+  /**
+   * @brief Selects a beverage to be displayed or brewed.
+   *
+   * Updates the `selectedBeverage` property if the selection has changed.
+   * This method also updates the status text to provide immediate feedback
+   * to the user (e.g., "Selected: Cappuccino").
+   *
+   * @param beverage Pointer to the Beverage object to select.
+   */
   void EdgeCoffeeMachine::selectBeverage(Beverage *beverage)
   {
     if (selectedBeverage.value() != beverage)
