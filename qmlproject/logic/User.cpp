@@ -134,9 +134,8 @@ namespace Logic
      *
      * This is the main "learning" trigger. It performs the following steps:
      * 1. **Classify**: Updates user scores and Category.
-     * 2. **Adjust Rate**: Sets the learning rate (`weightR`) based on the new Category.
-     * 3. **Update Weights**: Applies exponential decay to increase the selected drink's weight.
-     * 4. **Update View**: Regenerates the display list.
+     * 2. **Update Weights**: Applies exponential decay to increase the selected drink's weight.
+     * 3. **Update View**: Regenerates the display list.
      *
      * @param beverage Pointer to the brewed beverage.
      */
@@ -157,19 +156,6 @@ namespace Logic
         }
 
         classifyUser(idx);
-
-        switch (m_category)
-        {
-        case UserCategory::Conservative:
-            m_weightedBeverages.setWeightR(conservativeWeightR);
-            break;
-        case UserCategory::EarlyAdopter:
-            m_weightedBeverages.setWeightR(earlyAdopterWeightR);
-            break;
-        default:
-            m_weightedBeverages.setWeightR(defaultWeightR);
-            break;
-        }
 
         m_weightedBeverages.recordSelectionAt(idx);
 
