@@ -154,7 +154,7 @@ namespace Logic
          * Pushes the correct list of beverages (User's list or Global list)
          * to the `BeverageListModel` singleton so the UI updates.
          */
-        void updateModels();
+        void updateBeverageModel();
 
         /**
          * @brief Global list of beverages sorted by popularity (Weighted Learning).

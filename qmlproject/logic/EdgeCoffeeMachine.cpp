@@ -29,7 +29,7 @@ namespace Logic
    * 3. Loads the default recipe list from the `RecipeDatabase`.
    * 4. Initializes the `WeightedSortedList` to manage beverage popularity.
    * 5. Selects the most popular beverage by default.
-   * 6. Pushes the initial data to the UI models via `updateModels()`.
+   * 6. Pushes the initial data to the UI models via `updateBeverageModel()`.
    */
   EdgeCoffeeMachine::EdgeCoffeeMachine()
   {
@@ -69,7 +69,7 @@ namespace Logic
       selectedBeverage.setValue(nullptr);
     }
 
-    updateModels();
+    updateBeverageModel();
   }
 
   /**
@@ -106,7 +106,7 @@ namespace Logic
                                   static_cast<double>(weights[j]));
     }
 
-    updateModels();
+    updateBeverageModel();
   }
 
   /**
@@ -131,7 +131,7 @@ namespace Logic
    * - If `newUser` is valid, it logs the user in and updates the status message.
    * - If `newUser` is nullptr, it logs the current user out and resets to "Ready".
    *
-   * Crucially, this method calls `updateModels()` to switch the displayed beverage list
+   * Crucially, this method calls `updateBeverageModel()` to switch the displayed beverage list
    * from the global popularity list to the user's personalized list.
    *
    * @param newUser Pointer to the User object to log in, or nullptr to log out.
@@ -156,7 +156,7 @@ namespace Logic
       }
     }
 
-    updateModels();
+    updateBeverageModel();
   }
 
   /**
@@ -209,7 +209,7 @@ namespace Logic
    * This slot is called automatically by `m_brewTimer`. It handles the post-brewing logic:
    * 1. Updates user preferences (if a user is logged in) or global popularity (if guest).
    * 2. Automatically logs out the user after brewing (session end).
-   * 3. Triggers `updateModels()` to refresh the UI with new weights/sorting.
+   * 3. Triggers `updateBeverageModel()` to refresh the UI with new weights/sorting.
    * 4. Resets the machine state to "Ready" and `isMakingDrink` to false.
    */
   void EdgeCoffeeMachine::finishBrewing()
@@ -234,7 +234,7 @@ namespace Logic
 
       Qul::PlatformInterface::log("[ECM] Guest selection recorded for %s.\n", drinkName.c_str());
 
-      updateModels();
+      updateBeverageModel();
     }
 
     status.setValue(drinkName + " is ready!");
@@ -277,7 +277,7 @@ namespace Logic
    * Pushes the correct list of beverages (User's list or Global list)
    * to the `BeverageListModel` singleton so the UI updates.
    */
-  void EdgeCoffeeMachine::updateModels(){
+  void EdgeCoffeeMachine::updateBeverageModel(){
     if (user.value())
     {
       BeverageModel::instance().updateList(user.value()->getDisplayBeverages());
@@ -314,6 +314,7 @@ namespace Logic
     // Create the new User object
     User *u = new User(name, picture, RecipeDatabase::getAllDefaultRecipes());
 
+    Qul::PlatformInterface::log("[ECM] Enrolled new user %s (id=%d)\n", name.c_str(), id);
     m_user_list.push_back(u);
     m_users_by_id[id] = u;
     EdgeCoffeeMachine::instance().setUser(u);
@@ -321,7 +322,26 @@ namespace Logic
     // Push to the UI model
     // Ajusta la llamada a instance() según como implemente Qul::Singleton tu proyecto
     UserModel::instance().updateList(m_user_list);
+  }
 
-    Qul::PlatformInterface::log("[ECM] Enrolled new user %s (id=%d)\n", name.c_str(), id);
+  /**
+   * @brief Identifies an existing user by ID.
+   *
+   * Looks up the user in the internal map and sets them as the current user.
+   * If the ID is not found, it logs a warning and does not change the current user.
+   *
+   * @param id The unique ID detected by the AI subsystem.
+   */
+  void EdgeCoffeeMachine::identifyUser(int id){
+    auto it = m_users_by_id.find(id);
+    if (it != m_users_by_id.end())
+    {
+      Qul::PlatformInterface::log("[ECM] Identified user id=%d\n", id);
+        EdgeCoffeeMachine::instance().setUser(it->second);
+    }
+    else
+    {
+        Qul::PlatformInterface::log("[ECM] Warning: User id=%d not found during identification.\n", id);
+    }
   }
 }
