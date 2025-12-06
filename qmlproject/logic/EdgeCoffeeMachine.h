@@ -152,9 +152,27 @@ namespace Logic
          * @brief Synchronizes the backend data with the UI View Models.
          *
          * Pushes the correct list of beverages (User's list or Global list)
-         * to the `BeverageListModel` singleton so the UI updates.
+         * to the `BeverageModel` singleton so the UI updates.
          */
         void updateBeverageModel();
+
+        /**
+         * @brief Updates the UserModel with the complete list of registered users.
+         *
+         * Retrieves the full internal list of enrolled users (m_user_list) and pushes
+         * it to the `UserModel` singleton. This ensures that UI components designed for
+         * user selection or administration panels have access to the latest, complete set of profiles.
+         */
+        void updateUserModel();
+
+        /**
+         * @brief Central synchronization point for all QML View Models.
+         *
+         * This function orchestrates the update process whenever the application state changes.
+         * It delegates the update by calling both the specialized beverage model helper and
+         * the user model helper to ensure complete UI coherence across all list views.
+         */
+        void updateModels();
 
         /**
          * @brief Global list of beverages sorted by popularity (Weighted Learning).
@@ -162,9 +180,9 @@ namespace Logic
          */
         WeightedSortedList<Beverage *> m_weightedBeverages;
 
-        std::vector<User *> m_user_list;  ///< List of all registered users.
+        std::vector<User *> m_user_list;     ///< List of all registered users.
         std::map<int, User *> m_users_by_id; ///< Map for fast user lookup by ID.
-        Qul::Timer m_brewTimer; //< Timer to simulate brewing duration.
+        Qul::Timer m_brewTimer;              //< Timer to simulate brewing duration.
 
         static constexpr float popularityWeightR = 0.175f; ///< Learning rate for global popularity.
     };

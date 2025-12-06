@@ -275,9 +275,10 @@ namespace Logic
    * @brief Synchronizes the backend data with the UI View Models.
    *
    * Pushes the correct list of beverages (User's list or Global list)
-   * to the `BeverageListModel` singleton so the UI updates.
+   * to the `BeverageModel` singleton so the UI updates.
    */
-  void EdgeCoffeeMachine::updateBeverageModel(){
+  void EdgeCoffeeMachine::updateBeverageModel()
+  {
     if (user.value())
     {
       BeverageModel::instance().updateList(user.value()->getDisplayBeverages());
@@ -289,13 +290,38 @@ namespace Logic
   }
 
   /**
+   * @brief Updates the UserModel with the complete list of registered users.
+   *
+   * Retrieves the full internal list of enrolled users (m_user_list) and pushes
+   * it to the `UserModel` singleton. This ensures that UI components designed for
+   * user selection or administration panels have access to the latest, complete set of profiles.
+   */
+  void EdgeCoffeeMachine::updateUserModel()
+  {
+    UserModel::instance().updateList(m_user_list);
+  }
+
+  /**
+   * @brief Central synchronization point for all QML View Models.
+   *
+   * This function orchestrates the update process whenever the application state changes.
+   * It delegates the update by calling both the specialized beverage model helper and
+   * the user model helper to ensure complete UI coherence across all list views.
+   */
+  void EdgeCoffeeMachine::updateModels()
+  {
+    updateBeverageModel();
+    updateUserModel();
+  }
+
+  /**
    * @brief Enrolls a new user into the system with default settings.
    *
    * Creates a new `User` object with a default name and picture,
    * initializes their beverage list from the default recipe list,
    * Finally, it updates the `UserModel` to reflect the new user in the UI
    * and logs the enrollment action.
-   * 
+   *
    * @param id The unique identifier assigned by the AI subsystem.
    */
 
@@ -303,8 +329,8 @@ namespace Logic
   {
     if (m_users_by_id.find(id) != m_users_by_id.end())
     {
-        Qul::PlatformInterface::log("[ECM] enrol id %d already exists\n", id);
-        return;
+      Qul::PlatformInterface::log("[ECM] enrol id %d already exists\n", id);
+      return;
     }
 
     // Default display name and picture
@@ -320,8 +346,7 @@ namespace Logic
     EdgeCoffeeMachine::instance().setUser(u);
 
     // Push to the UI model
-    // Ajusta la llamada a instance() según como implemente Qul::Singleton tu proyecto
-    UserModel::instance().updateList(m_user_list);
+    updateUserModel();
   }
 
   /**
@@ -332,16 +357,17 @@ namespace Logic
    *
    * @param id The unique ID detected by the AI subsystem.
    */
-  void EdgeCoffeeMachine::identifyUser(int id){
+  void EdgeCoffeeMachine::identifyUser(int id)
+  {
     auto it = m_users_by_id.find(id);
     if (it != m_users_by_id.end())
     {
       Qul::PlatformInterface::log("[ECM] Identified user id=%d\n", id);
-        EdgeCoffeeMachine::instance().setUser(it->second);
+      EdgeCoffeeMachine::instance().setUser(it->second);
     }
     else
     {
-        Qul::PlatformInterface::log("[ECM] Warning: User id=%d not found during identification.\n", id);
+      Qul::PlatformInterface::log("[ECM] Warning: User id=%d not found during identification.\n", id);
     }
   }
 }
