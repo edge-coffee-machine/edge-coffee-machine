@@ -3,9 +3,9 @@
 
 #include "Beverage.h"
 
-#include <Qul/Object.h>
-#include <Qul/Model.h>
-#include <Qul/Singleton.h>
+#include <qul/object.h>
+#include <qul/model.h>
+#include <qul/singleton.h>
 
 #include <vector>
 

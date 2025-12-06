@@ -11,7 +11,7 @@
 #include "User.h"
 #include "EdgeCoffeeMachine.h"
 
-#include <platforminterface/Log.h>
+#include <platforminterface/log.h>
 
 #include <cmath>
 #include <algorithm>

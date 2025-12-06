@@ -1,8 +1,8 @@
 #ifndef INGREDIENTINFO_H
 #define INGREDIENTINFO_H
 
-#include <Qul/Object.h>
-#include <Qul/Property.h>
+#include <qul/object.h>
+#include <qul/property.h>
 
 namespace Logic
 {

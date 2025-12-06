@@ -13,7 +13,7 @@
 #include "UserListModel.h"
 #include "User.h"
 
-#include <platforminterface/Log.h>
+#include <platforminterface/log.h>
 
 #include <algorithm>
 #include <cstdio>
@@ -269,5 +269,13 @@ namespace Logic
         status.setValue("Select a drink");
       }
     }
+  }
+
+  /**
+   * @brief Synchronizes the backend data with the UI View Models.
+   */
+  void EdgeCoffeeMachine::updateModels()
+  {
+    // TODO: Implement the logic
   }
 }

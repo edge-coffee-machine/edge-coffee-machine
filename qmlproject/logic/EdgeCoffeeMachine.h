@@ -6,10 +6,10 @@
 #include "WeightedSortedList.h"
 #include "RecipeDatabase.h"
 
-#include <Qul/Object.h>
-#include <Qul/Singleton.h>
-#include <Qul/Property.h>
-#include <Qul/Timer.h>
+#include <qul/object.h>
+#include <qul/singleton.h>
+#include <qul/property.h>
+#include <qul/timer.h>
 
 #include <vector>
 #include <string>

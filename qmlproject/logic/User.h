@@ -1,8 +1,8 @@
 #ifndef USER_H
 #define USER_H
 
-#include <Qul/Object.h>
-#include <Qul/Property.h>
+#include <qul/object.h>
+#include <qul/property.h>
 #include <string>
 #include <vector>
 
