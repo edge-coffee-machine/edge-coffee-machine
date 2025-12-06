@@ -273,9 +273,55 @@ namespace Logic
 
   /**
    * @brief Synchronizes the backend data with the UI View Models.
+   *
+   * Pushes the correct list of beverages (User's list or Global list)
+   * to the `BeverageListModel` singleton so the UI updates.
    */
-  void EdgeCoffeeMachine::updateModels()
+  void EdgeCoffeeMachine::updateModels(){
+    if (user.value())
+    {
+      BeverageModel::instance().updateList(user.value()->getDisplayBeverages());
+    }
+    else
+    {
+      BeverageModel::instance().updateList(m_weightedBeverages.items());
+    }
+  }
+
+  /**
+   * @brief Enrolls a new user into the system with default settings.
+   *
+   * Creates a new `User` object with a default name and picture,
+   * initializes their beverage list from the default recipe list,
+   * Finally, it updates the `UserModel` to reflect the new user in the UI
+   * and logs the enrollment action.
+   * 
+   * @param id The unique identifier assigned by the AI subsystem.
+   */
+
+  void EdgeCoffeeMachine::enrollUser(int id)
   {
-    // TODO: Implement the logic
+    if (m_users_by_id.find(id) != m_users_by_id.end())
+    {
+        Qul::PlatformInterface::log("[ECM] enrol id %d already exists\n", id);
+        return;
+    }
+
+    // Default display name and picture
+    std::string name = "User " + std::to_string(id);
+    int picture = 0;
+
+    // Create the new User object
+    User *u = new User(name, picture, RecipeDatabase::getAllDefaultRecipes());
+
+    m_user_list.push_back(u);
+    m_users_by_id[id] = u;
+    EdgeCoffeeMachine::instance().setUser(u);
+
+    // Push to the UI model
+    // Ajusta la llamada a instance() según como implemente Qul::Singleton tu proyecto
+    UserModel::instance().updateList(m_user_list);
+
+    Qul::PlatformInterface::log("[ECM] Enrolled new user %s (id=%d)\n", name.c_str(), id);
   }
 }
