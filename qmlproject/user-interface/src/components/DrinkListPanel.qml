@@ -6,8 +6,8 @@ import "text"
 Rectangle {
     id: root
 
-    // TODO: add property model
     signal drinksListRequested
+    property Beverage model // Model passed from C++
 
     color: Theme.dark700
     height: 420

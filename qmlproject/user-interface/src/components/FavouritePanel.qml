@@ -75,13 +75,13 @@ Item {
 
                     fillMode: Image.PreserveAspectFit
                     height: 270
-                    source: "assets/images/featured-cappuccino.png" //root.getImage(root.targetBeverage)
+                    source: root.getImage(root.targetBeverage)
                     width: 270
                 }
 
                 H1 {
                     horizontalAlignment: Text.AlignHCenter
-                    text: root.targetBeverage ? root.targetBeverage.name : "Espresso"
+                    text: root.targetBeverage ? root.targetBeverage.name : "Cappuccino"
                     width: parent.width
                 }
             }

@@ -90,6 +90,7 @@ Rectangle {
         anchors.leftMargin: 15
         anchors.rightMargin: 15
         anchors.bottomMargin: 15
+        targetBeverage: root.targetBeverage
         brewingTime: root.targetBeverage ? root.targetBeverage.brewingTime() : 0
         color: Theme.dark400
         height: 130

@@ -53,13 +53,13 @@ Rectangle {
                         Components.FavouritePanel {
                             id: favouritePanel
 
-                            //targetBeverage: edgeCoffeeMachineController.selectedBeverage
+                            targetBeverage: EdgeCoffeeMachine.selectedBeverage
                         }
                         
                         SettingsPanel {
                             id: settingsPanel
 
-                            //targetBeverage: edgeCoffeeMachineController.selectedBeverage // Connects the selected beverage to the panel
+                            targetBeverage: EdgeCoffeeMachine.selectedBeverage // Connects the selected beverage to the panel
                         }
                     }
                 }
@@ -68,7 +68,7 @@ Rectangle {
             Components.DrinkListPanel {
                 id: drinkListPanel
 
-                //model: edgeCoffeeMachineController.beverages // Passes the list of beverages from C++ to the panel's model
+                // model: EdgeCoffeeMachine.getPopularBeverages() // Passes the list of beverages from C++ to the panel's model
 
                 onDrinksListRequested: root.drinksListRequested()
             }
