@@ -80,7 +80,7 @@ Rectangle {
                     value: getIngredientInfo(modelData, root.targetBeverage).current
 
                     unitOfM: "ml"
-                    visible: getIngredientInfo(modelData, root.targetBeverage).current !== 0
+                    visible: (getIngredientInfo(modelData, root.targetBeverage).min !== getIngredientInfo(modelData, root.targetBeverage).max) 
                 }
             }
         }
