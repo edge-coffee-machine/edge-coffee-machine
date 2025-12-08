@@ -19,7 +19,7 @@ Row {
         anchors.verticalCenter: parent.verticalCenter
         font.weight: 300
         font.pixelSize: 32
-        text: "Guest" //edgeCoffeeMachineController.user ? edgeCoffeeMachineController.user.name : "Guest"
+        text: EdgeCoffeeMachine.user ? EdgeCoffeeMachine.user.name : "Guest"
     }
 
     Rectangle {
@@ -45,7 +45,7 @@ Row {
             color: Theme.accent
             font.pixelSize: 14
             font.weight: 400
-            text: "Not you?" //edgeCoffeeMachineController.user ? "Not you?" : "Remember me"
+            text: EdgeCoffeeMachine.user ? "Not you?" : "Remember me"
         }
 
         MouseArea {
