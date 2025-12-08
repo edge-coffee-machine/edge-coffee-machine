@@ -29,6 +29,8 @@ Rectangle {
         switch (drinkName) {
         case "Cappuccino":
             return "assets/images/cappuccino.png";
+        case "Espresso":
+            return "assets/images/espresso.png";
         default:
             return "assets/images/missing_texture.png";
         }
@@ -113,7 +115,7 @@ Rectangle {
                                     Image {
                                         anchors.verticalCenter: parent.verticalCenter
                                         height: 60
-                                        source: getImage("Cappuccino") //drinkName.name) // Accesses the 'name' property of the Beverage object
+                                        source: getImage(model.name) //drinkName.name) // Accesses the 'name' property of the Beverage object
                                         width: 60
                                     }
 
@@ -124,7 +126,7 @@ Rectangle {
                                             color: Theme.white
                                             font.bold: true
                                             font.pixelSize: 20
-                                            text: "Cappuccino" //drinkName.name // Accesses the 'name' property of the Beverage object
+                                            text: model.name //drinkName.name // Accesses the 'name' property of the Beverage object
                                         }
 
                                         TextDefault {
