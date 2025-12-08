@@ -105,6 +105,11 @@ namespace Logic
         void identifyUser(int id);
 
         /**
+         * @brief Logs out the current user, reverting to Guest mode.
+         */
+        void logoutUser();
+
+        /**
          * @return The currently selected beverage pointer.
          */
         Beverage *getSelectedBeverage() const { return selectedBeverage.value(); }

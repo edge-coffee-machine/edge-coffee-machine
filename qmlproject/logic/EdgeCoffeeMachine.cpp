@@ -370,4 +370,16 @@ namespace Logic
       Qul::PlatformInterface::log("[ECM] Warning: User id=%d not found during identification.\n", id);
     }
   }
+
+  /**
+   * @brief Logs out the current user, reverting to Guest mode.
+   *
+   * This method clears the current user session by setting the user
+   * property to nullptr. It also updates the beverage model to switch
+   * back to the global popularity list and logs the logout action.
+   */  
+  void EdgeCoffeeMachine::logoutUser()
+  {
+      setUser(nullptr);
+  }
 }
