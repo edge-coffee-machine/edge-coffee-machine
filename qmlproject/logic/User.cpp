@@ -34,7 +34,8 @@ namespace Logic
         : m_weightedBeverages(personalRecipes, defaultWeightR)
     {
         name.setValue(nameVal);
-        picture.setValue(pictureVal);
+        initials.setValue(nameVal.substr(0, 2));
+        picture.setValue(pictureVal);        
 
         m_category = UserCategory::Default;
 

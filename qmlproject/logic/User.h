@@ -59,6 +59,11 @@ namespace Logic
         Qul::Property<std::string> name;
 
         /**
+         * @brief The user's initials derived from their name.
+         */
+        Qul::Property<std::string> initials;
+
+        /**
          * @brief The index of the user's profile picture.
          */
         Qul::Property<int> picture;
