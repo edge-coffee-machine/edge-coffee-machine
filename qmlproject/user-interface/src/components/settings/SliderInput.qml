@@ -90,7 +90,7 @@ Item {
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         from: sliderInputRoot.minimumValue
-        stepSize: 10
+        stepSize: 1
         to: sliderInputRoot.maximumValue
         value: sliderInputRoot.value
         width: 150

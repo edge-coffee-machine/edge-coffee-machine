@@ -73,7 +73,12 @@ Rectangle {
                     width: settingsColumn.width
                     label: modelData
 
-                    maximumValue: 50
+                    minimumValue: getIngredientInfo(modelData, root.targetBeverage).min
+
+                    maximumValue: getIngredientInfo(modelData, root.targetBeverage).max
+
+                    value: getIngredientInfo(modelData, root.targetBeverage).current
+
                     unitOfM: "ml"
                 }
             }
@@ -94,5 +99,25 @@ Rectangle {
         brewingTime: root.targetBeverage ? root.targetBeverage.brewingTime() : 0
         color: Theme.dark400
         height: 130
+    }
+
+    function getIngredientInfo(label: string, targetBeverage: Beverage): IngredientInfo {
+        if (label === "Coffee") {
+            return targetBeverage.coffeeBeans;
+        }
+
+        if (label === "Cocoa") {
+            return targetBeverage.cocoaPowder;
+        }
+
+        if (label === "Water") {
+            return targetBeverage.water;
+        }
+
+        if (label === "Foam") {
+            return targetBeverage.foam;
+        }
+
+        return targetBeverage.milk;
     }
 }
