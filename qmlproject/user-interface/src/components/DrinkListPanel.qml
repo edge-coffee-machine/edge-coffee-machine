@@ -31,6 +31,8 @@ Rectangle {
             return "assets/images/cappuccino.png";
         case "Espresso":
             return "assets/images/espresso.png";
+        case "Latte":
+            return "assets/images/latte.png";
         default:
             return "assets/images/missing_texture.png";
         }
