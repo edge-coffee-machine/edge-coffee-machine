@@ -51,7 +51,7 @@ Project {
 
     /* Images */
     ImageFiles {
-        files: ["user-interface/assets/images/icon.png", "user-interface/assets/images/voice-wave.png", "user-interface/assets/icons/coffee.png", "user-interface/assets/icons/foam.png", "user-interface/assets/icons/water.png", "user-interface/assets/icons/milk.png", "user-interface/assets/images/fade-out.png", "user-interface/assets/images/featured-americano.png", "user-interface/assets/images/featured-cappuccino.png", "user-interface/assets/images/featured-espresso.png", "user-interface/assets/images/featured-milk.png", "user-interface/assets/images/featured-mocha.png", "user-interface/assets/images/border.png", "user-interface/assets/images/wave.png", "user-interface/assets/icons/close-icon.png", "user-interface/assets/images/missing_texture.png"]
+        files: ["user-interface/assets/images/icon.png", "user-interface/assets/images/voice-wave.png", "user-interface/assets/icons/coffee.png", "user-interface/assets/icons/foam.png", "user-interface/assets/icons/water.png", "user-interface/assets/icons/milk.png", "user-interface/assets/images/fade-out.png", "user-interface/assets/images/featured-americano.png", "user-interface/assets/images/featured-cappuccino.png", "user-interface/assets/images/featured-espresso.png", "user-interface/assets/images/featured-milk.png", "user-interface/assets/images/featured-mocha.png", "user-interface/assets/images/border.png", "user-interface/assets/images/wave.png", "user-interface/assets/icons/close-icon.png", "user-interface/assets/images/missing_texture.png", "user-interface/assets/images/cappuccino.png"]
         MCU.base: "user-interface"
         MCU.resourceCompression: true // Allow compression
         MCU.resourceImagePixelFormat: "Automatic"

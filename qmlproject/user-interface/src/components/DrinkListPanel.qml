@@ -25,6 +25,15 @@ Rectangle {
         ListElement { name: "Mocha" }
     }
 
+    function getImage(drinkName: string): string {
+        switch (drinkName) {
+        case "Cappuccino":
+            return "assets/images/cappuccino.png";
+        default:
+            return "assets/images/missing_texture.png";
+        }
+    }
+
     Item {
         anchors.fill: parent
         anchors.margins: Theme.cardMargin
@@ -104,7 +113,7 @@ Rectangle {
                                     Image {
                                         anchors.verticalCenter: parent.verticalCenter
                                         height: 60
-                                        source: "assets/images/missing_texture.png"
+                                        source: getImage("Cappuccino") //drinkName.name) // Accesses the 'name' property of the Beverage object
                                         width: 60
                                     }
 
