@@ -87,6 +87,8 @@ Item {
     Slider {
         id: actualSlider
 
+        visible: sliderInputRoot.minimumValue !== sliderInputRoot.maximumValue
+
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         from: sliderInputRoot.minimumValue
