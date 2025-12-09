@@ -52,6 +52,13 @@ namespace Logic
             current.setValue(m_current);
         }
 
+        void setCurrent(float val){
+            if (val<m_min) val = m_min;
+            else if (val>m_max) val = m_max;
+            m_current = val;
+            current.setValue(m_current);
+        }
+
         /**
          * @brief The current selected amount of the ingredient.
          *
@@ -77,6 +84,12 @@ namespace Logic
          * Used to restore the standard recipe settings.
          */
         Qul::Property<float> def;
+
+        /**
+         *@brief Sets the current amount of the ingredient.
+         *Used to update the current value programmatically through QML.
+         */
+
 
     private:
         float m_current;
