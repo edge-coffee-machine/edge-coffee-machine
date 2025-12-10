@@ -76,6 +76,14 @@ namespace Logic
         void makeDrink(Beverage *beverage);
 
         /**
+         * @brief Stops the brewing process immediately.
+         *
+         * Cancels the brew timer and resets the machine state to Idle.
+         * If a drink was being brewed, it is considered cancelled.
+         */
+        void stopBrewing();
+
+        /**
          * @brief Sets the currently selected beverage.
          *
          * Updates the `selectedBeverage` property and the status message.

@@ -204,6 +204,30 @@ namespace Logic
   }
 
   /**
+   * @brief Stops the brewing process immediately.
+   *
+   * Cancels the brew timer and resets the machine state to Idle.
+   * If a drink was being brewed, it is considered cancelled.
+   */
+  void EdgeCoffeeMachine::stopBrewing()
+  {
+      if (isMakingDrink.value())
+      {
+          m_brewTimer.stop();
+          isMakingDrink.setValue(false);
+
+          std::string drinkName = selectedBeverage.value() ? selectedBeverage.value()->name.value() : "Drink";
+          status.setValue("Canceled: " + drinkName + " preparation stopped.");
+
+          Qul::PlatformInterface::log("[ECM] Brewing process cancelled by user.\n");
+      }
+      else
+      {
+          Qul::PlatformInterface::log("[ECM] No brewing process to cancel.\n");
+      }
+  }
+
+  /**
    * @brief Completes the brewing process when the timer expires.
    *
    * This slot is called automatically by `m_brewTimer`. It handles the post-brewing logic:
@@ -324,7 +348,6 @@ namespace Logic
    *
    * @param id The unique identifier assigned by the AI subsystem.
    */
-
   void EdgeCoffeeMachine::enrollUser(int id)
   {
     if (m_users_by_id.find(id) != m_users_by_id.end())
