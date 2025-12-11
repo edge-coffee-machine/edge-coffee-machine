@@ -7,7 +7,7 @@ Rectangle {
     property int brewingTime
     property Beverage targetBeverage
 
-    property bool isLoading: makeButton.enabled === false
+    property bool isLoading: EdgeCoffeeMachine.isMakingDrink
     property int waveBottomMargins: 25
 
     clip: true
@@ -109,12 +109,17 @@ Rectangle {
             width: parent.width
             anchors.bottom: parent.bottom
             color: Theme.dark700
-            enabled: !EdgeCoffeeMachine.isMakingDrink
-            text: makeButton.enabled ? ("Make " + (targetBeverage ? targetBeverage.name : "")) : "Cancel"
+            text: !EdgeCoffeeMachine.isMakingDrink ? ("Make " + (targetBeverage ? targetBeverage.name : "")) : "Cancel"
 
             onClick: {
                 console.log("Make drink button clicked");
-                EdgeCoffeeMachine.makeDrink(targetBeverage);
+                if (!EdgeCoffeeMachine.isMakingDrink) {
+                    EdgeCoffeeMachine.makeDrink(targetBeverage);
+                } else {
+                    EdgeCoffeeMachine.stopBrewing()
+                }
+
+
             }
         }
     }
