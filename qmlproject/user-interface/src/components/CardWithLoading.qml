@@ -118,8 +118,6 @@ Rectangle {
                 } else {
                     EdgeCoffeeMachine.stopBrewing()
                 }
-
-
             }
         }
     }

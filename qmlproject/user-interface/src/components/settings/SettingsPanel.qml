@@ -79,6 +79,10 @@ Rectangle {
 
                     value: getIngredientInfo(modelData, root.targetBeverage).current
 
+                    onValueChanged: { 
+                        getIngredientInfo(modelData, root.targetBeverage).setCurrent(value);
+                    }
+
                     unitOfM: "ml"
                     visible: getIngredientInfo(modelData, root.targetBeverage).min >0 && getIngredientInfo(modelData, root.targetBeverage).def >0
                 }
