@@ -9,8 +9,10 @@ add_executable(unit_tests
     main.cpp
     TestBeverage.cpp
     TestUser.cpp
+    TestWeightedSortedList.cpp
     ../qmlproject/logic/Beverage.cpp
     ../qmlproject/logic/User.cpp
+    ../qmlproject/logic/WeightedSortedList.h
 )
 
 target_include_directories(unit_tests PRIVATE
