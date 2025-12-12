@@ -6,8 +6,11 @@ enable_testing()
 
 # Build an executable that compiles the Beverage implementation together with the test.
 add_executable(unit_tests
+    main.cpp
+    TestBeverage.cpp
+    TestUser.cpp
     ../qmlproject/logic/Beverage.cpp
-    test_Beverage.cpp
+    ../qmlproject/logic/User.cpp
 )
 
 target_include_directories(unit_tests PRIVATE
