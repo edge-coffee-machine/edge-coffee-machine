@@ -10,8 +10,12 @@ add_executable(unit_tests
     TestBeverage.cpp
     TestUser.cpp
     TestWeightedSortedList.cpp
+    TestEdgeCoffeeMachine.cpp
+    
     ../qmlproject/logic/Beverage.cpp
     ../qmlproject/logic/User.cpp
+    ../qmlproject/logic/EdgeCoffeeMachine.cpp
+    ../qmlproject/logic/RecipeDatabase.cpp
     ../qmlproject/logic/WeightedSortedList.h
 )
 

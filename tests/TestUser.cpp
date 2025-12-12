@@ -9,32 +9,6 @@
 #include "../qmlproject/logic/Beverage.h"
 #include "../qmlproject/logic/EdgeCoffeeMachine.h"
 
-// =========================================================
-// MOCK / STUB for EdgeCoffeeMachine
-// =========================================================
-// Since User.cpp depends on EdgeCoffeeMachine singleton, we need 
-// a fake implementation here to make the test link and run 
-// without the rest of the application.
-namespace Logic {
-
-    // 1. Constructor: Necessary because Singleton::instance() will try to create one.
-    // We leave it empty or minimal. Member objects (like timers) will use their default constructors.
-    EdgeCoffeeMachine::EdgeCoffeeMachine() {
-        // No initialization needed for this unit test
-    }
-
-    // 2. Mock Method: User.cpp calls this to get the default list.
-    const std::vector<Beverage*>& EdgeCoffeeMachine::getPopularBeverages() const {
-        static std::vector<Beverage*> emptyList;
-        return emptyList;
-    }
-
-    // 3. Methods required by the Linker if referenced implicitly (e.g. by the header)
-    // Note: The Singleton 'instance()' method is usually provided by the Qul::Singleton base class template,
-    // so we don't need to implement it manually unless it's specialized.
-}
-// =========================================================
-
 using namespace Logic;
 
 // Helper to create a fresh set of dummy beverages

@@ -11,7 +11,7 @@
 #include "User.h"
 #include "EdgeCoffeeMachine.h"
 
-//#include <platforminterface/log.h>
+#include <platforminterface/log.h>
 
 #include <cmath>
 #include <algorithm>
@@ -46,7 +46,7 @@ namespace Logic
 
         updateDisplayBeverages();
 
-        //Qul::PlatformInterface::log("[User] Created user: %s (Category: Default)\n", nameVal.c_str());
+        Qul::PlatformInterface::log("[User] Created user: %s (Category: Default)\n", nameVal.c_str());
     }
 
     /**
@@ -145,14 +145,14 @@ namespace Logic
         if (!beverage)
             return;
 
-        /*Qul::PlatformInterface::log("[User] beverageBrewed called for: %s\n", 
-                                        beverage->name.value().c_str());*/
+        Qul::PlatformInterface::log("[User] beverageBrewed called for: %s\n", 
+                                        beverage->name.value().c_str());
 
         int idx = m_weightedBeverages.indexOf(beverage);
 
         if (idx < 0)
         {
-            //Qul::PlatformInterface::log("[User] Error: Beverage not found in user list!\n");
+            Qul::PlatformInterface::log("[User] Error: Beverage not found in user list!\n");
             return;
         }
         
@@ -161,8 +161,8 @@ namespace Logic
 
         m_weightedBeverages.recordSelectionAt(idx);
 
-        //Qul::PlatformInterface::log("[User] Beverage weights after selection:\n");
-        /*const std::vector<Beverage *> &items = m_weightedBeverages.items();
+        Qul::PlatformInterface::log("[User] Beverage weights after selection:\n");
+        const std::vector<Beverage *> &items = m_weightedBeverages.items();
 
         for (int i = 0; i < m_weightedBeverages.size(); i++)
         {
@@ -170,7 +170,7 @@ namespace Logic
                                         i,
                                         items[i]->name.value().c_str(),
                                         static_cast<double>(m_weightedBeverages.weightAt(i)));
-        }*/
+        }
 
         updateDisplayBeverages();
         m_customized = false;
@@ -184,7 +184,7 @@ namespace Logic
      */
     void User::beverageCustomized()
     {
-        //Qul::PlatformInterface::log("[User] beverageCustomized called.\n");
+        Qul::PlatformInterface::log("[User] beverageCustomized called.\n");
         m_customized = true;
     }
 
@@ -220,16 +220,16 @@ namespace Logic
         m_customized = false;
 
         // print tryer score, customizer score, and beverage weights for debugging
-        /*Qul::PlatformInterface::log("[User] Scores updated: Tryer=%.2f, Customizer=%.2f\n",
+        Qul::PlatformInterface::log("[User] Scores updated: Tryer=%.2f, Customizer=%.2f\n",
                                     static_cast<double>(m_tryerScore),
-                                    static_cast<double>(m_customizerScore));*/
+                                    static_cast<double>(m_customizerScore));
 
         if (m_numBeverages >= 3)
         { // Classify the user after 3 selections
             // Calculate an early adopter score to classify the user based on the tryer and customizer scores
             float earlyAdopterScore = tryerToCustomizerRatio * m_tryerScore + (1 - tryerToCustomizerRatio) * m_customizerScore;
 
-            //Qul::PlatformInterface::log("[User] EarlyAdopterScore: %.2f\n", static_cast<double>(earlyAdopterScore));
+            Qul::PlatformInterface::log("[User] EarlyAdopterScore: %.2f\n", static_cast<double>(earlyAdopterScore));
 
             // Classify user
             if (earlyAdopterScore < earlyAdopterThreshold)
@@ -258,6 +258,6 @@ namespace Logic
             break;
         }
 
-        //Qul::PlatformInterface::log("[User] Current Category: %s\n", categoryStr);
+        Qul::PlatformInterface::log("[User] Current Category: %s\n", categoryStr);
     }
 }
