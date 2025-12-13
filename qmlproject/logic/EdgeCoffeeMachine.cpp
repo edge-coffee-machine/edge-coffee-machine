@@ -280,6 +280,10 @@ namespace Logic
   {
     if (selectedBeverage.value() != beverage)
     {
+      if(!user.value() && beverage){
+        beverage->resetIngredients();
+      }
+
       selectedBeverage.setValue(beverage);
 
       if (beverage)
