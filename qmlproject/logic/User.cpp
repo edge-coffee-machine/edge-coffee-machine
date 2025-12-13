@@ -145,8 +145,8 @@ namespace Logic
         if (!beverage)
             return;
 
-        Qul::PlatformInterface::log("[User] beverageBrewed called for: %s\n",
-                                    beverage->name.value().c_str());
+        Qul::PlatformInterface::log("[User] beverageBrewed called for: %s\n", 
+                                        beverage->name.value().c_str());
 
         int idx = m_weightedBeverages.indexOf(beverage);
 
@@ -155,7 +155,8 @@ namespace Logic
             Qul::PlatformInterface::log("[User] Error: Beverage not found in user list!\n");
             return;
         }
-
+        
+        m_numBeverages++;
         classifyUser(idx);
 
         m_weightedBeverages.recordSelectionAt(idx);
@@ -172,8 +173,6 @@ namespace Logic
         }
 
         updateDisplayBeverages();
-
-        m_numBeverages++;
         m_customized = false;
     }
 
