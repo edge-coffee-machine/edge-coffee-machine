@@ -96,8 +96,8 @@ Rectangle {
                                 spacing: 10
 
                                 CoffeeTileSquare {
-                                    imageSource: "assets/images/cappuccino.png"
-                                    name: "Cappuccino"
+                                    onGoBackRequested: root.goBackRequested()
+                                    drink: EdgeCoffeeMachine.drinksList.data(0)
                                     price: "€1.20"
                                 }
 
@@ -108,20 +108,20 @@ Rectangle {
                                         spacing: 10
 
                                         CoffeeTile {
-                                            imageSource: "assets/images/cappuccino.png"
-                                            name: "Cappuccino"
+                                            onGoBackRequested: root.goBackRequested()
+                                            drink: EdgeCoffeeMachine.drinksList.data(1)
                                             price: "€1.20"
                                         }
 
                                         CoffeeTile {
-                                            imageSource: "assets/images/cappuccino.png"
-                                            name: "Cappuccino"
+                                            onGoBackRequested: root.goBackRequested()
+                                            drink: EdgeCoffeeMachine.drinksList.data(2)
                                             price: "€1.20"
                                         }
 
                                         CoffeeTile {
-                                            imageSource: "assets/images/cappuccino.png"
-                                            name: "Cappuccino"
+                                            onGoBackRequested: root.goBackRequested()
+                                            drink: EdgeCoffeeMachine.drinksList.data(3)
                                             price: "€1.20"
                                         }
                                     }
@@ -130,8 +130,8 @@ Rectangle {
                                         spacing: 10
 
                                         CoffeeTile {
-                                            imageSource: "assets/images/cappuccino.png"
-                                            name: "Cappuccino"
+                                            onGoBackRequested: root.goBackRequested()
+                                            drink: EdgeCoffeeMachine.drinksList.data(4)
                                             price: "€1.20"
                                         }
                                     }

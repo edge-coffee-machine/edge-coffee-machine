@@ -6,14 +6,27 @@ Rectangle {
     id: root
 
     // Props
-    property string imageSource: "../../assets/img/cappuccino.png"
-    property string name: "Cappuccino"
+    signal goBackRequested
+    property Beverage drink
     property string price: "€1.20"
 
     color: Theme.dark400
     height: 170
     radius: Theme.cardRadius
     width: 170
+
+    function getImage(drinkName: string): string {
+        switch (drinkName) {
+        case "Cappuccino":
+            return "assets/images/cappuccino.png";
+        case "Espresso":
+            return "assets/images/espresso.png";
+        case "Latte":
+            return "assets/images/latte.png";
+        default:
+            return "assets/images/missing_texture.png";
+        }
+    }
 
     Column {
         height: parent.height
@@ -23,7 +36,7 @@ Rectangle {
         Image {
             anchors.horizontalCenter: parent.horizontalCenter
             height: 90
-            source: root.imageSource
+            source: getImage(root.drink.name)
             width: 90
         }
 
@@ -36,7 +49,7 @@ Rectangle {
                 color: Theme.white
                 font.bold: true
                 font.pixelSize: 20
-                text: root.name
+                text: root.drink.name
             }
 
             TextDefault {
@@ -46,6 +59,17 @@ Rectangle {
                 opacity: 0.7
                 text: root.price
             }
+        }
+    }
+    MouseArea {
+        id: mouseArea
+
+        anchors.fill: parent
+
+        onClicked: {
+            console.log("Selected drink: " + root.drink.name);
+            EdgeCoffeeMachine.selectBeverage(root.drink);
+            root.goBackRequested()
         }
     }
 }
