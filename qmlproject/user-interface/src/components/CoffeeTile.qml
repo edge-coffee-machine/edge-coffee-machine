@@ -23,6 +23,10 @@ Rectangle {
             return "assets/images/espresso.png";
         case "Latte":
             return "assets/images/latte.png";
+        case "Mocha":
+            return "assets/images/mocha.png";
+        case "Americano":
+            return "assets/images/americano.png";
         default:
             return "assets/images/missing_texture.png";
         }
