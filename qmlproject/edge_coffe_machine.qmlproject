@@ -85,7 +85,7 @@ Project {
     InterfaceFiles {
         files: [
             "logic/Beverage.h",
-            "logic/BeverageListModel.h",
+            "logic/BeverageModel.h",
             "logic/EdgeCoffeeMachine.h",
             "logic/IngredientInfo.h",
             "logic/User.h",

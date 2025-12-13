@@ -2,6 +2,7 @@
 #define EDGE_COFFEE_MACHINE_H
 
 #include "Beverage.h"
+#include "BeverageModel.h"
 #include "User.h"
 #include "WeightedSortedList.h"
 #include "RecipeDatabase.h"
@@ -63,6 +64,15 @@ namespace Logic
          * If set, the machine uses the user's personalized preferences.
          */
         Qul::Property<User *> user;
+
+        /**
+         * @brief The BeverageModel exposing the beverage list to QML.
+         *
+         * This property allows QML UI components to bind to the list of beverages
+         * currently managed by the EdgeCoffeeMachine, whether in Default (global popularity)
+         * or Personalized mode.
+         */
+        Qul::Property<BeverageModel *> drinksList;
 
         /**
          * @brief Starts the brewing process.
@@ -193,9 +203,10 @@ namespace Logic
          */
         WeightedSortedList<Beverage *> m_weightedBeverages;
 
-        std::vector<User *> m_user_list;     ///< List of all registered users.
-        std::map<int, User *> m_users_by_id; ///< Map for fast user lookup by ID.
-        Qul::Timer m_brewTimer;              //< Timer to simulate brewing duration.
+        BeverageModel m_beverageModelInstance; ///< Instance of BeverageModel for UI binding.
+        std::vector<User *> m_user_list;       ///< List of all registered users.
+        std::map<int, User *> m_users_by_id;   ///< Map for fast user lookup by ID.
+        Qul::Timer m_brewTimer;                //< Timer to simulate brewing duration.
 
         static constexpr float popularityWeightR = 0.175f; ///< Learning rate for global popularity.
     };

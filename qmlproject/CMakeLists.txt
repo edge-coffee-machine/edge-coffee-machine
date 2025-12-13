@@ -10,7 +10,7 @@ target_include_directories(edge_coffe_machine PRIVATE
 target_sources(edge_coffe_machine PRIVATE
     logic/Beverage.h
     logic/Beverage.cpp
-    logic/BeverageListModel.h
+    logic/BeverageModel.h
     logic/EdgeCoffeeMachine.h
     logic/EdgeCoffeeMachine.cpp
     logic/IngredientInfo.h

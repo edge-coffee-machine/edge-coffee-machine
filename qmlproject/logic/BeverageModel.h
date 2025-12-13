@@ -1,11 +1,10 @@
-#ifndef BEVERAGELISTMODEL_H
-#define BEVERAGELISTMODEL_H
+#ifndef BEVERAGEMODEL_H
+#define BEVERAGEMODEL_H
 
 #include "Beverage.h"
 
 #include <qul/object.h>
 #include <qul/model.h>
-#include <qul/singleton.h>
 
 #include <vector>
 
@@ -13,20 +12,26 @@ namespace Logic
 {
     /**
      * @class BeverageModel
-     * @brief A singleton ListModel that exposes the list of beverages to the QML UI.
+     * @brief A ListModel that exposes a collection of beverages to the QML UI.
      *
-     * This class acts as a bridge (View Model) between the backend logic (EdgeCoffeeMachine)
-     * and the frontend QML `ListView`. It wraps a standard `std::vector` of Beverage pointers
+     * This class acts as a bridge (View Model) between the backend data (std::vector)
+     * and the frontend QML `ListView`. It wraps the raw list of `Beverage` pointers
      * into a `Qul::ListModel` compatible with Qt for MCUs.
      *
-     * Being a Singleton, it can be accessed directly in QML files (e.g., `model: Logic.BeverageModel`)
-     * without needing to pass pointers manually.
+     * @note It is owned and instantiated by the
+     * `EdgeCoffeeMachine` controller. In QML, it is accessed via the
+     * `EdgeCoffeeMachine.drinksList` property.
      */
-    class BeverageModel : public Qul::ListModel<Beverage *>, public Qul::Singleton<BeverageModel>
+    class BeverageModel : public Qul::ListModel<Beverage *>
     {
-        friend class Qul::Singleton<BeverageModel>;
-
     public:
+        /**
+         * @brief Default constructor.
+         *
+         * Initializes an empty model. The data is populated later via `updateList`.
+         */
+        BeverageModel() {};
+
         /**
          * @brief Returns the number of items in the model.
          *
@@ -79,11 +84,6 @@ namespace Logic
         }
 
     private:
-        /**
-         * @brief Private constructor to enforce the Singleton pattern.
-         */
-        BeverageModel() {}
-
         /**
          * @brief Internal storage for the list of beverages currently displayed.
          */

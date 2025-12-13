@@ -7,14 +7,14 @@ Rectangle {
     id: root
 
     signal drinksListRequested
-    property Beverage model // Model passed from C++
+    //property Beverage model // Model passed from C++
 
     color: Theme.dark700
     height: 420
     radius: Theme.cardRadius
     width: 270
 
-    ListModel {
+    /*ListModel {
         id: drinkListModel
 
         // Example data; in practice, this will be populated from C++
@@ -23,7 +23,7 @@ Rectangle {
         ListElement { name: "Espresso" }
         ListElement { name: "Americano" }
         ListElement { name: "Mocha" }
-    }
+    }*/
 
     function getImage(drinkName: string): string {
         switch (drinkName) {
@@ -70,8 +70,6 @@ Rectangle {
                     }
                 }
 
-                
-
                 TextDefault {
                     color: Theme.white
                     font.pixelSize: 15
@@ -90,7 +88,7 @@ Rectangle {
 
                 ListView {
                     id: drinkListView
-                    model: drinkListModel
+                    model: EdgeCoffeeMachine.drinksList
 
                     clip: true // Prevents items from going out of bounds
 
@@ -100,68 +98,69 @@ Rectangle {
 
                     // A custom delegate for a better look
                     delegate: Rectangle {
-                            color: Theme.dark500
-                            height: 80
-                            radius: Theme.cardRadius
-                            //width: drinkListView.width
+                        color: Theme.dark500
+                        height: 80
+                        radius: Theme.cardRadius
+                        //width: drinkListView.width
 
-                            Item {
-                                anchors.fill: parent
-                                anchors.margins: Theme.cardMargin
+                        Item {
+                            anchors.fill: parent
+                            anchors.margins: Theme.cardMargin
 
-                                Row {
-                                    height: parent.height
-                                    spacing: 20
+                            Row {
+                                height: parent.height
+                                spacing: 20
 
-                                    // Note: In the future we should look at .qrt files for the resources
-                                    Image {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        height: 60
-                                        source: getImage(model.name) //drinkName.name) // Accesses the 'name' property of the Beverage object
-                                        width: 60
-                                    }
-
-                                    Column {
-                                        anchors.verticalCenter: parent.verticalCenter
-
-                                        TextDefault {
-                                            color: Theme.white
-                                            font.bold: true
-                                            font.pixelSize: 20
-                                            text: model.name //drinkName.name // Accesses the 'name' property of the Beverage object
-                                        }
-
-                                        TextDefault {
-                                            color: Theme.white
-                                            font.pixelSize: 15
-                                            opacity: 0.7
-                                            text: "€1.20" // Accesses the 'name' property of the Beverage object
-                                        }
-                                    }
+                                // Note: In the future we should look at .qrt files for the resources
+                                Image {
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    height: 60
+                                    source: getImage(EdgeCoffeeMachine.drinksList.data(index).name) //drinkName.name) // Accesses the 'name' property of the Beverage object
+                                    width: 60
                                 }
 
-                                MouseArea {
-                                    id: mouseArea
+                                Column {
+                                    anchors.verticalCenter: parent.verticalCenter
 
-                                    anchors.fill: parent
-
-                                    onClicked: {
-                                        console.log("Selected drink: Cappuccino");
-                                        //edgeCoffeeMachineController.selectBeverage(modelData);
+                                    TextDefault {
+                                        color: Theme.white
+                                        font.bold: true
+                                        font.pixelSize: 20
+                                        text: EdgeCoffeeMachine.drinksList.data(index).name //drinkName.name // Accesses the 'name' property of the Beverage object
                                     }
+
+                                    TextDefault {
+                                        color: Theme.white
+                                        font.pixelSize: 15
+                                        opacity: 0.7
+                                        text: "€1.20" // Accesses the 'name' property of the Beverage object
+                                    }
+                                }
+                            }
+
+                            MouseArea {
+                                id: mouseArea
+
+                                anchors.fill: parent
+
+                                onClicked: {
+                                    console.log("Selected drink: " + EdgeCoffeeMachine.drinksList.data(index).name);
+                                    EdgeCoffeeMachine.selectBeverage(EdgeCoffeeMachine.drinksList.data(index));
+                                    //edgeCoffeeMachineController.selectBeverage(modelData);
                                 }
                             }
                         }
                     }
                 }
             }
-
-            CustomButton {
-                anchors.bottom: parent.bottom
-                width: parent.width
-                text: "All drinks"
-
-                onClick: root.drinksListRequested()
-            }
         }
+
+        CustomButton {
+            anchors.bottom: parent.bottom
+            width: parent.width
+            text: "All drinks"
+
+            onClick: root.drinksListRequested()
+        }
+    }
 }

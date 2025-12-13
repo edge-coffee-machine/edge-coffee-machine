@@ -9,7 +9,7 @@
  */
 
 #include "EdgeCoffeeMachine.h"
-#include "BeverageListModel.h"
+#include "BeverageModel.h"
 #include "UserListModel.h"
 #include "User.h"
 
@@ -29,7 +29,8 @@ namespace Logic
    * 3. Loads the default recipe list from the `RecipeDatabase`.
    * 4. Initializes the `WeightedSortedList` to manage beverage popularity.
    * 5. Selects the most popular beverage by default.
-   * 6. Pushes the initial data to the UI models via `updateBeverageModel()`.
+   * 6. Initializes the drinksList property to point to the BeverageModel instance.
+   * 7. Pushes the initial data to the UI models via `updateBeverageModel()`.
    */
   EdgeCoffeeMachine::EdgeCoffeeMachine()
   {
@@ -68,6 +69,8 @@ namespace Logic
       Qul::PlatformInterface::log("[ECM] Warning: initialized with an empty beverage list!\n");
       selectedBeverage.setValue(nullptr);
     }
+
+    drinksList.setValue(&m_beverageModelInstance); // Initialize drinksList property to point to the BeverageModel instance
 
     updateBeverageModel();
   }
@@ -211,20 +214,20 @@ namespace Logic
    */
   void EdgeCoffeeMachine::stopBrewing()
   {
-      if (isMakingDrink.value())
-      {
-          m_brewTimer.stop();
-          isMakingDrink.setValue(false);
+    if (isMakingDrink.value())
+    {
+      m_brewTimer.stop();
+      isMakingDrink.setValue(false);
 
-          std::string drinkName = selectedBeverage.value() ? selectedBeverage.value()->name.value() : "Drink";
-          status.setValue("Canceled: " + drinkName + " preparation stopped.");
+      std::string drinkName = selectedBeverage.value() ? selectedBeverage.value()->name.value() : "Drink";
+      status.setValue("Canceled: " + drinkName + " preparation stopped.");
 
-          Qul::PlatformInterface::log("[ECM] Brewing process cancelled by user.\n");
-      }
-      else
-      {
-          Qul::PlatformInterface::log("[ECM] No brewing process to cancel.\n");
-      }
+      Qul::PlatformInterface::log("[ECM] Brewing process cancelled by user.\n");
+    }
+    else
+    {
+      Qul::PlatformInterface::log("[ECM] No brewing process to cancel.\n");
+    }
   }
 
   /**
@@ -305,11 +308,11 @@ namespace Logic
   {
     if (user.value())
     {
-      BeverageModel::instance().updateList(user.value()->getDisplayBeverages());
+      m_beverageModelInstance.updateList(user.value()->getDisplayBeverages());
     }
     else
     {
-      BeverageModel::instance().updateList(m_weightedBeverages.items());
+      m_beverageModelInstance.updateList(m_weightedBeverages.items());
     }
   }
 
@@ -400,9 +403,9 @@ namespace Logic
    * This method clears the current user session by setting the user
    * property to nullptr. It also updates the beverage model to switch
    * back to the global popularity list and logs the logout action.
-   */  
+   */
   void EdgeCoffeeMachine::logoutUser()
   {
-      setUser(nullptr);
+    setUser(nullptr);
   }
 }
