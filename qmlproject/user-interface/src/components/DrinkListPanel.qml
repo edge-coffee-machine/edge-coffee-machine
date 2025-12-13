@@ -101,7 +101,7 @@ Rectangle {
                         color: Theme.dark500
                         height: 80
                         radius: Theme.cardRadius
-                        //width: drinkListView.width
+                        width: drinkListView.width
 
                         Item {
                             anchors.fill: parent
@@ -146,7 +146,6 @@ Rectangle {
                                 onClicked: {
                                     console.log("Selected drink: " + EdgeCoffeeMachine.drinksList.data(index).name);
                                     EdgeCoffeeMachine.selectBeverage(EdgeCoffeeMachine.drinksList.data(index));
-                                    //edgeCoffeeMachineController.selectBeverage(modelData);
                                 }
                             }
                         }
