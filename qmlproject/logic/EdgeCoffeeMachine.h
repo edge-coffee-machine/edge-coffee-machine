@@ -4,6 +4,7 @@
 #include "Beverage.h"
 #include "BeverageModel.h"
 #include "User.h"
+#include "UserModel.h"
 #include "WeightedSortedList.h"
 #include "RecipeDatabase.h"
 
@@ -73,6 +74,8 @@ namespace Logic
          * or Personalized mode.
          */
         Qul::Property<BeverageModel *> drinksList;
+
+        Qul::Property<UserModel *> usersList;
 
         /**
          * @brief Starts the brewing process.
@@ -204,6 +207,7 @@ namespace Logic
         WeightedSortedList<Beverage *> m_weightedBeverages;
 
         BeverageModel m_beverageModelInstance; ///< Instance of BeverageModel for UI binding.
+        UserModel m_userModelInstance;         ///< Instance of UserModel for UI binding.
         std::vector<User *> m_user_list;       ///< List of all registered users.
         std::map<int, User *> m_users_by_id;   ///< Map for fast user lookup by ID.
         Qul::Timer m_brewTimer;                //< Timer to simulate brewing duration.

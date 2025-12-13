@@ -89,7 +89,7 @@ Project {
             "logic/EdgeCoffeeMachine.h",
             "logic/IngredientInfo.h",
             "logic/User.h",
-            "logic/UserListModel.h"
+            "logic/UserModel.h"
         ]
         MCU.qmlImports: ["QtQuick"]
     }

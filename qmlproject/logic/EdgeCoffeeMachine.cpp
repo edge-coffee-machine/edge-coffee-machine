@@ -5,12 +5,12 @@
  * This file implements the core business logic, including state management,
  * beverage selection, user session handling, and the simulation of the brewing process.
  * It acts as the bridge between the data layer (User, Beverage, RecipeDatabase) and
- * the presentation layer (BeverageListModel, UserListModel).
+ * the presentation layer (BeverageModel, UserModel).
  */
 
 #include "EdgeCoffeeMachine.h"
 #include "BeverageModel.h"
-#include "UserListModel.h"
+#include "UserModel.h"
 #include "User.h"
 
 #include <platforminterface/log.h>
@@ -70,9 +70,30 @@ namespace Logic
       selectedBeverage.setValue(nullptr);
     }
 
-    drinksList.setValue(&m_beverageModelInstance); // Initialize drinksList property to point to the BeverageModel instance
+    // --- USER TEST ---
+    static Qul::Timer initTimer;
+    initTimer.setSingleShot(true);
+    initTimer.setInterval(0); // 0ms = next event loop cycle
+    initTimer.onTimeout([this]()
+                        {
+                          Qul::PlatformInterface::log("[ECM] Initializing test users...\n");
 
-    updateBeverageModel();
+                          this->enrollUser(10);
+                          this->enrollUser(20);
+
+                          User *testUser = new User("Paolo Rossi", 1, RecipeDatabase::getAllDefaultRecipes());
+                          m_user_list.push_back(testUser);
+                          m_users_by_id[99] = testUser;
+
+                          this->updateUserModel();
+                        });
+    initTimer.start();
+    // -------------------------
+
+    drinksList.setValue(&m_beverageModelInstance); // Initialize drinksList property to point to the BeverageModel instance
+    usersList.setValue(&m_userModelInstance);      // Initialize usersList property to point to the UserModel instance
+
+    updateModels();
   }
 
   /**
@@ -283,7 +304,8 @@ namespace Logic
   {
     if (selectedBeverage.value() != beverage)
     {
-      if(!user.value() && beverage){
+      if (!user.value() && beverage)
+      {
         beverage->resetIngredients();
       }
 
@@ -329,7 +351,7 @@ namespace Logic
    */
   void EdgeCoffeeMachine::updateUserModel()
   {
-    UserModel::instance().updateList(m_user_list);
+    m_userModelInstance.updateList(m_user_list);
   }
 
   /**

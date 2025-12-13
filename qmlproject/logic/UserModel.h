@@ -1,10 +1,9 @@
-#ifndef USERLISTMODEL_H
-#define USERLISTMODEL_H
+#ifndef USERMODEL_H
+#define USERMODEL_H
 
 #include "User.h"
 
 #include <qul/model.h>
-#include <qul/singleton.h>
 
 #include <vector>
 
@@ -12,20 +11,23 @@ namespace Logic
 {
     /**
      * @class UserModel
-     * @brief A singleton ListModel that exposes the list of registered users to the QML UI.
+     * @brief A ListModel that exposes the list of registered users to the QML UI.
      *
      * This class acts as the interface (View Model) between the backend logic
-     * (specifically the user management inside `EdgeCoffeeMachine`) and the frontend QML.
-     * It wraps a `std::vector` of `User` pointers into a `Qul::ListModel`, allowing
-     * visual elements to display user data.
-     *
-     * As a Singleton, it can be accessed globally in QML (e.g., `model: Logic.UserModel`).
+     * and the frontend QML. It wraps a `std::vector` of `User` pointers.
+     * * NOTE: It is owned by EdgeCoffeeMachine and 
+     * exposed via the `usersList` property.
      */
-    class UserModel : public Qul::ListModel<User *>, public Qul::Singleton<UserModel>
+    class UserModel : public Qul::ListModel<User *>
     {
-        friend class Qul::Singleton<UserModel>;
-
     public:
+        /**
+         * @brief Default constructor.
+         *
+         * Initializes an empty model. The data is populated later via `updateList`.
+         */
+        UserModel() {};
+
         /**
          * @brief Returns the total number of users in the model.
          *
@@ -76,11 +78,6 @@ namespace Logic
         }
 
     private:
-        /**
-         * @brief Private constructor to enforce the Singleton pattern.
-         */
-        UserModel() {}
-
         /**
          * @brief Internal storage for the list of user pointers.
          */

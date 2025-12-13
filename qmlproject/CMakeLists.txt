@@ -18,7 +18,7 @@ target_sources(edge_coffe_machine PRIVATE
     logic/RecipeDatabase.cpp
     logic/User.h
     logic/User.cpp
-    logic/UserListModel.h
+    logic/UserModel.h
     logic/WeightedSortedList.h
 )
 

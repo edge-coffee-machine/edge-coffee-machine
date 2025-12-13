@@ -15,7 +15,7 @@ Rectangle {
     height: 600
     width: 1024
 
-    ListModel {
+    /*ListModel {
         id: usersListModel
 
         // Example data; in practice, this will be populated from C++
@@ -26,7 +26,7 @@ Rectangle {
         ListElement { name: "Eve" }
         ListElement { name: "Frank" }
         ListElement { name: "Grace" }
-    }
+    }*/
 
     // --- 1. HEADER SECTION ---
     Rectangle {
@@ -167,6 +167,7 @@ Rectangle {
                 // B. THE SCROLLABLE LIST (Left Aligned, fills space up to New User)
                 ListView {
                     id: userList
+                    model: EdgeCoffeeMachine.usersList //edgeCoffeeMachineController.users
 
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
@@ -180,7 +181,6 @@ Rectangle {
 
                     delegate: userDelegate
                     flickableDirection: Flickable.HorizontalFlick
-                    model: usersListModel //edgeCoffeeMachineController.users
                     orientation: Qt.Horizontal
                     //spacing: root.p_spacing
 /*
@@ -223,7 +223,7 @@ Rectangle {
                             font.bold: true
                             font.pixelSize: 42
                             // Auto Initials
-                            text: "PT"//name.charAt(0).toUpperCase() + name.charAt(1).toUpperCase()
+                            text: EdgeCoffeeMachine.usersList.data(index).initials //"PT"name.charAt(0).toUpperCase() + name.charAt(1).toUpperCase()
                         }
                     }
 
@@ -240,7 +240,7 @@ Rectangle {
                             font.bold: true
                             font.pixelSize: 18
                             horizontalAlignment: Text.AlignHCenter
-                            text: model.name
+                            text: EdgeCoffeeMachine.usersList.data(index).name
                             width: parent.width
                         }
                     }
@@ -250,7 +250,8 @@ Rectangle {
 
                         onClicked: {
                             //edgeCoffeeMachineController.setUser(modelData);
-                            console.log("Selected", model.name);
+                            EdgeCoffeeMachine.setUser(EdgeCoffeeMachine.usersList.data(index));
+                            console.log("Selected", EdgeCoffeeMachine.usersList.data(index).name);
                             root.goBackRequested();
                         }
                     }

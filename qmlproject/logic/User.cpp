@@ -34,8 +34,20 @@ namespace Logic
         : m_weightedBeverages(personalRecipes, defaultWeightR)
     {
         name.setValue(nameVal);
-        initials.setValue(nameVal.substr(0, 2));
-        picture.setValue(pictureVal);        
+        // Compute initials from name
+        std::string computedInitials = "";
+        if (!nameVal.empty())
+        {
+            computedInitials += (char)toupper(nameVal[0]);
+
+            size_t spacePos = nameVal.find(' ');
+            if (spacePos != std::string::npos && spacePos + 1 < nameVal.length())
+                computedInitials += (char)toupper(nameVal[spacePos + 1]);
+            else if (nameVal.length() > 1)
+                computedInitials += (char)toupper(nameVal[1]);
+        }
+        initials.setValue(computedInitials);
+        picture.setValue(pictureVal);
 
         m_category = UserCategory::Default;
 
@@ -145,8 +157,8 @@ namespace Logic
         if (!beverage)
             return;
 
-        Qul::PlatformInterface::log("[User] beverageBrewed called for: %s\n", 
-                                        beverage->name.value().c_str());
+        Qul::PlatformInterface::log("[User] beverageBrewed called for: %s\n",
+                                    beverage->name.value().c_str());
 
         int idx = m_weightedBeverages.indexOf(beverage);
 
@@ -155,7 +167,7 @@ namespace Logic
             Qul::PlatformInterface::log("[User] Error: Beverage not found in user list!\n");
             return;
         }
-        
+
         m_numBeverages++;
         classifyUser(idx);
 
