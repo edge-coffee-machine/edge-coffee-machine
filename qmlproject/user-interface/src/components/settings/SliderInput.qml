@@ -15,6 +15,10 @@ Item {
 
     // Public properties for the slider
     property double value: 0.5
+    property double initialValue: 0.1
+    onInitialValueChanged: {
+        actualSlider.value = initialValue;
+    }
 
     function getIcon(label: string): string {
         if (label === "Coffee" || label === "Powder") {
@@ -75,7 +79,7 @@ Item {
                 font.weight: 400
                 font.pixelSize: 12
                 opacity: 0.6
-                text: sliderInputRoot.value.toFixed(1) + " " + sliderInputRoot.unitOfM // Display label and current value
+                text: actualSlider.value.toFixed(1) + " " + sliderInputRoot.unitOfM + "-" + sliderInputRoot.value// Display label and current value
 
                 anchors {
                     top: labelText.bottom
@@ -94,7 +98,7 @@ Item {
         from: sliderInputRoot.minimumValue
         stepSize: 1
         to: sliderInputRoot.maximumValue
-        value: sliderInputRoot.value
+        value: sliderInputRoot.initialValue
         width: 150
 
         // Optional: Customize appearance to match original Rectangle if desired

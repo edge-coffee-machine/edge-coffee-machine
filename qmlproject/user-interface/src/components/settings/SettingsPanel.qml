@@ -62,8 +62,6 @@ Rectangle {
             spacing: 0
             width: parent.width
 
-            
-
             Repeater {
                 id: sliderGroup
 
@@ -71,15 +69,15 @@ Rectangle {
 
                 delegate: SliderInput {
                     width: settingsColumn.width
-                    label: modelData
-
+                    label: modelData + getIngredientInfo(modelData, root.targetBeverage).current
                     minimumValue: getIngredientInfo(modelData, root.targetBeverage).min
 
                     maximumValue: getIngredientInfo(modelData, root.targetBeverage).max
 
-                    value: getIngredientInfo(modelData, root.targetBeverage).current
+                    initialValue: getIngredientInfo(modelData, root.targetBeverage).current
 
                     onValueChanged: { 
+                        console.log("Setting " + targetBeverage.name + "." + modelData + " from " + getIngredientInfo(modelData, root.targetBeverage).current + " to " + value);
                         getIngredientInfo(modelData, root.targetBeverage).setCurrent(value);
                     }
 
@@ -87,6 +85,7 @@ Rectangle {
                     visible: getIngredientInfo(modelData, root.targetBeverage).min >0 && getIngredientInfo(modelData, root.targetBeverage).def >0
                 }
             }
+            
         }
     }
 
