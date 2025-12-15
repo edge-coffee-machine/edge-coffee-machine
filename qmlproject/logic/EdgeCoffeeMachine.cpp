@@ -335,10 +335,14 @@ namespace Logic
     if (user.value())
     {
       m_beverageModelInstance.updateList(user.value()->getDisplayBeverages());
+      // Update the selected beverage reference to the new instance in the user list
+      selectBeverage(user.value()->getDisplayBeverages().front());
     }
     else
     {
       m_beverageModelInstance.updateList(m_weightedBeverages.items());
+      // Update the selected beverage reference to the new instance in the global list
+      selectBeverage(m_weightedBeverages.items().front());
     }
   }
 
