@@ -69,15 +69,14 @@ Rectangle {
 
                 delegate: SliderInput {
                     width: settingsColumn.width
-                    label: modelData + getIngredientInfo(modelData, root.targetBeverage).current
+                    label: modelData
                     minimumValue: getIngredientInfo(modelData, root.targetBeverage).min
 
                     maximumValue: getIngredientInfo(modelData, root.targetBeverage).max
 
                     initialValue: getIngredientInfo(modelData, root.targetBeverage).current
 
-                    onValueChanged: { 
-                        console.log("Setting " + targetBeverage.name + "." + modelData + " from " + getIngredientInfo(modelData, root.targetBeverage).current + " to " + value);
+                    onValueChanged: {
                         getIngredientInfo(modelData, root.targetBeverage).setCurrent(value);
                     }
 

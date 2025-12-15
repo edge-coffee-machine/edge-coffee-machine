@@ -14,8 +14,10 @@ Item {
     property string unitOfM: "ml"
 
     // Public properties for the slider
-    property double value: 0.5
-    property double initialValue: 0.1
+    property double value
+    property double initialValue
+
+    // Ensure the slider reflects the initial value when it changes
     onInitialValueChanged: {
         actualSlider.value = initialValue;
     }
@@ -79,7 +81,7 @@ Item {
                 font.weight: 400
                 font.pixelSize: 12
                 opacity: 0.6
-                text: actualSlider.value.toFixed(1) + " " + sliderInputRoot.unitOfM + "-" + sliderInputRoot.value// Display label and current value
+                text: actualSlider.value.toFixed(1) + " " + sliderInputRoot.unitOfM
 
                 anchors {
                     top: labelText.bottom
