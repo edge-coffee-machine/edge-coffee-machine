@@ -27,12 +27,35 @@ Rectangle {
         anchors.topMargin: 15
         spacing: 5
 
-        TextDefault {
-            color: Theme.white
-            font.bold: true
-            font.pixelSize: 24
-            text: "Settings"
+        Item {
+            width: parent.width
+            height: 30
+
+            TextDefault {
+                color: Theme.white
+                font.bold: true
+                font.pixelSize: 24
+                text: "Settings"
+            }
+
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.right: parent.right
+                source: "assets/icons/reset.png"
+                height: 18
+                width: 18
+
+                MouseArea {
+                    anchors.fill: parent
+
+                    onClicked: {
+                        console.log("Reset settings to default for " + root.targetBeverage.name);
+                        root.targetBeverage.resetIngredients();
+                    }
+                }
+            }
         }
+        
 
         Subtitle {
             text: "Customize your drink."
