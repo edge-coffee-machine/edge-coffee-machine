@@ -25,6 +25,7 @@ Rectangle {
             id: header
 
             height: 60
+            width: parent.width
 
             onSwitchUserRequested: root.switchUserRequested()
         }

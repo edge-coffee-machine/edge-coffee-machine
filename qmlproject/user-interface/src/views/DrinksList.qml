@@ -22,6 +22,7 @@ Rectangle {
         color: "transparent"
 
         CloseButton {
+            id: closeBtn
             onGoBackRequested: root.goBackRequested()
             anchors {
                 top: parent.top
@@ -31,8 +32,12 @@ Rectangle {
 
         Header {
             id: header
+            anchors {
+                top: closeBtn.bottom
+            }
 
             height: 60
+            width: parent.width
 
             onSwitchUserRequested: root.switchUserRequested()
         }
@@ -75,7 +80,7 @@ Rectangle {
 
                 Rectangle {
                     color: Theme.dark500
-                    height: 370
+                    height: 355
                     radius: Theme.cardRadius
                     width: parent.width
 
