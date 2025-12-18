@@ -79,7 +79,7 @@ qmlproject/
 #### QML Files
 
 Use `qmlformat` on all QML files before committing.
-The configuration file is located at the project root: `.qmlformat.conf`.
+The [configuration](https://doc.qt.io/qt-6/qtqml-tooling-qmlformat.html#settings-file) file is located at the project root: [`.qmlformat.ini`](./.qmlformat.ini).
 
 Qt Creator can be set up to format on save:
 
