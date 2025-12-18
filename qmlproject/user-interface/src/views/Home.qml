@@ -17,6 +17,7 @@ Rectangle {
 
     Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
         color: "transparent"
         height: parent.height - 60
         width: parent.width - 60
@@ -43,7 +44,7 @@ Rectangle {
                 color: Theme.dark700
                 height: 420
                 radius: Theme.cardRadius
-                width: 670
+                width: 680
 
                 Item {
                     anchors.fill: parent
