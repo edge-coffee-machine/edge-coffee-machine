@@ -13,13 +13,14 @@ Rectangle {
 
     // Rectangular Bar 1 (Rotated 45 degrees)
     Image {
+        height: 16
+        source: "assets/icons/close-icon.png"
+        width: 16
+
         anchors {
             horizontalCenter: parent.horizontalCenter
             verticalCenter: parent.verticalCenter
         }
-        source: "assets/icons/close-icon.png"
-        width: 16
-        height: 16
     }
 
     MouseArea {

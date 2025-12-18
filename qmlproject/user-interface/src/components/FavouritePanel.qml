@@ -9,7 +9,6 @@ Item {
     // This property will receive the selected beverage object from main.qml
     property Beverage targetBeverage: null
 
-
     function getImage(targetBeverage: Beverage): string {
         /*
         if (targetBeverage == undefined || targetBeverage == null) {
@@ -38,6 +37,7 @@ Item {
 
     Row {
         anchors.horizontalCenter: parent.horizontalCenter
+
         TextDefault {
             color: Theme.white
             font.pixelSize: 22
@@ -51,7 +51,6 @@ Item {
             text: "favourite."
         }
     }
-    
 
     Rectangle {
         id: favouritePanel
@@ -69,7 +68,7 @@ Item {
 
             Column {
                 anchors.centerIn: parent
-                
+
                 Image {
                     id: espressoImg
 

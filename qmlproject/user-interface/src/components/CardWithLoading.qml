@@ -5,9 +5,8 @@ Rectangle {
     id: card
 
     property int brewingTime
-    property Beverage targetBeverage
-
     property bool isLoading: EdgeCoffeeMachine.isMakingDrink
+    property Beverage targetBeverage
     property int waveBottomMargins: 25
 
     clip: true
@@ -91,8 +90,6 @@ Rectangle {
         anchors.fill: parent
         anchors.margins: 15
 
-
-
         TextDefault {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
@@ -106,17 +103,17 @@ Rectangle {
         CustomButton {
             id: makeButton
 
-            width: parent.width
             anchors.bottom: parent.bottom
             color: Theme.dark700
             text: !EdgeCoffeeMachine.isMakingDrink ? ("Make " + (targetBeverage ? targetBeverage.name : "")) : "Cancel"
+            width: parent.width
 
             onClick: {
                 console.log("Make drink button clicked");
                 if (!EdgeCoffeeMachine.isMakingDrink) {
                     EdgeCoffeeMachine.makeDrink(targetBeverage);
                 } else {
-                    EdgeCoffeeMachine.stopBrewing()
+                    EdgeCoffeeMachine.stopBrewing();
                 }
             }
         }

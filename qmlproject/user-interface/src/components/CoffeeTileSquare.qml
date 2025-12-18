@@ -5,15 +5,11 @@ import Theme
 Rectangle {
     id: root
 
-    // Props
-    signal goBackRequested
     property Beverage drink
     property string price: "€1.20"
 
-    color: Theme.dark400
-    height: 170
-    radius: Theme.cardRadius
-    width: 170
+    // Props
+    signal goBackRequested
 
     function getImage(drinkName: string): string {
         switch (drinkName) {
@@ -31,6 +27,11 @@ Rectangle {
             return "assets/images/missing_texture.png";
         }
     }
+
+    color: Theme.dark400
+    height: 170
+    radius: Theme.cardRadius
+    width: 170
 
     Column {
         height: parent.height
@@ -65,6 +66,7 @@ Rectangle {
             }
         }
     }
+
     MouseArea {
         id: mouseArea
 
@@ -73,7 +75,7 @@ Rectangle {
         onClicked: {
             console.log("Selected drink: " + root.drink.name);
             EdgeCoffeeMachine.selectBeverage(root.drink);
-            root.goBackRequested()
+            root.goBackRequested();
         }
     }
 }

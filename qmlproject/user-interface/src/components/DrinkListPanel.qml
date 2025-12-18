@@ -7,12 +7,6 @@ Rectangle {
     id: root
 
     signal drinksListRequested
-    //property Beverage model // Model passed from C++
-
-    color: Theme.dark700
-    height: 420
-    radius: Theme.cardRadius
-    width: 270
 
     /*ListModel {
         id: drinkListModel
@@ -42,6 +36,13 @@ Rectangle {
         }
     }
 
+    //property Beverage model // Model passed from C++
+
+    color: Theme.dark700
+    height: 420
+    radius: Theme.cardRadius
+    width: 270
+
     Item {
         anchors.fill: parent
         anchors.margins: Theme.cardMargin
@@ -57,7 +58,6 @@ Rectangle {
                 width: parent.width
 
                 Row {
-
                     TextDefault {
                         color: Theme.white
                         font.pixelSize: 22
@@ -68,8 +68,8 @@ Rectangle {
                     TextDefault {
                         color: Theme.white
                         font.pixelSize: 22
-                        text: "for you"
                         font.weight: 700
+                        text: "for you"
                         textFormat: Text.RichText
                     }
                 }
@@ -87,16 +87,17 @@ Rectangle {
 
             Item {
                 id: drinkListContainer
+
                 height: 268
                 width: parent.width
 
                 ListView {
                     id: drinkListView
-                    model: EdgeCoffeeMachine.drinksList
 
                     clip: true // Prevents items from going out of bounds
 
                     height: parent.height
+                    model: EdgeCoffeeMachine.drinksList
                     spacing: 10
                     width: parent.width
 
@@ -160,8 +161,8 @@ Rectangle {
 
         CustomButton {
             anchors.bottom: parent.bottom
-            width: parent.width
             text: "All drinks"
+            width: parent.width
 
             onClick: root.drinksListRequested()
         }

@@ -14,6 +14,7 @@ Rectangle {
     height: 40
     radius: height / 2
     width: 50
+
     //width: parent.width
 
     TextDefault {

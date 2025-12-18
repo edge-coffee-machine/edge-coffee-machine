@@ -7,6 +7,7 @@ import "../text"
 Item {
     id: sliderInputRoot
 
+    property double initialValue
     property alias label: labelText.text // Expose the text property for external setting
 
     property double maximumValue: 100.0
@@ -15,12 +16,6 @@ Item {
 
     // Public properties for the slider
     property double value
-    property double initialValue
-
-    // Ensure the slider reflects the initial value when it changes
-    onInitialValueChanged: {
-        actualSlider.value = initialValue;
-    }
 
     function getIcon(label: string): string {
         if (label === "Coffee" || label === "Powder") {
@@ -44,6 +39,11 @@ Item {
 
     height: 40
     width: 240
+
+    // Ensure the slider reflects the initial value when it changes
+    onInitialValueChanged: {
+        actualSlider.value = initialValue;
+    }
 
     Rectangle {
         anchors.verticalCenter: parent.verticalCenter
@@ -69,8 +69,8 @@ Item {
                 id: labelText
 
                 color: "white"
-                font.weight: 700
                 font.pixelSize: 12
+                font.weight: 700
                 y: -13
             }
 
@@ -78,8 +78,8 @@ Item {
                 id: quantity
 
                 color: "white"
-                font.weight: 400
                 font.pixelSize: 12
+                font.weight: 400
                 opacity: 0.6
                 text: actualSlider.value.toFixed(1) + " " + sliderInputRoot.unitOfM
 
@@ -93,14 +93,13 @@ Item {
     Slider {
         id: actualSlider
 
-        visible: sliderInputRoot.minimumValue !== sliderInputRoot.maximumValue
-
         anchors.right: parent.right
         anchors.verticalCenter: parent.verticalCenter
         from: sliderInputRoot.minimumValue
         stepSize: 1
         to: sliderInputRoot.maximumValue
         value: sliderInputRoot.initialValue
+        visible: sliderInputRoot.minimumValue !== sliderInputRoot.maximumValue
         width: 150
 
         // Optional: Customize appearance to match original Rectangle if desired

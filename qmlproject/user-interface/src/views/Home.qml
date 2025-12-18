@@ -16,11 +16,11 @@ Rectangle {
     width: 1024
 
     Rectangle {
-        width: parent.width - 60
-        height: parent.height - 60
         anchors.horizontalCenter: parent.horizontalCenter
         color: "transparent"
-        
+        height: parent.height - 60
+        width: parent.width - 60
+
         Components.Header {
             id: header
 
@@ -36,13 +36,14 @@ Rectangle {
 
             anchors.top: header.bottom
             spacing: 15
+
             Rectangle {
                 id: card
 
                 color: Theme.dark700
                 height: 420
-                width: 670
                 radius: Theme.cardRadius
+                width: 670
 
                 Item {
                     anchors.fill: parent
@@ -50,13 +51,13 @@ Rectangle {
 
                     Row {
                         spacing: 15
-                        
+
                         Components.FavouritePanel {
                             id: favouritePanel
 
                             targetBeverage: EdgeCoffeeMachine.selectedBeverage
                         }
-                        
+
                         SettingsPanel {
                             id: settingsPanel
 
@@ -65,7 +66,7 @@ Rectangle {
                     }
                 }
             }
-            
+
             Components.DrinkListPanel {
                 id: drinkListPanel
 
@@ -73,11 +74,10 @@ Rectangle {
 
                 onDrinksListRequested: root.drinksListRequested()
             }
-            
         }
 
         // Bottom assistant
-        
+
         Components.BottomAssistant {
             id: bottomAssistant
 

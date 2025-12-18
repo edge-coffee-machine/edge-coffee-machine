@@ -37,9 +37,10 @@ Rectangle {
         // --- 2. CLOSE BUTTON ---
         CloseButton {
             onGoBackRequested: root.goBackRequested()
+
             anchors {
-                top: parent.top
                 right: parent.right
+                top: parent.top
             }
         }
 
@@ -167,7 +168,6 @@ Rectangle {
                 // B. THE SCROLLABLE LIST (Left Aligned, fills space up to New User)
                 ListView {
                     id: userList
-                    model: EdgeCoffeeMachine.usersList //edgeCoffeeMachineController.users
 
                     anchors.bottom: parent.bottom
                     anchors.left: parent.left
@@ -181,9 +181,11 @@ Rectangle {
 
                     delegate: userDelegate
                     flickableDirection: Flickable.HorizontalFlick
+                    model: EdgeCoffeeMachine.usersList //edgeCoffeeMachineController.users
+
                     orientation: Qt.Horizontal
                     //spacing: root.p_spacing
-/*
+                    /*
                     footer: Item {
                         height: 0
                         // This Item acts as the right-side padding/spacer.

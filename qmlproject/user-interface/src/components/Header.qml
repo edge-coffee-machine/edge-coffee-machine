@@ -7,21 +7,22 @@ Rectangle {
 
     // Signal emitted when "not you?" button is clicked
     signal switchUserRequested
+
     color: "transparent"
 
     Row {
-        spacing: 10
         anchors.verticalCenter: parent.verticalCenter
+        spacing: 10
 
-            H1 {
+        H1 {
             anchors.verticalCenter: parent.verticalCenter
             text: "Good Morning,"
         }
 
         H1 {
             anchors.verticalCenter: parent.verticalCenter
-            font.weight: 300
             font.pixelSize: 32
+            font.weight: 300
             text: EdgeCoffeeMachine.user ? EdgeCoffeeMachine.user.name : "Guest"
         }
 
@@ -63,11 +64,12 @@ Rectangle {
     }
 
     Image {
-        anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
         height: 24
-        width: 24
         source: "assets/icons/logout.png"
+        visible: EdgeCoffeeMachine.user
+        width: 24
 
         MouseArea {
             anchors.fill: parent
@@ -77,6 +79,5 @@ Rectangle {
                 EdgeCoffeeMachine.logoutUser();
             }
         }
-        visible: EdgeCoffeeMachine.user
     }
 }

@@ -14,7 +14,7 @@ Rectangle {
     color: Theme.dark500
     height: 600
     width: 1024
-    
+
     Rectangle {
         anchors.fill: parent
         //anchors.horizontalCenter: parent.horizontalCenter
@@ -23,25 +23,28 @@ Rectangle {
 
         CloseButton {
             id: closeBtn
+
             onGoBackRequested: root.goBackRequested()
+
             anchors {
-                top: parent.top
                 right: parent.right
+                top: parent.top
             }
         }
 
         Header {
             id: header
-            anchors {
-                top: closeBtn.bottom
-            }
 
             height: 60
             width: parent.width
 
             onSwitchUserRequested: root.switchUserRequested()
+
+            anchors {
+                top: closeBtn.bottom
+            }
         }
-        
+
         Rectangle {
             anchors.top: header.bottom
             color: Theme.dark700
@@ -56,6 +59,7 @@ Rectangle {
                 Column {
                     spacing: 10
                     width: parent.width
+
                     Row {
                         TextDefault {
                             color: Theme.white
@@ -66,78 +70,85 @@ Rectangle {
                         TextDefault {
                             color: Theme.white
                             font.pixelSize: 22
-                            text: "our drinks selection"
                             font.weight: 700
+                            text: "our drinks selection"
                         }
                     }
 
                     TextDefault {
-                    id: description
-                    font.pixelSize: 16
-                    opacity: 0.7
-                    text: "Discover a curated collection of drinks designed just for you."
-                }
+                        id: description
 
-                Rectangle {
-                    color: Theme.dark500
-                    height: 355
-                    radius: Theme.cardRadius
-                    width: parent.width
+                        font.pixelSize: 16
+                        opacity: 0.7
+                        text: "Discover a curated collection of drinks designed just for you."
+                    }
 
-                    Item {
-                        anchors.fill: parent
-                        anchors.margins: Theme.cardMargin
+                    Rectangle {
+                        color: Theme.dark500
+                        height: 355
+                        radius: Theme.cardRadius
+                        width: parent.width
 
-                        Column {
-                            spacing: 10
+                        Item {
+                            anchors.fill: parent
+                            anchors.margins: Theme.cardMargin
 
-                            TextDefault {
-                                font.pixelSize: 18
-                                font.weight: 700
-                                text: "Coffee Based"
-                            }
-
-                            Row {
+                            Column {
                                 spacing: 10
 
-                                CoffeeTileSquare {
-                                    onGoBackRequested: root.goBackRequested()
-                                    drink: EdgeCoffeeMachine.drinksList.data(0)
-                                    price: "€1.20"
+                                TextDefault {
+                                    font.pixelSize: 18
+                                    font.weight: 700
+                                    text: "Coffee Based"
                                 }
 
-                                Column {
+                                Row {
                                     spacing: 10
 
-                                    Row {
-                                        spacing: 10
+                                    CoffeeTileSquare {
+                                        drink: EdgeCoffeeMachine.drinksList.data(0)
+                                        price: "€1.20"
 
-                                        CoffeeTile {
-                                            onGoBackRequested: root.goBackRequested()
-                                            drink: EdgeCoffeeMachine.drinksList.data(1)
-                                            price: "€1.20"
-                                        }
-
-                                        CoffeeTile {
-                                            onGoBackRequested: root.goBackRequested()
-                                            drink: EdgeCoffeeMachine.drinksList.data(2)
-                                            price: "€1.20"
-                                        }
-
-                                        CoffeeTile {
-                                            onGoBackRequested: root.goBackRequested()
-                                            drink: EdgeCoffeeMachine.drinksList.data(3)
-                                            price: "€1.20"
-                                        }
+                                        onGoBackRequested: root.goBackRequested()
                                     }
 
-                                    Row {
+                                    Column {
                                         spacing: 10
 
-                                        CoffeeTile {
-                                            onGoBackRequested: root.goBackRequested()
-                                            drink: EdgeCoffeeMachine.drinksList.data(4)
-                                            price: "€1.20"
+                                        Row {
+                                            spacing: 10
+
+                                            CoffeeTile {
+                                                drink: EdgeCoffeeMachine.drinksList.data(1)
+                                                price: "€1.20"
+
+                                                onGoBackRequested: root.goBackRequested()
+                                            }
+
+                                            CoffeeTile {
+                                                drink: EdgeCoffeeMachine.drinksList.data(2)
+                                                price: "€1.20"
+
+                                                onGoBackRequested: root.goBackRequested()
+                                            }
+
+                                            CoffeeTile {
+                                                drink: EdgeCoffeeMachine.drinksList.data(3)
+                                                price: "€1.20"
+
+                                                onGoBackRequested: root.goBackRequested()
+                                            }
+                                        }
+
+                                        Row {
+                                            spacing: 10
+
+                                            CoffeeTile {
+                                                drink: EdgeCoffeeMachine.drinksList.data(4)
+                                                price: "€1.20"
+
+                                                onGoBackRequested: root.goBackRequested()
+                                            }
                                         }
                                     }
                                 }
@@ -146,7 +157,6 @@ Rectangle {
                     }
                 }
             }
-                }
         }
     }
 }

@@ -6,14 +6,14 @@ QtObject {
 
     // UI colors
     readonly property color accent: "#D9A569"
-    readonly property color dark400: "#212223"
-    readonly property color dark500: "#1A1B1C"
-    readonly property color dark600: "#18191A"
-    readonly property color dark700: "#161818"
 
     // Layout
     readonly property int cardMargin: 15
     readonly property int cardRadius: 16
+    readonly property color dark400: "#212223"
+    readonly property color dark500: "#1A1B1C"
+    readonly property color dark600: "#18191A"
+    readonly property color dark700: "#161818"
     readonly property int margins: 30
     readonly property int spacing: 20
 
