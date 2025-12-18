@@ -28,22 +28,22 @@ Item {
 
         anchors.fill: parent
         interactive: false // Disable user swiping; navigation controlled programmatically
+        currentIndex: 1 // Start at Home page
 
-        // Page 1: Home
+        // Page 1: Users Panel
+        UsersPanel {
+            onGoBackRequested: mainSwipeView.currentIndex = 1 // Navigate back to Home page
+        }
+        // Page 2: Home
         Home {
             onDrinksListRequested: mainSwipeView.currentIndex = 2 // Navigate to Drinks List page
-            onSwitchUserRequested: mainSwipeView.currentIndex = 1 // Navigate to Users page
-        }
-
-        // Page 2: Users Panel
-        UsersPanel {
-            onGoBackRequested: mainSwipeView.currentIndex = 0 // Navigate back to Home page
+            onSwitchUserRequested: mainSwipeView.currentIndex = 0 // Navigate to Users page
         }
 
         // Page 3: Drinks List
         DrinksList {
-            onGoBackRequested: mainSwipeView.currentIndex = 0 // Navigate back to Home page
-            onSwitchUserRequested: mainSwipeView.currentIndex = 1 // Navigate to Users page
+            onGoBackRequested: mainSwipeView.currentIndex = 1 // Navigate back to Home page
+            onSwitchUserRequested: mainSwipeView.currentIndex = 0 // Navigate to Users page
         }
     }
 }
