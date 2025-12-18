@@ -41,7 +41,7 @@ Rectangle {
             running: card.isLoading
 
             RotationAnimation {
-                duration: card.brewingTime / 6 // Speed of the tilt (0.5 seconds)
+                duration: 1500 // Speed of the tilt (0.5 seconds)
                 // Use Easing.InOutQuad for a smoother start and stop at the edges
                 easing.type: Easing.InOutQuad
                 // Start where the previous loop ended (or at 0 on the first run)
@@ -50,16 +50,22 @@ Rectangle {
             }
 
             RotationAnimation {
-                duration: card.brewingTime / 6 // Must match the first duration for symmetry
+                duration: 1500 // Must match the first duration for symmetry
                 easing.type: Easing.InOutQuad
                 // Starts where the previous animation ended (20 degrees)
                 from: 5
                 to: -5
             }
+
+            onRunningChanged: {
+                if (!running) {
+                    wave.rotation = 0;
+                }
+            }
         }
         Behavior on width {
             NumberAnimation {
-                duration: card.brewingTime
+                duration: card.isLoading ? card.brewingTime : 1000
                 easing.type: Easing.InOutQuad
             }
         }
@@ -78,7 +84,7 @@ Rectangle {
 
         Behavior on height {
             NumberAnimation {
-                duration: card.brewingTime
+                duration: card.isLoading ? card.brewingTime : 1000
                 easing.type: Easing.InOutQuad
             }
         }
