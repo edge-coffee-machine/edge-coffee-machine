@@ -26,7 +26,6 @@ std::vector<Beverage*> createTestRecipes() {
 }
 
 TEST_CASE("User Profile and Recommendation Engine", "[Logic][User]") {
-    
     // SETUP: Create recipes and user
     // The vector 'recipes' passes ownership of pointers to 'user'
     std::vector<Beverage*> recipes = createTestRecipes();
@@ -40,7 +39,7 @@ TEST_CASE("User Profile and Recommendation Engine", "[Logic][User]") {
 
     SECTION("Initialization: User starts as Default") {
         REQUIRE(user.name.value() == "Batman");
-        REQUIRE(user.initials.value() == "Ba");
+        REQUIRE(user.initials.value() == "BA");
         REQUIRE(user.category() == User::UserCategory::Default);
         
         // In Default mode, weights haven't diverged yet

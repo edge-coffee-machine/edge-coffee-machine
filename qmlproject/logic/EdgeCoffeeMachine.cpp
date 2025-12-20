@@ -71,7 +71,7 @@ namespace Logic
     }
 
     // --- USER TEST ---
-    static Qul::Timer initTimer;
+    /*static Qul::Timer initTimer;
     initTimer.setSingleShot(true);
     initTimer.setInterval(0); // 0ms = next event loop cycle
     initTimer.onTimeout([this]()
@@ -87,7 +87,7 @@ namespace Logic
 
                           this->updateUserModel();
                         });
-    initTimer.start();
+    initTimer.start();*/
     // -------------------------
 
     drinksList.setValue(&m_beverageModelInstance); // Initialize drinksList property to point to the BeverageModel instance
@@ -116,7 +116,7 @@ namespace Logic
 
     m_weightedBeverages.recordSelection(drink);
 
-    Qul::PlatformInterface::log("[ECM] Recorded beverage selection: %s\n",
+    /*Qul::PlatformInterface::log("[ECM] Recorded beverage selection: %s\n",
                                 drink->name.value().c_str());
 
     const std::vector<Beverage *> &items = m_weightedBeverages.items();
@@ -128,7 +128,7 @@ namespace Logic
                                   static_cast<int>(j),
                                   items[j]->name.value().c_str(),
                                   static_cast<double>(weights[j]));
-    }
+    }*/
 
     updateBeverageModel();
   }
@@ -334,7 +334,13 @@ namespace Logic
     {
       m_beverageModelInstance.updateList(user.value()->getDisplayBeverages());
       // Update the selected beverage reference to the new instance in the user list
-      selectBeverage(user.value()->getDisplayBeverages().front());
+      
+      if(user.value()->getDisplayBeverages().size() && user.value()->getDisplayBeverages().size() > 0){
+        selectBeverage(user.value()->getDisplayBeverages().front());
+      }
+      else{
+        selectBeverage(nullptr);
+      }
     }
     else
     {
