@@ -116,7 +116,7 @@ namespace Logic
 
     m_weightedBeverages.recordSelection(drink);
 
-    /*Qul::PlatformInterface::log("[ECM] Recorded beverage selection: %s\n",
+    Qul::PlatformInterface::log("[ECM] Recorded beverage selection: %s\n",
                                 drink->name.value().c_str());
 
     const std::vector<Beverage *> &items = m_weightedBeverages.items();
@@ -128,7 +128,7 @@ namespace Logic
                                   static_cast<int>(j),
                                   items[j]->name.value().c_str(),
                                   static_cast<double>(weights[j]));
-    }*/
+    }
 
     updateBeverageModel();
   }
