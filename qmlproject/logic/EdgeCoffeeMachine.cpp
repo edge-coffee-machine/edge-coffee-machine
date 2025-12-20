@@ -99,7 +99,7 @@ namespace Logic
   /**
    * @brief Records a beverage selection to update popularity weights.
    *
-   * This method is called when a drink is brewed (specifically for guests) or
+   * This method is called when a drink is brewed or
    * internally to track usage statistics. It updates the weights in the
    * `WeightedSortedList`, logs the new weights for debugging, and triggers
    * a UI update to reflect any changes in the beverage sorting order.
@@ -273,17 +273,14 @@ namespace Logic
     {
       currentUser->beverageBrewed(target);
       user.setValue(nullptr);
-
       Qul::PlatformInterface::log("[ECM] User brewed %s and logged out.\n", drinkName.c_str());
     }
     else
     {
-      m_weightedBeverages.recordSelection(target);
-
       Qul::PlatformInterface::log("[ECM] Guest selection recorded for %s.\n", drinkName.c_str());
-
-      updateBeverageModel();
     }
+
+    recordBeverageSelection(target);
 
     status.setValue(drinkName + " is ready!");
     isMakingDrink.setValue(false);
@@ -302,25 +299,26 @@ namespace Logic
    */
   void EdgeCoffeeMachine::selectBeverage(Beverage *beverage)
   {
-    if (selectedBeverage.value() != beverage)
+    if (selectedBeverage.value() == beverage)
     {
-      if (!user.value() && beverage)
-      {
-        beverage->resetIngredients();
-      }
+      return;
+    }
 
-      selectedBeverage.setValue(beverage);
+    if (!user.value() && beverage)
+    {
+      beverage->resetIngredients();
+    }
 
-      if (beverage)
-      {
-        status.setValue("Selected: " + beverage->name.value());
+    selectedBeverage.setValue(beverage);
 
-        Qul::PlatformInterface::log("[ECM] Selected: %s\n", beverage->name.value().c_str());
-      }
-      else
-      {
-        status.setValue("Select a drink");
-      }
+    if (beverage)
+    {
+      status.setValue("Selected: " + beverage->name.value());
+      Qul::PlatformInterface::log("[ECM] Selected: %s\n", beverage->name.value().c_str());
+    }
+    else
+    {
+      status.setValue("Select a drink");
     }
   }
 

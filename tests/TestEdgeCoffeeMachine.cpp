@@ -21,41 +21,39 @@ TEST_CASE("EdgeCoffeeMachine Public Interface", "[Logic][ECM]") {
     resetMachine();
 
     SECTION("Initialization: Default state check") {
-        // According to EdgeCoffeeMachine.cpp constructor:
-        // Status should be "Idle"
-        // isMakingDrink should be false
-        // User should be nullptr
         CHECK(machine.status.value() == "Idle");
         CHECK(machine.getIsMakingDrink() == false);
         CHECK(machine.getUser() == nullptr);
-        
-        // It should have loaded the default popularity list
+        CHECK(machine.getSelectedBeverage() != nullptr);
         CHECK(machine.getPopularBeverages().size() > 0);
     }
 
     SECTION("Beverage Selection: Updates public properties") {
-        // Get a valid drink from the public list
-        const auto& drinks = machine.getPopularBeverages();
-        REQUIRE(drinks.size() > 0);
-        Beverage* espresso = drinks[0]; 
+        // Get the drink list
+        const auto& drinks = machine.getPopularBeverages(); 
+        REQUIRE(drinks.size() >= 2);
 
-        // ACTION: Select the beverage
-        machine.selectBeverage(espresso);
-
-        // VERIFY: Public properties match the selection
-        CHECK(machine.getSelectedBeverage() == espresso);
+        // Get the first drink
+        Beverage* beverage = drinks[0]; 
         
+        // Select it
+        machine.selectBeverage(beverage);
+
+        // Verify selection
+        CHECK(machine.getSelectedBeverage() == beverage); 
+
         // Verify status text contains the drink name (e.g., "Selected: Espresso")
         // We search for the substring because the exact message might change.
-        CHECK(machine.status.value().find(espresso->name.value()) != std::string::npos);
+        CHECK(machine.status.value().find("Selected") != std::string::npos);
+        CHECK(machine.status.value().find(beverage->name.value()) != std::string::npos);
     }
 
-    SECTION("Brewing Start: Verifies state transition to 'Busy'") {
-        // 1. Select a drink
-        Beverage* latte = machine.getPopularBeverages()[0];
-        machine.selectBeverage(latte);
+    SECTION("Brewing Start: Verifies state transition to 'Making'") {
+        // Select a drink
+        Beverage* drink = machine.getPopularBeverages()[0];
+        machine.selectBeverage(drink);
 
-        // 2. Start Brewing
+        // Start Brewing
         machine.makeDrink(nullptr); 
 
         // VERIFY: The machine enters the brewing state
@@ -64,10 +62,7 @@ TEST_CASE("EdgeCoffeeMachine Public Interface", "[Logic][ECM]") {
         
         // Verify status indicates activity (e.g., "Making Latte...")
         CHECK(machine.status.value().find("Making") != std::string::npos);
-        CHECK(machine.status.value().find(latte->name.value()) != std::string::npos);
-
-        // NOTE: Without access to private m_brewTimer, we stop testing here.
-        // We cannot force the brew to finish, so we assume the timer started internally.
+        CHECK(machine.status.value().find(drink->name.value()) != std::string::npos);
     }
 
     SECTION("User Session: Login and Logout public flow") {
@@ -77,14 +72,14 @@ TEST_CASE("EdgeCoffeeMachine Public Interface", "[Logic][ECM]") {
         std::vector<Beverage*> userRecipes; 
         User* batman = new User("Batman", 1, userRecipes);
 
-        // 1. Login
+        // Login
         machine.setUser(batman);
         
         // Verify state changes
         CHECK(machine.getUser() == batman);
         CHECK(machine.status.value().find("Batman") != std::string::npos);
 
-        // 2. Logout
+        // Logout
         machine.logoutUser();
 
         // Verify return to Guest state
