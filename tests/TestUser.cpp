@@ -5,7 +5,7 @@
 #include <iostream>
 
 // Include the class to test
-#include "../qmlproject/logic/User.h"
+#include "../qmlproject/logic/user.h"
 #include "../qmlproject/logic/Beverage.h"
 #include "../qmlproject/logic/EdgeCoffeeMachine.h"
 
@@ -26,6 +26,9 @@ std::vector<Beverage*> createTestRecipes() {
 }
 
 TEST_CASE("User Profile and Recommendation Engine", "[Logic][User]") {
+    EdgeCoffeeMachine::resetInstance();
+    EdgeCoffeeMachine::instance();
+
     // SETUP: Create recipes and user
     // The vector 'recipes' passes ownership of pointers to 'user'
     std::vector<Beverage*> recipes = createTestRecipes();
@@ -35,15 +38,15 @@ TEST_CASE("User Profile and Recommendation Engine", "[Logic][User]") {
     Beverage* americano = recipes[1];  // Index 1
     Beverage* macchiato = recipes[4];  // Index 4
 
-    Logic::User user("Batman", 1, recipes);
+    User *user = new User("Batman",  1, recipes);
 
     SECTION("Initialization: User starts as Default") {
-        REQUIRE(user.name.value() == "Batman");
-        REQUIRE(user.initials.value() == "BA");
-        REQUIRE(user.category() == User::UserCategory::Default);
+        REQUIRE(user->name.value() == "Batman");
+        REQUIRE(user->initials.value() == "BA");
+        REQUIRE(user->category() == User::UserCategory::Default);
         
         // In Default mode, weights haven't diverged yet
-        const auto& displayList = user.getDisplayBeverages();
+        const auto& displayList = user->getDisplayBeverages();
         REQUIRE(displayList.size() == 6);
     }
 
@@ -52,21 +55,21 @@ TEST_CASE("User Profile and Recommendation Engine", "[Logic][User]") {
         // 1. Sticks to the same drink (Espresso)
         // 2. Does NOT customize
         // 3. Needs > 3 drinks to be classified
-
+        
         INFO("Brewing Espresso 3 times without customization");
         
         for(int i=0; i<3; i++) {
-            user.beverageBrewed(espresso);
+            user->beverageBrewed(espresso);
         }
-
+        
         // CHECK 1: Classification
         // Low variety (TryerScore low) + No customization (CustomizerScore low) -> Conservative
-        REQUIRE(user.category() == User::UserCategory::Conservative);
-
+        REQUIRE(user->category() == User::UserCategory::Conservative);
+        
         // CHECK 2: Sorting
         // Conservative users see list sorted strictly by weight (Favorites first).
         // Espresso was selected 4 times, so it must be #1.
-        const auto& list = user.getDisplayBeverages();
+        const auto& list = user->getDisplayBeverages();
         REQUIRE(list.front()->name.value() == "Espresso");
         
         // Ensure weights are decaying correctly (others should be lower than Espresso)
@@ -80,32 +83,32 @@ TEST_CASE("User Profile and Recommendation Engine", "[Logic][User]") {
         // Early Adopter behavior:
         // 1. Tries different drinks (High Tryer Score)
         // 2. Customizes drinks (High Customizer Score)
-
+        
         INFO("Brewing different drinks with customization");
-
+        
         // Brew 1: Custom Espresso
-        user.beverageCustomized(); 
-        user.beverageBrewed(espresso); // Index 0
-
+        user->beverageCustomized(); 
+        user->beverageBrewed(espresso); // Index 0
+        
         // Brew 2: Custom Americano
-        user.beverageCustomized();
-        user.beverageBrewed(americano); // Index 1
-
+        user->beverageCustomized();
+        user->beverageBrewed(americano); // Index 1
+        
         // Brew 3: Custom Macchiato
-        user.beverageCustomized();
-        user.beverageBrewed(macchiato); // Index 4 (Novelty!)
-
+        user->beverageCustomized();
+        user->beverageBrewed(macchiato); // Index 4 (Novelty!)
+        
         // CHECK 1: Classification
-        REQUIRE(user.category() == User::UserCategory::EarlyAdopter);
-
+        REQUIRE(user->category() == User::UserCategory::EarlyAdopter);
+        
         // CHECK 2: The "Suggestion" Injection logic
         // Early Adopters get a low-weight suggestion inserted at index 2 (3rd position).
         // Based on our brewing, Macchiato is high weight.
         // The list should be roughly: [High, High, SUGGESTION, ...]
         
-        const auto& list = user.getDisplayBeverages();
+        const auto& list = user->getDisplayBeverages();
         REQUIRE(list.size() == 6);
-
+        
         CHECK(list[0] == macchiato);
         CHECK(list[1] == americano);
         CHECK(list[2] != espresso); // Espresso is the third most liked, but here goes the suggestion
@@ -114,13 +117,12 @@ TEST_CASE("User Profile and Recommendation Engine", "[Logic][User]") {
 
     SECTION("Error Handling: Brewing null or unknown beverage") {
         // Should not crash
-        user.beverageBrewed(nullptr);
-        
+        user->beverageBrewed(nullptr);
         // Create a beverage NOT in the user's list
         Beverage unknown("Unknown", 0,0,0, 0,0,0, 0,0,0, 0,0,0, 0,0,0);
-        user.beverageBrewed(&unknown);
+        user->beverageBrewed(&unknown);
         
         // State should remain consistent
-        CHECK(user.category() == User::UserCategory::Default);
+        CHECK(user->category() == User::UserCategory::Default);
     }
 }
