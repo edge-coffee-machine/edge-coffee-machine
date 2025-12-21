@@ -1,0 +1,86 @@
+@startuml user_recognition_and_menu_display
+title User Recognition and Menu Display
+skinparam sequenceMessageAlign center
+
+actor User
+participant Camera
+participant Backend
+participant "AI component" as AI
+participant Frontend
+
+loop System Lifecycle
+
+    ' === Detection Phase ===
+    ' The system is in a tight loop looking for a user
+    loop Detection Phase
+        Camera -> Backend: Send Image
+        Backend -> AI: Analyze Image
+        activate AI
+
+        AI -> AI: Execute Face Detection
+
+        alt Face Detected
+            AI -> AI: Execute Recognition (Get User ID)
+            AI --> Backend: Send User ID
+            deactivate AI
+            ' We found a user, so we "break" out of the
+            ' fast detection loop to start the interaction.
+            break
+        else No Face Detected
+            AI --> Backend: No Face
+            deactivate AI
+            ' No face, so this inner loop continues
+        end
+    end
+
+    ' === Interaction Phase ===
+    ' This part is reached *only* after the "break"
+    activate Backend
+
+    ' 1. Stop the stream, as per the description
+    Backend -> Backend: Interrupt Camera→AI Stream
+
+    ' 2. Process user ID and update state
+    Backend -> Backend: Compare User ID with Cache
+    alt Match Not Found
+        Backend -> Backend: Classify as "Default Customer"
+        Backend -> Backend: Add to Cache
+        Backend -> Backend: Update User Status & Beverages List
+        Backend -> Frontend: Notify userChanged
+        Backend -> Frontend: Notify beveragesChanged
+    else Match Found
+        Backend -> Backend: Update User Status & Beverages List
+        Backend -> Frontend: Notify userChanged
+        Backend -> Frontend: Notify beveragesChanged
+    end
+
+    ' 3. Frontend reacts to notifications
+    activate Frontend
+    Frontend -> Frontend: Handle userChanged
+    Frontend -> Frontend: Handle beveragesChanged
+    Frontend --> User: Update UI
+    deactivate Frontend
+
+    ' 4. Backend waits for user interaction or timeout
+    ' This 'alt' group correctly shows the two possibilities
+    alt User Interacts (Success)
+        Frontend -> Backend: Send User Event (e.g., selection)
+
+        ' ... Logic for processing the interaction ...
+        Backend -> Backend: Process User Selection
+        Backend -> Frontend: Confirm Selection / Show "Thank You"
+
+        ' After a successful interaction, reset the screen
+        Backend -> Frontend: Return to Default Screen
+
+    else Timeout (No event received)
+        ' This is the failure path from the description
+        Backend -> Frontend: Return to Default Screen
+    end
+
+    ' 5. Explicitly restart the flow before the main loop repeats
+    Backend -> Backend: Restart Camera→AI Stream
+    deactivate Backend
+
+end
+@enduml

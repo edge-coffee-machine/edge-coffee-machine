@@ -1,0 +1,31 @@
+@startuml components
+' Hardware Interfaces
+interface "Display" as Disp
+interface "Touch Display" as Touch
+interface "Camera" as Cam
+interface "Microphone" as Mic
+
+' Software Components
+package "Device Firmware" {
+  [UI/Frontend\n(Qt for MCU)] as UI
+  [App logic/Backend\n(ESP-IDF, C++)] as Backend
+  [AI component\n(ESP-DL, ESP-SR)] as AI
+}
+
+' Relationships
+' UI <-> Backend
+Backend -> UI : "High-level commands"
+UI -> Backend : "High-level events"
+
+' UI <-> Hardware
+UI ..> Disp : "Renders GUI"
+Touch ..> UI : "Captures user input"
+
+' Backend <-> Hardware
+Cam ..> Backend : "Raw image data"
+Mic ..> Backend : "Raw audio data"
+
+' Backend <-> AI
+Backend -right-> AI : "Image/Audio data"
+AI -left-> Backend : "Embeddings/Commands"
+@enduml

@@ -1,0 +1,57 @@
+@startuml voice_command_interaction
+skinparam sequenceMessageAlign center
+
+title Voice Command Interaction
+
+participant Frontend
+participant Backend
+participant AI
+participant Microphone
+
+' Interaction starts after customer recognition
+Backend -> Backend: Customer Recognized
+activate Backend
+
+' 1. Backend sends menu and initiates voice interaction in parallel
+par
+    Backend -> Frontend: Send Menu
+else
+    ' 2. Backend starts listening and streaming
+    Backend -> Microphone: Activate (Start Listening)
+    activate Microphone
+    Backend -> AI: Activate (Expect Audio Stream)
+    activate AI
+end
+
+' 3. The audio stream is now live
+Microphone ->> Backend: Live Audio Stream
+Backend ->> AI: Forward Live Audio Stream
+note right of AI: AI is now continuously processing\nthe stream for commands...
+
+' 4. The system now waits for one of two outcomes:
+alt Command Recognized
+    ' 4a. AI finds a command and sends it
+    AI -> Backend: Send Recognized Command
+    note left of AI: Command detected in stream
+
+    ' 5a. Backend executes the command
+    Backend -> Backend: Execute Command
+    ' Note: The diagram assumes the loop continues unless a "stop" command is given.
+    ' Deactivation is only shown on the timeout path per the prompt.
+
+else No Input / Timeout
+    ' 4b. Backend's internal timer expires
+    Backend -> Backend: Timeout (No input from AI or Frontend)
+
+    ' 5b. Backend stops the audio stream
+    Backend -> AI: Stop Audio Stream
+    deactivate AI
+    Backend -> Microphone: Stop Listening
+    deactivate Microphone
+
+    ' 6b. Backend tells Frontend to reset
+    Backend -> Frontend: Return to Default Screen
+    deactivate Backend
+end
+
+@enduml

@@ -1,0 +1,40 @@
+allespresso:
+  type: web
+  organization: Wilma Studio
+  author:
+    - Deshmir, Morteza
+    - Mahdizadehm, Hamid
+    - Kazemkhani, Mostafa
+    - Askarzade, Mahdiar
+  title: Allespresso, Coffee Maker UI/UX Design
+  publisher: Behance
+  date: 2024-09-11
+  url: https://www.behance.net/gallery/206658869/Allespresso-Coffee-Maker-UIUX-Design
+
+delivery-coffee-application:
+  type: web
+  author: Rahimi, Meena
+  title: Delivery coffee application
+  publisher: Dribbble
+  url: https://dribbble.com/shots/20353652-Delivery-coffee-application
+
+coffee-app-design:
+  type: web
+  author: Masud, Afzal
+  title: Coffee App Design – UI UX
+  publisher: Dribbble
+  url: https://dribbble.com/shots/25873648-Coffee-App-Design-UI-UX
+
+coffee-app:
+  type: web
+  author: Moeller, Thomas
+  title: Coffee App
+  publisher: Dribbble
+  url: https://dribbble.com/shots/21273795-Coffee-App
+
+smart-coffee-machine-app:
+  type: web
+  author: Windmill, Sergii
+  title: Smart coffee machine app
+  publisher: Dribbble
+  url: https://dribbble.com/shots/23534133-Smart-coffee-machine-app

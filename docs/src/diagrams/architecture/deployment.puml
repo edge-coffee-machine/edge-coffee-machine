@@ -1,0 +1,12 @@
+@startuml deployment
+' Define the single hardware node
+node "ESP32-P4-Function-EV" <<device>> as Hardware {
+  ' Define the single artifact (firmware) that is deployed on the node
+  artifact "Monolithic Application Firmware" <<binary>> {
+    ' Define the software modules compiled into the firmware
+    component "Frontend"
+    component "Backend"
+    component "AI"
+  }
+}
+@enduml

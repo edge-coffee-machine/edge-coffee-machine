@@ -1,0 +1,68 @@
+@startuml drink_lifecycle_state_diagram
+[*] --> Idle
+
+state Idle {
+  Idle : status = "Idle" / "Ready" / "Welcome {User}"
+  Idle : isMakingDrink = false
+  Idle : selectedBeverage = nullptr or previous
+}
+
+Idle --> BeverageSelected : selectBeverage(beverage)
+
+state BeverageSelected {
+  BeverageSelected : status = "Selected: {BeverageName}"
+  BeverageSelected : selectedBeverage = beverage pointer
+  BeverageSelected : isMakingDrink = false
+}
+
+BeverageSelected --> Customization : User modifies ingredients\n(QML slider interaction)
+BeverageSelected --> Brewing : makeDrink()
+
+state Customization {
+  Customization : IngredientInfo.current modified
+  Customization : user.beverageCustomized() called
+  Customization : customizerScore incremented
+}
+
+Customization --> Brewing : makeDrink()
+
+state Brewing {
+  Brewing : status = "Making {Name}..."
+  Brewing : isMakingDrink = true
+  Brewing : m_brewTimer started
+  Brewing : UI shows progress animation
+}
+
+Brewing --> Cancelled : stopBrewing()
+Brewing --> Finished : Timer expires\n(m_brewTimer.onTimeout)
+
+state Cancelled {
+  Cancelled : status = "Canceled: {Name} preparation stopped."
+  Cancelled : isMakingDrink = false
+  Cancelled : m_brewTimer stopped
+}
+
+state Finished {
+  Finished : status = "{BeverageName} is ready!"
+  Finished : isMakingDrink = false
+}
+
+Finished --> PostProcessing : Automatic
+
+state PostProcessing {
+  PostProcessing : IF user != nullptr:
+  PostProcessing :   - user.beverageBrewed(beverage)
+  PostProcessing :   - Update user preferences/weights
+  PostProcessing :   - user.setValue(nullptr) [auto logout]
+  PostProcessing : ELSE (guest):
+  PostProcessing :   - recordBeverageSelection(beverage)
+  PostProcessing :   - Update global popularity weights
+  PostProcessing :
+  PostProcessing : updateBeverageModel() called
+  PostProcessing : Beverage list re-sorted
+}
+
+PostProcessing --> Idle : Auto-return
+Cancelled --> Idle : Auto-return
+
+@enduml
