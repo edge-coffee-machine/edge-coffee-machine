@@ -1004,8 +1004,8 @@ The `TestBeverage.cpp` file validates recipe data and ingredient customization l
 The `TestUser.cpp` file validates user profile logic and personalization algorithms:
 
 - *Default Category*: New users start in the "Default" category, shown global popularity list (FR-U-3).
-- *Conservative Classification*: After ≥3 identical beverage selections with no customization, user is classified as "Conservative" and shown top 2 favorites first (FR-U-4).
-- *Early Adopter Classification*: High variety (different drinks) + high customization (ingredient modifications) → "EarlyAdopter" category; untried drinks injected into top recommendations (FR-U-5).
+- *Conservative Classification*: After ≥3 similar beverage selections with little customization, user is classified as "Conservative" and shown his favorites first (FR-U-4).
+- *Early Adopter Classification*: High variety (different drinks) + high customization (ingredient modifications) → "EarlyAdopter" category; untried drink injected into top 3 recommendations (FR-U-5).
 - *History Tracking*: `beverageBrewed()` increments drink counters; `beverageCustomized()` flags session for customization scoring (FR-S-1).
 - *Error Resilience*: Null or unknown beverages handled gracefully without state corruption.
 
