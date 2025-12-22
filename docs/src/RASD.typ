@@ -71,7 +71,7 @@
     text(size: 24pt, fill: rgb("#777"))[Edge Coffee Machine]
     linebreak()
     v(4pt)
-    text(size: 1.2em)[Version 1.4 · 2025-12-21]
+    text(size: 1.2em)[Version 1.3 · 2025-12-21]
     linebreak()
     v(16pt)
     grid(
