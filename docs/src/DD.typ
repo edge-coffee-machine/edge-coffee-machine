@@ -69,7 +69,7 @@
     text(size: 24pt, fill: rgb("#777"))[Edge Coffee Machine]
     linebreak()
     v(4pt)
-    text(size: 1.2em)[Living document · Snapshot: 2025-12-21]
+    text(size: 1.2em)[Living document · Snapshot: 2025-12-26]
     linebreak()
     text(
       fill: rgb("#777"),
