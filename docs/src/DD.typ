@@ -1038,7 +1038,7 @@ The `TestEdgeCoffeeMachine.cpp` file validates the state machine and main contro
 
 === UI Integration Tests
 
-UI integration tests will validate the interaction between QML frontend and C++ backend on a desktop environment. Mock implementations will substitute the AI module (face recognition, voice commands) and brew timer for deterministic, repeatable testing.
+UI integration tests will validate the interaction between QML frontend and C++ backend on a desktop environment. Mock implementations will substitute the AI module (face recognition, voice commands) and brew timer for deterministic, repeatable testing. Since Qt for MCU does not provide UI testing support for the ESP32-P4-Function-EV board, a golden reference approach will be used for these tests. Consequently, only backend changes that are reflected in the user interface will be validated.
 
 ==== Touch Navigation & Ingredient Customization
 
@@ -1053,9 +1053,8 @@ UI integration tests will validate the interaction between QML frontend and C++ 
 
 ==== Brewing Display & Cancellation
 
-- *Brew Screen Transition*: After `makeDrink()` is called, the UI transitions to a brewing screen; other controls are disabled (FR-UI-2).
+- *Brew Screen Transition*: After `makeDrink()` is called, the UI transitions to a brewing screen (FR-UI-2).
 - *Progress Animation*: A visual progress indicator (bar or waveform) animates during brewing; updates at least every 500 ms.
-- *Brew Time Label*: Estimated time from `Beverage::brewingTime()` is displayed to the user.
 - *Cancel Button*: User can tap a cancel button during brewing, which calls `EdgeCoffeeMachine::stopBrewing()` (FR-UI-3).
 
 ==== Post-Brewing Reset
