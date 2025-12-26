@@ -95,3 +95,24 @@ Qt Creator can be set up to format on save:
 - Frontend uses **[Qt for MCUs](https://doc.qt.io/QtForMCUs/)**
 
 [^1]: Select this option and not **QmlFormat** since the latter doesn't format on save correctly.
+
+## 🧪 Visual Testing Setup (Windows)
+
+To ensure the UI renders correctly across changes, we use a Visual Regression Testing system based on **Python + Pytest + OpenCV**.
+
+### 1. Prerequisites
+- Python 3.10 or newer installed.
+- The project compiled successfully (an `.exe` must exist in the build folder).
+
+### 2. Setup Virtual Environment
+Run the following commands in PowerShell from the project root:
+
+```powershell
+# 1. Create virtual environment (only once)
+python -m venv venv
+
+# 2. Activate environment
+.\venv\Scripts\Activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
