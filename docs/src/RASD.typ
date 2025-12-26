@@ -71,7 +71,7 @@
     text(size: 24pt, fill: rgb("#777"))[Edge Coffee Machine]
     linebreak()
     v(4pt)
-    text(size: 1.2em)[Version 1.3 · 2025-12-21]
+    text(size: 1.2em)[Version 1.4 · 2025-12-26]
     linebreak()
     v(16pt)
     grid(
@@ -353,13 +353,13 @@ The Source column indicates whether the requirement is clearly stated in the pro
 
   [FR-U-4],
   [Conservative customers menu],
-  [Conservative customers will be shown their 2 preferred drinks at the start of the drinks list.],
+  [Conservative customers will be shown their drinks ordered by preference.],
   [Qt],
   [high-priority-sym],
 
   [FR-U-5],
   [Early adopter customers menu],
-  [Early adopter customers will be shown drinks they have not tried yet at the start of the drinks list.],
+  [Early adopter customers will be shown a drink they have not tried yet after their 2 favorite drinks.],
   [Qt],
   [high-priority-sym],
 
