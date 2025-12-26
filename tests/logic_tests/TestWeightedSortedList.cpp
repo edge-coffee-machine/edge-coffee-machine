@@ -1,7 +1,7 @@
 #include "catch.hpp"
 #include <string>
 #include <vector>
-#include "../qmlproject/logic/WeightedSortedList.h"
+#include "../../qmlproject/logic/WeightedSortedList.h"
 
 using namespace Logic;
 

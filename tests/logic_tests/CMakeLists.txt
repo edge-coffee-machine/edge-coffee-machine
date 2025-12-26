@@ -12,17 +12,17 @@ add_executable(unit_tests
     TestWeightedSortedList.cpp
     TestEdgeCoffeeMachine.cpp
     
-    ../qmlproject/logic/Beverage.cpp
-    ../qmlproject/logic/User.cpp
-    ../qmlproject/logic/EdgeCoffeeMachine.cpp
-    ../qmlproject/logic/RecipeDatabase.cpp
-    ../qmlproject/logic/WeightedSortedList.h
+    ../../qmlproject/logic/Beverage.cpp
+    ../../qmlproject/logic/User.cpp
+    ../../qmlproject/logic/EdgeCoffeeMachine.cpp
+    ../../qmlproject/logic/RecipeDatabase.cpp
+    ../../qmlproject/logic/WeightedSortedList.h
 )
 
 target_include_directories(unit_tests PRIVATE
-    ${CMAKE_SOURCE_DIR}/tests/include
+    ${CMAKE_SOURCE_DIR}/tests/logic_tests/include
     ${CMAKE_SOURCE_DIR}/qmlproject/logic
-    ${CMAKE_SOURCE_DIR}/tests
+    ${CMAKE_SOURCE_DIR}/tests/logic_tests
 )
 
 target_compile_features(unit_tests PRIVATE cxx_std_17)

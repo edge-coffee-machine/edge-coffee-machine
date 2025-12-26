@@ -3,7 +3,7 @@
 #include <vector>
 
 // Include the header normally.
-#include "../qmlproject/logic/EdgeCoffeeMachine.h"
+#include "../../qmlproject/logic/EdgeCoffeeMachine.h"
 
 using namespace Logic;
 

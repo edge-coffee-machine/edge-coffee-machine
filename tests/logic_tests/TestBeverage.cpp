@@ -1,6 +1,6 @@
 #include "catch.hpp"
 #include <string>
-#include "../qmlproject/logic/Beverage.h"
+#include "../../qmlproject/logic/Beverage.h"
 
 using namespace Logic;
 

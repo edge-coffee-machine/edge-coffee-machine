@@ -5,9 +5,9 @@
 #include <iostream>
 
 // Include the class to test
-#include "../qmlproject/logic/user.h"
-#include "../qmlproject/logic/Beverage.h"
-#include "../qmlproject/logic/EdgeCoffeeMachine.h"
+#include "../../qmlproject/logic/user.h"
+#include "../../qmlproject/logic/Beverage.h"
+#include "../../qmlproject/logic/EdgeCoffeeMachine.h"
 
 using namespace Logic;
 
