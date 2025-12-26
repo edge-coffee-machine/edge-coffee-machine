@@ -237,13 +237,24 @@ namespace Logic
   {
     if (isMakingDrink.value())
     {
+      User *currentUser = user.value();
+      std::string drinkName = selectedBeverage.value() ? selectedBeverage.value()->name.value() : "Drink";
+
       m_brewTimer.stop();
       isMakingDrink.setValue(false);
-
-      std::string drinkName = selectedBeverage.value() ? selectedBeverage.value()->name.value() : "Drink";
       status.setValue("Canceled: " + drinkName + " preparation stopped.");
 
-      Qul::PlatformInterface::log("[ECM] Brewing process cancelled by user.\n");
+      if (currentUser)
+      {
+        user.setValue(nullptr);
+        Qul::PlatformInterface::log("[ECM] User %s canceled brewing %s and logged out.\n",
+                                    currentUser->name.value().c_str(),
+                                    drinkName.c_str());
+      }
+      else
+      {
+        Qul::PlatformInterface::log("[ECM] Guest canceled brewing %s.\n", drinkName.c_str());
+      }
     }
     else
     {
@@ -273,7 +284,7 @@ namespace Logic
     {
       currentUser->beverageBrewed(target);
       user.setValue(nullptr);
-      Qul::PlatformInterface::log("[ECM] User brewed %s and logged out.\n", drinkName.c_str());
+      Qul::PlatformInterface::log("[ECM] User %s brewed %s and logged out.\n", currentUser->name.value().c_str(), drinkName.c_str());
     }
     else
     {
@@ -334,11 +345,13 @@ namespace Logic
     {
       m_beverageModelInstance.updateList(user.value()->getDisplayBeverages());
       // Update the selected beverage reference to the new instance in the user list
-      
-      if(user.value()->getDisplayBeverages().size() && user.value()->getDisplayBeverages().size() > 0){
+
+      if (user.value()->getDisplayBeverages().size() && user.value()->getDisplayBeverages().size() > 0)
+      {
         selectBeverage(user.value()->getDisplayBeverages().front());
       }
-      else{
+      else
+      {
         selectBeverage(nullptr);
       }
     }
