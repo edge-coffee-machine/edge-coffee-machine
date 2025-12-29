@@ -145,6 +145,19 @@ def test_main_screen(app_process):
     click_element("espresso_button.png")
     time.sleep(0.2)
     click_element("mocha_button.png")
+    time.sleep(0.2)
 
     # Compare main window (mocha ingredients reset)
     screenshot(window, "main4.png")
+
+    # Change coffee amount
+    click_element("coffe_slider_button.png")
+    time.sleep(0.2)
+
+    # Reset coffe amount
+    click_element("reset_button.png")
+    time.sleep(0.2)
+
+    # Compare main window (mocha ingredients reset)
+    screenshot(window, "main5.png")
+
