@@ -36,10 +36,11 @@ TEST_CASE("User Profile and Recommendation Engine", "[Logic][User]") {
     Beverage* americano = recipes[1];  // Index 1
     Beverage* macchiato = recipes[4];  // Index 4
 
-    Logic::User user("Batman", 1, recipes);
+    Logic::User user("Mr.", "Batman", 1, recipes);
 
     SECTION("Initialization: User starts as Default") {
-        REQUIRE(user.name.value() == "Batman");
+        REQUIRE(user.name.value() == "Mr.");
+        REQUIRE(user.surname.value() == "Batman");
         REQUIRE(user.initials.value() == "Ba");
         REQUIRE(user.category() == User::UserCategory::Default);
         

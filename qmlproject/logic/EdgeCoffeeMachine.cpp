@@ -17,6 +17,7 @@
 
 #include <algorithm>
 #include <cstdio>
+#include <ctime>
 
 namespace Logic
 {
@@ -71,7 +72,7 @@ namespace Logic
     }
 
     // --- USER TEST ---
-    /*static Qul::Timer initTimer;
+    static Qul::Timer initTimer;
     initTimer.setSingleShot(true);
     initTimer.setInterval(0); // 0ms = next event loop cycle
     initTimer.onTimeout([this]()
@@ -81,13 +82,13 @@ namespace Logic
                           this->enrollUser(10);
                           this->enrollUser(20);
 
-                          User *testUser = new User("Paolo Rossi", 1, RecipeDatabase::getAllDefaultRecipes());
+                          User *testUser = new User("Paolo", "Rossi", 1, RecipeDatabase::getAllDefaultRecipes());
                           m_user_list.push_back(testUser);
                           m_users_by_id[99] = testUser;
 
                           this->updateUserModel();
                         });
-    initTimer.start();*/
+    initTimer.start();
     // -------------------------
 
     drinksList.setValue(&m_beverageModelInstance); // Initialize drinksList property to point to the BeverageModel instance
@@ -406,12 +407,56 @@ namespace Logic
       return;
     }
 
-    // Default display name and picture
-    std::string name = "User " + std::to_string(id);
+    // Generate username by concatenating random adjective and beverage name
+    static const std::vector<std::string> adjectives = {
+      "Happy", "Bold", "Chill", "Sunny", "Lucky", "Brave", "Clever", "Calm", "Swift", "Bright"
+    };
+
+    const std::vector<Beverage *> &beverages = RecipeDatabase::getAllDefaultRecipes();
+    std::string name;
+    std::string surname;
+
+    
+    size_t maxCombinations = adjectives.size() * beverages.size();
+    size_t usedCombinations = m_user_list.size();
+
+    if (!beverages.empty() && usedCombinations < maxCombinations) {
+        static bool seeded = false;
+        if (!seeded) {
+            std::srand(static_cast<unsigned int>(std::time(nullptr)));
+            seeded = true;
+        }
+        bool unique = false;
+        int attempts = 0;
+        do {
+            int adjIdx = std::rand() % adjectives.size();
+            int bevIdx = std::rand() % beverages.size();
+            name = adjectives[adjIdx];
+            surname = beverages[bevIdx]->name.value();
+
+            unique = true;
+            for (const auto &user : m_user_list) {
+                if (user->name.value() == name && user->surname.value() == surname) {
+                    unique = false;
+                    break;
+                }
+            }
+            attempts++;
+        } while (!unique && attempts < 1000); // Prevent infinite loop
+
+        // If after 1000 attempts we didn't find a unique one, fallback
+        if (!unique) {
+            name = "User";
+            surname = std::to_string(id);
+        }
+    } else {
+        name = "User";
+        surname = std::to_string(id);
+    }
     int picture = 0;
 
     // Create the new User object
-    User *u = new User(name, picture, RecipeDatabase::getAllDefaultRecipes());
+    User *u = new User(name, surname, picture, RecipeDatabase::getAllDefaultRecipes());
 
     Qul::PlatformInterface::log("[ECM] Enrolled new user %s (id=%d)\n", name.c_str(), id);
     m_user_list.push_back(u);

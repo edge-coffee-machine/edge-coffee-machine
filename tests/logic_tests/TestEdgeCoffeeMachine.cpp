@@ -49,14 +49,17 @@ TEST_CASE("EdgeCoffeeMachine Public Interface", "[Logic][ECM]") {
 
     SECTION("User Session: Login and Logout public flow") {
         EdgeCoffeeMachine& machine = EdgeCoffeeMachine::instance();
+        // Create a temporary user for testing
+        // We pass empty recipes as we don't need to test the inner User logic here, 
+        // just the Machine's handling of the pointer.
         std::vector<Beverage*> userRecipes = machine.getPopularBeverages();
-        User* batman = new User("Batman", 1, userRecipes);
+        User* batman = new User("Mr.", "Batman", 1, userRecipes);
 
         machine.setUser(batman);
 
         CHECK(machine.getUser() == batman);
         // Check that the machine status contains some welcoming message including "Batman"
-        CHECK(machine.status.value().find("Batman") != std::string::npos);
+        CHECK(machine.status.value().find("Mr.") != std::string::npos);
 
         machine.logoutUser();
 

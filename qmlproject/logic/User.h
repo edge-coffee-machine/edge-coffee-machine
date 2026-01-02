@@ -43,10 +43,11 @@ namespace Logic
          * @brief Constructs a new User with a cloned set of recipes.
          *
          * @param nameVal The display name of the user.
+         * @param surnameVal The surname of the user. 
          * @param pictureVal The ID of the user's profile picture.
          * @param personalRecipes A vector of Beverage pointers that this User will own and manage independently.
          */
-        User(const std::string &nameVal, int pictureVal, const std::vector<Beverage *> &personalRecipes);
+        User(const std::string &nameVal, const std::string &surnameVal, int pictureVal, const std::vector<Beverage *> &personalRecipes);
 
         /**
          * @brief Destructor. Cleans up the personal beverage instances.
@@ -57,6 +58,11 @@ namespace Logic
          * @brief The user's display name.
          */
         Qul::Property<std::string> name;
+
+        /**
+         * @brief The user's surname.
+         */
+        Qul::Property<std::string> surname;
 
         /**
          * @brief The user's initials derived from their name.

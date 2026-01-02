@@ -225,7 +225,7 @@ Rectangle {
                             font.bold: true
                             font.pixelSize: 42
                             // Auto Initials
-                            text: EdgeCoffeeMachine.usersList.data(index).initials //"PT"name.charAt(0).toUpperCase() + name.charAt(1).toUpperCase()
+                            text: EdgeCoffeeMachine.usersList.data(index).initials
                         }
                     }
 
@@ -243,6 +243,16 @@ Rectangle {
                             font.pixelSize: 18
                             horizontalAlignment: Text.AlignHCenter
                             text: EdgeCoffeeMachine.usersList.data(index).name
+                            width: parent.width
+                        }
+
+                        Text {
+                            color: "#FFFFFF"
+                            elide: Text.ElideRight
+                            font.bold: false
+                            font.pixelSize: 18
+                            horizontalAlignment: Text.AlignHCenter
+                            text: EdgeCoffeeMachine.usersList.data(index).surname
                             width: parent.width
                         }
                     }

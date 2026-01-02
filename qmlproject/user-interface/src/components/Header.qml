@@ -23,7 +23,7 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 32
             font.weight: 300
-            text: EdgeCoffeeMachine.user ? EdgeCoffeeMachine.user.name : "Guest"
+            text: EdgeCoffeeMachine.user ? (EdgeCoffeeMachine.user.name + " " + EdgeCoffeeMachine.user.surname ): "Guest"
         }
 
         Rectangle {

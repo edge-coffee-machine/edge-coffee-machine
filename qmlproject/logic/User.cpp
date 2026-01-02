@@ -27,24 +27,30 @@ namespace Logic
      * for this user do not affect the global recipes or other users.
      *
      * @param nameVal The display name of the user.
+     * @param surnameVal The user's surname.
      * @param pictureVal The ID of the user's profile picture.
      * @param personalRecipes A vector of Beverage pointers exclusively owned by this User.
      */
-    User::User(const std::string &nameVal, int pictureVal, const std::vector<Beverage *> &personalRecipes)
+    User::User(const std::string &nameVal, const std::string &surnameVal, int pictureVal, const std::vector<Beverage *> &personalRecipes)
         : m_weightedBeverages(personalRecipes, defaultWeightR)
     {
         name.setValue(nameVal);
-        // Compute initials from name
+        surname.setValue(surnameVal);
+        // Compute initials from name and surname
         std::string computedInitials = "";
         if (!nameVal.empty())
         {
             computedInitials += (char)toupper(nameVal[0]);
-
-            size_t spacePos = nameVal.find(' ');
-            if (spacePos != std::string::npos && spacePos + 1 < nameVal.length())
-                computedInitials += (char)toupper(nameVal[spacePos + 1]);
-            else if (nameVal.length() > 1)
-                computedInitials += (char)toupper(nameVal[1]);
+            
+            if (!surnameVal.empty()) {
+                computedInitials += (char)toupper(surnameVal[0]);
+            } else {
+                size_t spacePos = nameVal.find(' ');
+                if (spacePos != std::string::npos && spacePos + 1 < nameVal.length())
+                    computedInitials += (char)toupper(nameVal[spacePos + 1]);
+                else if (nameVal.length() > 1)
+                    computedInitials += (char)toupper(nameVal[1]);
+            }
         }
         initials.setValue(computedInitials);
         picture.setValue(pictureVal);
