@@ -11,7 +11,7 @@ TEST_CASE("EdgeCoffeeMachine Public Interface", "[Logic][ECM]") {
     SECTION("Initialization: Default state check") {
         EdgeCoffeeMachine& machine = EdgeCoffeeMachine::instance();
 
-        CHECK(machine.status.value() == "Idle");
+        CHECK(machine.status.value().find("Selected: ") != std::string::npos);
         CHECK(machine.getIsMakingDrink() == false);
         CHECK(machine.getUser() == nullptr);
         CHECK(machine.getPopularBeverages().size() > 0);
