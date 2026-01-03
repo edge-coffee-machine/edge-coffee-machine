@@ -103,7 +103,7 @@ Rectangle {
             color: Theme.white
             font.bold: true
             font.pixelSize: 40
-            text: isLoading ? "€ 1.20" : "Brewing"
+            text: isLoading ? " Brewing..." : " €1.20 "
         }
 
         CustomButton {
