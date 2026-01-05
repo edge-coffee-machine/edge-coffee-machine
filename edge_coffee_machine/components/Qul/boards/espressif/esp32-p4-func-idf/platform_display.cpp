@@ -135,7 +135,6 @@ void initializeLcd()
     ESP_ERROR_CHECK(bsp_display_brightness_init());
 
     const bsp_display_config_t displayConfig = {
-        .hdmi_resolution = BSP_HDMI_RES_NONE,
         .dsi_bus = {
             .phy_clk_src = MIPI_DSI_PHY_CLK_SRC_DEFAULT,
             .lane_bit_rate_mbps = BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS,
