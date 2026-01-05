@@ -1,6 +1,6 @@
 ## IDF Component Manager Manifest File
 dependencies:
-  espressif/esp32_p4_function_ev_board: "^5.0.0~3"
+  espressif/esp32_p4_function_ev_board: "*"
   esp_codec_dev:
     public: true
     version: "==1.2.0"

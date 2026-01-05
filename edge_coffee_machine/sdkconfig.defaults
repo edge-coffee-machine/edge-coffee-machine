@@ -10,13 +10,11 @@ CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
 
 # PSRAM must be Octal (Required for 1024x600 Display)
 CONFIG_SPIRAM=y
-CONFIG_SPIRAM_MODE_OCT=y
-CONFIG_SPIRAM_SPEED_80M=y
 CONFIG_SPIRAM_FETCH_INSTRUCTIONS=y
 CONFIG_SPIRAM_RODATA=y
 
 # From your current config: Allow large tasks (like Face Rec) to use PSRAM
-CONFIG_SPIRAM_ALLOW_STACK_EXTERNAL_MEMORY=y 
+CONFIG_FREERTOS_TASK_CREATE_ALLOW_EXT_MEM=y 
 
 # ====================================================
 # 2. FACE RECOGNITION REQUIREMENTS (Fixes xCoreID error)
@@ -34,7 +32,6 @@ CONFIG_FREERTOS_HZ=1000
 # ====================================================
 # Qt libraries are built without C++ exceptions
 CONFIG_COMPILER_CXX_EXCEPTIONS=n
-CONFIG_COMPILER_RTTI=n
 
 # Increase default stack sizes for Qt Initialization
 CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384
@@ -49,7 +46,5 @@ CONFIG_PARTITION_TABLE_OFFSET=0x10000
 
 CONFIG_LOG_DEFAULT_LEVEL_INFO=y
 CONFIG_BOOTLOADER_LOG_LEVEL_INFO=y
-
-QUL_COLOR_DEPTH=16
 
 # ==================================

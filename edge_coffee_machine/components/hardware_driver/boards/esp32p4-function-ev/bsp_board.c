@@ -39,6 +39,7 @@
 #include "sd_pwr_ctrl_interface.h"
 #include "esp_ldo_regulator.h"
 
+#include <bsp/esp-bsp.h>
 
 #define GPIO_MUTE_NUM   GPIO_NUM_1
 #define GPIO_MUTE_LEVEL 1
@@ -65,7 +66,7 @@ static audio_codec_gpio_if_t *codec_gpio_if = NULL;
 static audio_codec_if_t *codec_if = NULL;
 static esp_codec_dev_handle_t codec_dev = NULL;
 
-
+/* 
 esp_err_t bsp_i2c_init(i2c_port_t i2c_num, uint32_t clk_speed)
 {
     i2c_config_t i2c_cfg = {
@@ -81,7 +82,7 @@ esp_err_t bsp_i2c_init(i2c_port_t i2c_num, uint32_t clk_speed)
         return ESP_FAIL;
     }
     return i2c_driver_install(i2c_num, i2c_cfg.mode, 0, 0, 0);
-}
+} */
 
 esp_err_t bsp_audio_set_play_vol(int volume)
 {
@@ -305,8 +306,9 @@ esp_err_t bsp_board_init(uint32_t sample_rate, int channel_format, int bits_per_
     // bsp_enable_audio_board_power();
 
     /*!< Initialize I2C bus, used for audio codec*/
-    bsp_i2c_init(I2C_NUM, I2C_CLK);
-    
+    //bsp_i2c_init(I2C_NUM, I2C_CLK);
+    bsp_i2c_init();
+
     if (sample_rate != 16000) {
        ESP_LOGE(TAG, "Unable to configure sample_rate. It's only support 16000."); 
        sample_rate = 16000;

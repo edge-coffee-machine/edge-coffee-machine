@@ -9,3 +9,5 @@ dependencies:
     version: "*"
   espressif/usb_host_uvc: 
     version : "*"
+  esp_codec_dev: "1.5"
+  espressif/esp32_p4_function_ev_board: "*"

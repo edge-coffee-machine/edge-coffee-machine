@@ -4,6 +4,9 @@
 #include "esp_timer.h"
 #include "esp_video_device.h"
 #include "esp_video_init.h"
+
+#include "bsp/esp-bsp.h"
+
 #include <fcntl.h>
 
 static const char *TAG = "WhoP4Cam";
