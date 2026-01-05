@@ -148,6 +148,8 @@ The integration with the physical coffee machine hardware and the handling of pa
   - Specialize privacy non-functional requirements
   - Add ingredient range constraints (add FR-D-3, update FR-D-2 description)
   - Make layout adjustments
+- 2025-12-26: 1.4:
+  - Revise FR-U-4 and FR-U-5
 
 = Requirements Definition
 
