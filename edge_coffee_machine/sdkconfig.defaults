@@ -1,0 +1,55 @@
+# ====================================================
+# 1. HARDWARE SETUP (Critical for ESP32-P4 EV Board)
+# ====================================================
+CONFIG_IDF_TARGET="esp32p4"
+
+# Flash must be OPI 80MHz (Prevents "Store access fault" crashes)
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHMODE_OPI=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+
+# PSRAM must be Octal (Required for 1024x600 Display)
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_SPIRAM_FETCH_INSTRUCTIONS=y
+CONFIG_SPIRAM_RODATA=y
+
+# From your current config: Allow large tasks (like Face Rec) to use PSRAM
+CONFIG_SPIRAM_ALLOW_STACK_EXTERNAL_MEMORY=y 
+
+# ====================================================
+# 2. FACE RECOGNITION REQUIREMENTS (Fixes xCoreID error)
+# ====================================================
+# These enable the Task List debug features used by 'who_task'
+CONFIG_FREERTOS_USE_TRACE_FACILITY=y
+CONFIG_FREERTOS_USE_STATS_FORMATTING_FUNCTIONS=y
+CONFIG_FREERTOS_VTASKLIST_INCLUDE_COREID=y
+
+# Higher tick rate for smoother video/UI
+CONFIG_FREERTOS_HZ=1000
+
+# ====================================================
+# 3. QT FOR MCUS REQUIREMENTS
+# ====================================================
+# Qt libraries are built without C++ exceptions
+CONFIG_COMPILER_CXX_EXCEPTIONS=n
+CONFIG_COMPILER_RTTI=n
+
+# Increase default stack sizes for Qt Initialization
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384
+CONFIG_ESP_SYSTEM_EVENT_TASK_STACK_SIZE=8192
+
+# ====================================================
+# 4. PARTITIONS & LOGGING
+# ====================================================
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_PARTITION_TABLE_OFFSET=0x10000
+
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+CONFIG_BOOTLOADER_LOG_LEVEL_INFO=y
+
+QUL_COLOR_DEPTH=16
+
+# ==================================

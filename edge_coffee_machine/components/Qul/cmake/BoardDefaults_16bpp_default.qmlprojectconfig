@@ -1,0 +1,8 @@
+import QmlProject 1.2
+
+Project {
+    MCU.Config {
+        platformOpaquePixelFormat: "RGB565"
+        Experimental.resourceAlphaOptions: "Always"
+    }
+}
