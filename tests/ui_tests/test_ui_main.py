@@ -8,7 +8,7 @@ import time
 
 # Offsets to crop the window borders and title bar
 border_offset_x = 9
-title_bar_height = 40
+title_bar_height = 40+100
 border_offset_bottom = 15
 
 # Paths
@@ -161,3 +161,4 @@ def test_main_screen(app_process):
     # Compare main window (mocha ingredients reset)
     screenshot(window, "main5.png")
 
+    print("UI main screen test completed successfully.")
