@@ -116,3 +116,9 @@ python -m venv venv
 
 # 3. Install dependencies
 pip install -r requirements.txt
+```
+
+### 3. Run
+```powershell
+pytest tests/ui_tests
+```
