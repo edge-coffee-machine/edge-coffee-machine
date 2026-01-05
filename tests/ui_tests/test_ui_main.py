@@ -160,5 +160,3 @@ def test_main_screen(app_process):
 
     # Compare main window (mocha ingredients reset)
     screenshot(window, "main5.png")
-
-    print("UI main screen test completed successfully.")
