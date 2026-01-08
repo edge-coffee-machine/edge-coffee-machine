@@ -7,6 +7,7 @@ Rectangle {
     id: root
 
     property int p_spacing: 20
+    property bool isRecognizing: false
 
     // Signal to request going back to previous view
     signal goBackRequested
@@ -15,21 +16,24 @@ Rectangle {
     height: 600
     width: 1024
 
-    /*ListModel {
-        id: usersListModel
+    UserRecognition {
+        visible: isRecognizing
+        anchors.fill: parent
+        anchors.margins: 30
+        z: 3
+    }
 
-        // Example data; in practice, this will be populated from C++
-        ListElement { name: "Alice" }
-        ListElement { name: "Bob" }
-        ListElement { name: "Charlie" }
-        ListElement { name: "Diana" }
-        ListElement { name: "Eve" }
-        ListElement { name: "Frank" }
-        ListElement { name: "Grace" }
-    }*/
+    Rectangle {
+        color: "black"
+        anchors.fill: parent
+        z: 2
+        opacity: 0.9
+        visible: isRecognizing
+    }
 
     // --- 1. HEADER SECTION ---
     Rectangle {
+        enabled: !isRecognizing
         anchors.fill: parent
         anchors.margins: 30
         color: "transparent"
@@ -138,6 +142,7 @@ Rectangle {
 
                         onClicked: {
                             console.log("Create User");
+                            isRecognizing = true;
                             //console.log(edgeCoffeeMachineController.users);
                         }
                     }
