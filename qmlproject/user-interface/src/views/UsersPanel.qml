@@ -7,7 +7,6 @@ Rectangle {
     id: root
 
     property int p_spacing: 20
-    property bool isRecognizing: false
 
     // Signal to request going back to previous view
     signal goBackRequested
@@ -17,7 +16,7 @@ Rectangle {
     width: 1024
 
     UserRecognition {
-        visible: isRecognizing
+        visible: EdgeCoffeeMachine.isRecognizing
         anchors.fill: parent
         anchors.margins: 30
         z: 3
@@ -28,12 +27,12 @@ Rectangle {
         anchors.fill: parent
         z: 2
         opacity: 0.9
-        visible: isRecognizing
+        visible: EdgeCoffeeMachine.isRecognizing
     }
 
     // --- 1. HEADER SECTION ---
     Rectangle {
-        enabled: !isRecognizing
+        enabled: !EdgeCoffeeMachine.isRecognizing
         anchors.fill: parent
         anchors.margins: 30
         color: "transparent"
@@ -142,7 +141,7 @@ Rectangle {
 
                         onClicked: {
                             console.log("Create User");
-                            isRecognizing = true;
+                            EdgeCoffeeMachine.setIsRecognizing(true);
                             //console.log(edgeCoffeeMachineController.users);
                         }
                     }

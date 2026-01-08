@@ -44,6 +44,8 @@ namespace Logic
     selectedBeverage.setValue(nullptr);
     user.setValue(nullptr);
 
+    isRecognizing.setValue(false);
+
     std::vector<Beverage *> recipes = RecipeDatabase::getAllDefaultRecipes();
 
     m_weightedBeverages = WeightedSortedList<Beverage *>(recipes, popularityWeightR);
