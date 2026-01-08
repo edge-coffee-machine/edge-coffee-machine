@@ -78,5 +78,5 @@ build*/
 managed_components*/
 
 # Generated QUL folderq
-QtMCUs*/
+generated/
 CMake/

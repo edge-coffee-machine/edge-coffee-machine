@@ -1,0 +1,48 @@
+{
+    "compileOptions": {
+        "all": [
+            "-fno-exceptions",
+            "-fno-non-call-exceptions",
+            "-fomit-frame-pointer",
+            "$<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>",
+            "$<$<COMPILE_LANGUAGE:CXX>:-fno-threadsafe-statics>",
+            "$<$<COMPILE_LANGUAGE:CXX>:-fpermissive>",
+            "-fno-common",
+            "-fno-asynchronous-unwind-tables",
+            "-fno-unwind-tables",
+            "-MMD",
+            "-MP"
+        ]
+    },
+    "compiler": {
+        "name": "riscvgcc",
+        "version": "13.2.0"
+    },
+    "defines": [
+        "QUL_FREERTOS_TASK_PRIORITY=CONFIG_QUL_FREERTOS_TASK_PRIORITY",
+        "QUL_PLATFORM_DEFAULT_NUM_FRAMES_TO_PRESERVE_ASSETS=0",
+        "QUL_PLATFORM_DEFAULT_TEXT_CACHE_ENABLED=0",
+        "QUL_PLATFORM_DEFAULT_TEXT_CACHE_SIZE=24576",
+        "QUL_PLATFORM_NAME=\"esp32-p4-func-idf\"",
+        "QUL_PLATFORM_RENDER_BATCH_HEIGHT=0",
+        "QUL_PLATFORM_REQUIRED_IMAGE_ALIGNMENT=4",
+        "QUL_PLATFORM_REQUIRED_PIXEL_WIDTH_ALIGNMENT=1",
+        "QUL_STACK_SIZE=CONFIG_QUL_STACK_SIZE"
+    ],
+    "includeDirs": [
+        "${QUL_DIR}/src/3rdparty/minihdlc/",
+        "${QUL_DIR}/src/3rdparty/nanopb/",
+        "${QUL_DIR}/src/3rdparty/qoi/",
+        "boards/espressif/common",
+        "boards/espressif/esp32-p4-func-idf",
+        "platform/common/",
+        "platform/common/linux"
+    ],
+    "linkLibraries": [
+        "${QUL_DIR}/lib/libQulCore_riscv32-esp32-p4_Linux_riscvgcc_MinSizeRel.a"
+    ],
+    "linkOptions": [
+        "-Wno-psabi"
+    ],
+    "sourcesDir": "/home/maximator/ECM/edge_coffee_machine/QtMCUs/platform"
+}

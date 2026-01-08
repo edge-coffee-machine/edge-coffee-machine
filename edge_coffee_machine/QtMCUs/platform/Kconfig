@@ -1,0 +1,31 @@
+menu "Qt for MCUs"
+    menu "Performance measurements"
+        config ENABLE_PERFORMANCE_LOGGING
+            bool "Enable performance logging"
+            help
+                This enables performance measurements logging.
+                Note that this option has a slight negative impact
+                on performance.
+        config ENABLE_PERFORMANCE_CONSOLE_OUTPUT
+            bool "Enable performance console output"
+            depends on ENABLE_PERFORMANCE_LOGGING
+            help
+                Send performance statistics to the serial console.
+                Note that this option adds further negative impact
+                on performance. This option is useful for performance
+                comparisons and finding out bottlenecks in the system.
+    endmenu #Performance measurements
+
+    config QUL_STACK_SIZE
+        int "Qul task stack size"
+        default 51200
+        help
+            Configure the Qul task stack size. The value is in bytes,
+            which is different from vanilla FreeRTOS.
+    config QUL_FREERTOS_TASK_PRIORITY
+        int "Qul task priority"
+        default 2
+        help
+            Configure the priority for the Qul FreeRTOS task. The default
+            value of 2 is one above the app_main task.
+endmenu #Qt for MCUs

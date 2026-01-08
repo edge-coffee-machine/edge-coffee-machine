@@ -46,7 +46,7 @@ fi
 
 # Clean old folders in destination to prevent nesting (e.g. QtMCUs/QtMCUs)
 rm -rf "$TARGET_PROJECT/CMake"
-rm -rf "$TARGET_PROJECT/QtMCUs"
+rm -rf "$TARGET_PROJECT/QtMCUs/generated"
 
 # Move new folders
 # Note: The tool output is 'QtMCUs', fixing casing from prompt 'QtMcus'
@@ -56,8 +56,8 @@ else
     echo "Warning: Generated CMake folder not found."
 fi
 
-if [ -d "$TEMP_BUILD/QtMCUs" ]; then
-    mv "$TEMP_BUILD/QtMCUs" "$TARGET_PROJECT/"
+if [ -d "$TEMP_BUILD/QtMCUs/generated" ]; then
+    mv "$TEMP_BUILD/QtMCUs/generated" "$TARGET_PROJECT/"
 else
     echo "Warning: Generated QtMCUs folder not found."
 fi
