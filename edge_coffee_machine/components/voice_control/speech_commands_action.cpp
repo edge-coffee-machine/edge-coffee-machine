@@ -138,7 +138,7 @@ dac_audio_item_t playlist[] = {
     {"me_24_degrees", (uint16_t*)me_24_degrees, sizeof(me_24_degrees)},
     {"me_25_degrees", (uint16_t*)me_25_degrees, sizeof(me_25_degrees)},
     {"me_26_degrees", (uint16_t*)me_26_degrees, sizeof(me_26_degrees)},
-};
+    };
 
 void wake_up_action(void)
 {

@@ -21,6 +21,8 @@ extern "C" {
 #include "speech_commands_action.h"
 
 #include "esp_process_sdkconfig.h"
+extern "C" void ecm_brew_selected(void);
+extern "C" void ecm_cancel_brew(void);
 
 // DEFINICIJE GLOBALNIH VARIJABLI (Ovo je nedostajalo)
 static int wakeup_flag = 0;
@@ -100,9 +102,15 @@ void detect_Task(void *arg)
 
             if (mn_state == ESP_MN_STATE_DETECTED) {
                 esp_mn_results_t *mn_result = multinet->get_results(model_data);
-                for (int i = 0; i < mn_result->num; i++) {
-                    printf("TOP %d, command_id: %d, phrase_id: %d, string: %s, prob: %f\n",
-                           i+1, mn_result->command_id[i], mn_result->phrase_id[i], mn_result->string, mn_result->prob[i]);
+                int cmd = mn_result->command_id[0];
+                float prob = mn_result->prob[0];
+
+                // npr. tvoja "brew coffee" komanda je command_id == 3
+                if (cmd == 3 && prob > 0.15f) {
+                    ecm_brew_selected();
+                }
+                if (cmd == 4) {
+                    ecm_cancel_brew();
                 }
                 printf("-----------listening-----------\n");
             }

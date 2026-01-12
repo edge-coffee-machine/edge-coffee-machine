@@ -39,8 +39,31 @@ namespace Logic
    * 6. Initializes the drinksList property to point to the BeverageModel instance.
    * 7. Pushes the initial data to the UI models via `updateBeverageModel()`.
    */
+
+
+static Logic::EdgeCoffeeMachine* s_ecm = nullptr;
+
+extern "C" void ecm_set_instance(Logic::EdgeCoffeeMachine* inst)
+{
+    s_ecm = inst;
+}
+
+extern "C" void ecm_brew_selected(void)
+{
+    if (s_ecm) {
+        s_ecm->makeDrink(nullptr);   // brew za trenutno selektovano
+    }
+}
+extern "C" void ecm_cancel_brew(void){
+    if (s_ecm) {
+        s_ecm->stopBrewing();   // brew za trenutno selektovano
+    }
+}
+
+
   EdgeCoffeeMachine::EdgeCoffeeMachine()
   {
+      ecm_set_instance(this);
     m_brewTimer.setSingleShot(true);
     m_brewTimer.onTimeout([this]()
                           { this->finishBrewing(); });
