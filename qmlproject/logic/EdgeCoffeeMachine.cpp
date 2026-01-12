@@ -12,6 +12,7 @@
 #include "BeverageModel.h"
 #include "UserModel.h"
 #include "User.h"
+#include "FaceRecognitionApp.h"
 
 #include <platforminterface/log.h>
 
@@ -81,12 +82,8 @@ namespace Logic
                         {
                           Qul::PlatformInterface::log("[ECM] Initializing test users...\n");
 
-                          this->enrollUser(10);
-                          this->enrollUser(20);
-
-                          User *testUser = new User("Paolo", "Rossi", 1, RecipeDatabase::getAllDefaultRecipes());
-                          m_user_list.push_back(testUser);
-                          m_users_by_id[99] = testUser;
+                          this->createUser(1);
+                          this->createUser(2);
 
                           this->updateUserModel();
                         });
@@ -97,6 +94,14 @@ namespace Logic
     usersList.setValue(&m_userModelInstance);      // Initialize usersList property to point to the UserModel instance
 
     updateModels();
+    m_faceRecognitionApp = start_face_recognition();
+  }
+
+  void EdgeCoffeeMachine::callEnrollment()
+  {
+      if (m_faceRecognitionApp) {
+          m_faceRecognitionApp->run();
+      }
   }
 
   /**
@@ -401,7 +406,7 @@ namespace Logic
    *
    * @param id The unique identifier assigned by the AI subsystem.
    */
-  void EdgeCoffeeMachine::enrollUser(int id)
+  void EdgeCoffeeMachine::createUser(int id)
   {
     if (m_users_by_id.find(id) != m_users_by_id.end())
     {

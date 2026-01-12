@@ -1,5 +1,6 @@
 import QtQuick
-import "../components" as Components
+import "../components/text"
+import "../components"
 import Theme
 
 Rectangle {
@@ -30,20 +31,20 @@ Rectangle {
         }
 
         Column {
-            anchors.centerIn: parent
+            // Remove anchors.centerIn and anchors.verticalCenter
+            // Row handles horizontal positioning automatically
+            // For vertical alignment within the Row, use this:
             anchors.verticalCenter: parent.verticalCenter
+            spacing: 10
 
             H1 {
+                // Remove anchors.centerIn - Column handles positioning
                 text: "Hold on,"
-                anchors.centerIn: parent
             }
+            
             TextDefault {
-                text: "I’m trying to recognize you..."
+                text: "I'm trying to recognize you..."
             }
         }
     }
-
-    
-
-
 }

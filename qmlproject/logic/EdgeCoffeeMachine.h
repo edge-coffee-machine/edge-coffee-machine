@@ -17,6 +17,8 @@
 #include <string>
 #include <map>
 
+class FaceRecognitionApp;
+
 namespace Logic
 {
     /**
@@ -51,6 +53,21 @@ namespace Logic
          */
         Qul::Property<bool> isMakingDrink;
 
+
+        /**
+         * @brief Flag indicating if the machine is currently recognizing a user.
+         *
+         * Used to display recognition overlay in the UI.
+         */
+        Qul::Property<bool> isRecognizing;
+
+
+        /**
+         * @brief Sets the recognizing state of the machine.
+         * @param recognizing True if recognizing a user, false otherwise.
+         */
+        void setIsRecognizing(bool recognizing) { isRecognizing.setValue(recognizing); }
+
         /**
          * @brief Pointer to the currently selected beverage.
          *
@@ -76,20 +93,6 @@ namespace Logic
         Qul::Property<BeverageModel *> drinksList;
 
         Qul::Property<UserModel *> usersList;
-
-        /**
-         * @brief Flag indicating if the machine is currently recognizing a user.
-         *
-         * Used to display recognition overlay in the UI.
-         */
-        Qul::Property<bool> isRecognizing;
-
-
-        /**
-         * @brief Sets the recognizing state of the machine.
-         * @param recognizing True if recognizing a user, false otherwise.
-         */
-        void setIsRecognizing(bool recognizing) { isRecognizing.setValue(recognizing); }
 
         /**
          * @brief Starts the brewing process.
@@ -131,7 +134,12 @@ namespace Logic
          * @brief Registers a new user ID.
          * @param id The unique ID assigned by the AI subsystem.
          */
-        void enrollUser(int id);
+        void createUser(int id);
+
+        /**
+         * @brief Calls the enrollment function in FaceRecognitionApp.
+         */
+        void callEnrollment();
 
         /**
          * @brief Identifies an existing user by ID.
@@ -225,6 +233,7 @@ namespace Logic
         std::vector<User *> m_user_list;       ///< List of all registered users.
         std::map<int, User *> m_users_by_id;   ///< Map for fast user lookup by ID.
         Qul::Timer m_brewTimer;                //< Timer to simulate brewing duration.
+        FaceRecognitionApp *m_faceRecognitionApp; ///< Pointer to the FaceRecognitionApp instance.
 
         static constexpr float popularityWeightR = 0.175f; ///< Learning rate for global popularity.
     };
