@@ -7,6 +7,7 @@
 #include "bsp/esp-bsp.h"
 #include "esp_codec_dev.h"
 #include "bsp/esp32_p4_function_ev_board.h"
+#include "esp_log.h"
 extern "C" {
 #include "esp_wn_iface.h"
 #include "esp_wn_models.h"
@@ -156,7 +157,7 @@ void start_speech_recognition() {
 #endif
 
     task_flag = 1;
-    xTaskCreatePinnedToCore(&detect_Task, "detect", 8 * 1024, (void*)afe_data, 5, NULL, 1);
+    xTaskCreatePinnedToCore(&detect_Task, "detect", 8 * 1024, (void*)afe_data, 5, NULL, 0);
     xTaskCreatePinnedToCore(&feed_Task, "feed", 8 * 1024, (void*)afe_data, 5, NULL, 0);
 }
 }

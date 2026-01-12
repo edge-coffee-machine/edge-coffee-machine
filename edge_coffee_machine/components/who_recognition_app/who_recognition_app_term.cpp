@@ -29,7 +29,7 @@ bool WhoRecognitionAppTerm::run()
 {
     bool ret = WhoYield2Idle::get_instance()->run();
     for (const auto &frame_cap_node : m_frame_cap->get_all_nodes()) {
-        ret &= frame_cap_node->run(4096, 2, 0);
+        ret &= frame_cap_node->run(4096, 2, 1);
     }
     ret &= m_recognition->get_detect_task()->run(3584, 2, 1);
     ret &= m_recognition->get_recognition_task()->run(3584, 2, 1);
