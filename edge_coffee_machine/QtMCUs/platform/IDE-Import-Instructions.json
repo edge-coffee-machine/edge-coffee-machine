@@ -44,5 +44,5 @@
     "linkOptions": [
         "-Wno-psabi"
     ],
-    "sourcesDir": "/home/maximator/ECM/edge_coffee_machine/QtMCUs/platform"
+    "sourcesDir": "/home/balsarakocevic/Music/edge-coffee-machine-dev-qmlexporter-build/edge_coffee_machine/QtMCUs/platform"
 }

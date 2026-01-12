@@ -14,12 +14,17 @@
 #include "User.h"
 #include "FaceRecognitionApp.h"
 
+#include "VoiceEngine.h"
+
+
 #include <platforminterface/log.h>
 
 #include <algorithm>
 #include <cstdio>
 #include <ctime>
 
+
+extern void start_speech_recognition();
 namespace Logic
 {
   /**
@@ -94,6 +99,7 @@ namespace Logic
     usersList.setValue(&m_userModelInstance);      // Initialize usersList property to point to the UserModel instance
 
     updateModels();
+    start_speech_recognition();
     m_faceRecognitionApp = start_face_recognition();
   }
 

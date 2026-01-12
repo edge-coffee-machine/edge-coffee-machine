@@ -141,7 +141,7 @@ void initializeLcd()
             .lane_bit_rate_mbps = BSP_LCD_MIPI_DSI_LANE_BITRATE_MBPS,
         },
     };
-    
+
     ESP_ERROR_CHECK(bsp_display_new(&displayConfig, &panelHandle, &ioHandle));
 
     const esp_lcd_dpi_panel_event_callbacks_t callback = {

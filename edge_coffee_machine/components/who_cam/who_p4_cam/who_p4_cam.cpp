@@ -74,81 +74,42 @@ esp_err_t WhoP4Cam::set_flip(bool vertical_flip, bool horizontal_flip)
 
 void WhoP4Cam::video_init(bool vertical_flip, bool horizontal_flip)
 {
-    ESP_LOGI(TAG, "=== Starting WHO CAM VIDEO INIT ===");
-    
+    ESP_ERROR_CHECK(bsp_i2c_init());
+
     static bool once = []() {
-        ESP_LOGI("WhoP4Cam", "Attempting to get I2C handle...");
+        // --- FIX 1: Use the correct type (Bus Handle, not Device Handle) ---
         i2c_master_bus_handle_t i2c_bus_handle = bsp_i2c_get_handle();
 
         if (i2c_bus_handle == NULL) {
-            ESP_LOGE("WhoP4Cam", "BSP I2C Handle is NULL");
+            ESP_LOGE("WhoP4Cam", "BSP I2C Handle is NULL. Ensure I2C is initialized before camera.");
             return false;
         }
-        ESP_LOGI("WhoP4Cam", "I2C handle obtained successfully");
 
-        // Verify camera is responding
-        ESP_LOGI("WhoP4Cam", "Verifying camera at 0x30...");
-        i2c_master_dev_handle_t probe_dev;
-        i2c_device_config_t probe_cfg = {
-            .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-            .device_address = 0x30,
-            .scl_speed_hz = 400000,
-        };
-        
-        bool camera_found = false;
-        if (i2c_master_bus_add_device(i2c_bus_handle, &probe_cfg, &probe_dev) == ESP_OK) {
-            uint8_t dummy;
-            if (i2c_master_receive(probe_dev, &dummy, 1, 100) == ESP_OK) {
-                ESP_LOGI("WhoP4Cam", "Camera responding at 0x30 ✓");
-                camera_found = true;
-            }
-            i2c_master_bus_rm_device(probe_dev);
-        }
-        
-        if (!camera_found) {
-            ESP_LOGE("WhoP4Cam", "Camera not responding - check power sequence");
-            return false;
-        }
-        
         esp_video_init_csi_config_t csi_config = {
             .sccb_config = {
-                .init_sccb = false, 
-                .i2c_handle = i2c_bus_handle,
+                .init_sccb = false, // We use the existing BSP bus
+                // --- FIX 2: Pass the Bus Handle correctly ---
+                .i2c_handle = i2c_bus_handle, 
                 .freq = 400000,
             },
-            .reset_pin    = GPIO_NUM_NC, 
-            .pwdn_pin     = GPIO_NUM_NC, 
+            .reset_pin    = GPIO_NUM_26, 
+            .pwdn_pin     = GPIO_NUM_27, 
             .dont_init_ldo = false,
         };
 
         esp_video_init_config_t cam_config{};
         cam_config.csi = &csi_config;
 
-        // Enable detailed logging
-        esp_log_level_set("*", ESP_LOG_INFO);
-        esp_log_level_set("sc2336", ESP_LOG_VERBOSE);
-        esp_log_level_set("mipi_csi", ESP_LOG_VERBOSE);
-        esp_log_level_set("esp_video", ESP_LOG_VERBOSE);
-        esp_log_level_set("video_device", ESP_LOG_VERBOSE);
-        esp_log_level_set("isp", ESP_LOG_VERBOSE);
-        esp_log_level_set("isp_core", ESP_LOG_VERBOSE);
-        esp_log_level_set("vfs", ESP_LOG_VERBOSE);
-
-        ESP_LOGI("WhoP4Cam", "Calling esp_video_init...");
         esp_err_t err = esp_video_init(&cam_config);
         if (err != ESP_OK) {
-            ESP_LOGE("WhoP4Cam", "Video Init Failed: %s (0x%x)", esp_err_to_name(err), err);
+            ESP_LOGE("WhoP4Cam", "Video Init Failed: %s", esp_err_to_name(err));
             return false;
         }
-        ESP_LOGI("WhoP4Cam", "esp_video_init succeeded!");
         return true;
     }();
     
-    if (!once) {
-        ESP_LOGE(TAG, "Static initialization failed - aborting");
-        abort();  // Make it clear this is a fatal error
-    }
-    ESP_LOGI(TAG, "Static initialization successful, proceeding...");
+    if (!once) return;
+    (void)once;
 
     ESP_ERROR_CHECK(open_video_device());
     ESP_ERROR_CHECK(print_info());
@@ -167,18 +128,11 @@ void WhoP4Cam::video_deinit()
 
 esp_err_t WhoP4Cam::open_video_device()
 {
-    ESP_LOGI(TAG, "Opening device: %s", ESP_VIDEO_MIPI_CSI_DEVICE_NAME);
-    
-    // Device should exist now, try opening with minimal flags
-    m_fd = open(ESP_VIDEO_MIPI_CSI_DEVICE_NAME, O_RDWR);
-    
+    m_fd = open(ESP_VIDEO_MIPI_CSI_DEVICE_NAME, O_RDONLY);
     if (m_fd < 0) {
-        ESP_LOGE(TAG, "✗ Failed to open %s", ESP_VIDEO_MIPI_CSI_DEVICE_NAME);
-        ESP_LOGE(TAG, "  Error: %s (errno=%d)", strerror(errno), errno);
+        ESP_LOGE(TAG, "Failed to open device");
         return ESP_FAIL;
     }
-    
-    ESP_LOGI(TAG, "✓ Device opened successfully (fd=%d)", m_fd);
     return ESP_OK;
 }
 

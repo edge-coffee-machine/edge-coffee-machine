@@ -1,0 +1,9 @@
+menu "Who Camera Configuration"
+
+    config CAMERA_SC2336_MIPI_IF_FORMAT_INDEX_DEFAULT
+        int "SC2336 MIPI Format Index"
+        default 0
+        help
+            Select the default MIPI format index for SC2336. 
+            Used in who_p4_cam.cpp to select video format.
+endmenu

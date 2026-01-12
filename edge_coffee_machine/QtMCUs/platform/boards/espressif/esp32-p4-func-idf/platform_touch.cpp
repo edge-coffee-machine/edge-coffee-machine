@@ -10,7 +10,6 @@
 
 #include <esp_lcd_touch.h>
 #include <bsp/esp-bsp.h>
-#include <esp_log.h>
 #include <bsp/touch.h>
 #include <esp_timer.h>
 #include <freertos/FreeRTOS.h>

@@ -6,7 +6,7 @@ use the exact same compiler that the libraries have been built with:
 
      riscvgcc version 13.2.0
 
-Import all source files from /home/maximator/ECM/edge_coffee_machine/QtMCUs/platform to your project.
+Import all source files from /home/balsarakocevic/Music/edge-coffee-machine-dev-qmlexporter-build/edge_coffee_machine/QtMCUs/platform to your project.
 
 Compile and link settings
 -------------------------

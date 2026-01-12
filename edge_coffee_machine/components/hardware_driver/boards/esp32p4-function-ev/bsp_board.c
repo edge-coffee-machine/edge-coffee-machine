@@ -66,23 +66,23 @@ static audio_codec_gpio_if_t *codec_gpio_if = NULL;
 static audio_codec_if_t *codec_if = NULL;
 static esp_codec_dev_handle_t codec_dev = NULL;
 
-/* 
-esp_err_t bsp_i2c_init(i2c_port_t i2c_num, uint32_t clk_speed)
-{
-    i2c_config_t i2c_cfg = {
-        .mode = I2C_MODE_MASTER,
-        .scl_io_num = GPIO_I2C_SCL,
-        .sda_io_num = GPIO_I2C_SDA,
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = clk_speed,
-    };
-    esp_err_t ret = i2c_param_config(i2c_num, &i2c_cfg);
-    if (ret != ESP_OK) {
-        return ESP_FAIL;
+/*
+ e *sp_err_t bsp_i2c_init(i2c_port_t i2c_num, uint32_t clk_speed)
+ {
+ i2c_config_t i2c_cfg = {
+ .mode = I2C_MODE_MASTER,
+.scl_io_num = GPIO_I2C_SCL,
+.sda_io_num = GPIO_I2C_SDA,
+.scl_pullup_en = GPIO_PULLUP_ENABLE,
+.sda_pullup_en = GPIO_PULLUP_ENABLE,
+.master.clk_speed = clk_speed,
+};
+esp_err_t ret = i2c_param_config(i2c_num, &i2c_cfg);
+if (ret != ESP_OK) {
+    return ESP_FAIL;
     }
     return i2c_driver_install(i2c_num, i2c_cfg.mode, 0, 0, 0);
-} */
+    } */
 
 esp_err_t bsp_audio_set_play_vol(int volume)
 {
@@ -109,7 +109,7 @@ static esp_err_t bsp_i2s_init(i2s_port_t i2s_num, uint32_t sample_rate, int chan
 {
     esp_err_t ret_val = ESP_OK;
 
-#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 3, 0)
+    #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 3, 0)
     i2s_slot_mode_t channel_fmt = I2S_SLOT_MODE_STEREO;
     if (channel_format != 2) {
         ESP_LOGW(TAG, "Unable to configure channel_format %d, reset to 2", channel_format);
@@ -130,9 +130,9 @@ static esp_err_t bsp_i2s_init(i2s_port_t i2s_num, uint32_t sample_rate, int chan
     ret_val |= i2s_channel_init_std_mode(rx_handle, &std_cfg);
     ret_val |= i2s_channel_enable(tx_handle);
     ret_val |= i2s_channel_enable(rx_handle);
-#else
+    #else
     ESP_LOGE(TAG, "P4 don't support IDF version < V5.3");
-#endif
+    #endif
 
     return ret_val;
 }
@@ -141,7 +141,7 @@ static esp_err_t bsp_i2s_deinit(i2s_port_t i2s_num)
 {
     esp_err_t ret_val = ESP_OK;
 
-#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 3, 0)
+    #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 3, 0)
     if (rx_handle) {
         ret_val |= i2s_channel_disable(rx_handle);
         ret_val |= i2s_del_channel(rx_handle);
@@ -152,9 +152,9 @@ static esp_err_t bsp_i2s_deinit(i2s_port_t i2s_num)
         ret_val |= i2s_del_channel(tx_handle);
         tx_handle = NULL;
     }
-#else
+    #else
     ESP_LOGE(TAG, "P4 don't support IDF version < V5.3");
-#endif
+    #endif
 
     return ret_val;
 }
@@ -169,14 +169,20 @@ static esp_err_t bsp_codec_init(int adc_sample_rate, int dac_sample_rate, int da
     // Do initialize of related interface: data_if, ctrl_if and gpio_if
     audio_codec_i2s_cfg_t i2s_cfg = {
         .port = I2S_NUM_1,
-#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
+        #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
         .rx_handle = rx_handle,
         .tx_handle = tx_handle,
-#endif
+        #endif
     };
     codec_data_if = audio_codec_new_i2s_data(&i2s_cfg);
 
-    audio_codec_i2c_cfg_t i2c_cfg = {.addr = ES8311_CODEC_DEFAULT_ADDR};
+    i2c_master_bus_handle_t bus = bsp_i2c_get_handle();
+
+    audio_codec_i2c_cfg_t i2c_cfg = {
+        .addr = ES8311_CODEC_DEFAULT_ADDR,
+        .port = BSP_I2C_NUM,
+        .bus_handle = bus,
+    };
     codec_ctrl_if = audio_codec_new_i2c_ctrl(&i2c_cfg);
     codec_gpio_if = audio_codec_new_gpio();
     // New output codec interface
@@ -223,18 +229,18 @@ static esp_err_t bsp_codec_deinit()
         audio_codec_delete_codec_if(codec_if);
         codec_if = NULL;
     }
-    
+
     // Delete codec control interface
     if (codec_ctrl_if) {
         audio_codec_delete_ctrl_if(codec_ctrl_if);
         codec_ctrl_if = NULL;
     }
-    
+
     if (codec_gpio_if) {
         audio_codec_delete_gpio_if(codec_gpio_if);
         codec_gpio_if = NULL;
     }
-    
+
     // Delete codec data interface
     if (codec_data_if) {
         audio_codec_delete_data_if(codec_data_if);
@@ -303,15 +309,15 @@ static void bsp_disable_audio_board_power(void)
 esp_err_t bsp_board_init(uint32_t sample_rate, int channel_format, int bits_per_chan)
 {
     // Turn on the power for audio board
-    // bsp_enable_audio_board_power();
+    bsp_enable_audio_board_power();
 
     /*!< Initialize I2C bus, used for audio codec*/
     //bsp_i2c_init(I2C_NUM, I2C_CLK);
-    bsp_i2c_init();
+     ESP_ERROR_CHECK(bsp_i2c_init());
 
     if (sample_rate != 16000) {
-       ESP_LOGE(TAG, "Unable to configure sample_rate. It's only support 16000."); 
-       sample_rate = 16000;
+        ESP_LOGE(TAG, "Unable to configure sample_rate. It's only support 16000.");
+        sample_rate = 16000;
     }
     s_play_sample_rate = sample_rate;
 
@@ -327,9 +333,8 @@ esp_err_t bsp_board_init(uint32_t sample_rate, int channel_format, int bits_per_
     }
     s_bits_per_chan = bits_per_chan;
 
-    bsp_i2s_init(I2S_NUM_1, 16000, 2, 16);
-    // Because record and play use the same i2s.
-    bsp_codec_init(16000, 16000, 2, 16);
+    ESP_ERROR_CHECK(bsp_i2s_init(I2S_NUM_1, 16000, 2, 16));
+    ESP_ERROR_CHECK(bsp_codec_init(16000, 16000, 2, 16));
     return ESP_OK;
 }
 
@@ -367,10 +372,10 @@ esp_err_t bsp_sdcard_init(char *mount_point, size_t max_files)
      *
      */
     sdmmc_host_t host =
-#if FUNC_SDMMC_EN
-        SDMMC_HOST_DEFAULT();
-#else
-        SDSPI_HOST_DEFAULT();
+    #if FUNC_SDMMC_EN
+    SDMMC_HOST_DEFAULT();
+    #else
+    SDSPI_HOST_DEFAULT();
     spi_bus_config_t bus_cfg = {
         .mosi_io_num = GPIO_SDSPI_MOSI,
         .miso_io_num = GPIO_SDSPI_MISO,
@@ -384,7 +389,7 @@ esp_err_t bsp_sdcard_init(char *mount_point, size_t max_files)
         ESP_LOGE(TAG, "Failed to initialize bus.");
         return ret_val;
     }
-#endif
+    #endif
 
     /**
      * On these chips, the SDMMC IO power is supplied externally
@@ -408,13 +413,13 @@ esp_err_t bsp_sdcard_init(char *mount_point, size_t max_files)
      *   Modify slot_config.gpio_cd and slot_config.gpio_wp if your board has these signals.
      *
      */
-#if FUNC_SDMMC_EN
+    #if FUNC_SDMMC_EN
     sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();
-#else
+    #else
     sdspi_device_config_t slot_config = SDSPI_DEVICE_CONFIG_DEFAULT();
-#endif
+    #endif
 
-#if FUNC_SDMMC_EN
+    #if FUNC_SDMMC_EN
     /* Config SD data width. 0, 4 or 8. Currently for SD card, 8 bit is not supported. */
     slot_config.width = SDMMC_BUS_WIDTH;
 
@@ -423,20 +428,20 @@ esp_err_t bsp_sdcard_init(char *mount_point, size_t max_files)
      *   the slot_config structure.
      *
      */
-#if SOC_SDMMC_USE_GPIO_MATRIX
+    #if SOC_SDMMC_USE_GPIO_MATRIX
     slot_config.clk = GPIO_SDMMC_CLK;
     slot_config.cmd = GPIO_SDMMC_CMD;
     slot_config.d0 = GPIO_SDMMC_D0;
     slot_config.d1 = GPIO_SDMMC_D1;
     slot_config.d2 = GPIO_SDMMC_D2;
     slot_config.d3 = GPIO_SDMMC_D3;
-#endif
+    #endif
     slot_config.cd = GPIO_SDMMC_DET;
     slot_config.flags |= SDMMC_SLOT_FLAG_INTERNAL_PULLUP;
-#else
+    #else
     slot_config.gpio_cs = GPIO_SDSPI_CS;
     slot_config.host_id = host.slot;
-#endif
+    #endif
     /**
      * @brief Enable internal pullups on enabled pins. The internal pullups
      *   are insufficient however, please make sure 10k external pullups are
@@ -445,20 +450,20 @@ esp_err_t bsp_sdcard_init(char *mount_point, size_t max_files)
 
     /* get FAT filesystem on SD card registered in VFS. */
     ret_val =
-#if FUNC_SDMMC_EN
-        esp_vfs_fat_sdmmc_mount(mount_point, &host, &slot_config, &mount_config, &card);
-#else
-        esp_vfs_fat_sdspi_mount(mount_point, &host, &slot_config, &mount_config, &card);
-#endif
+    #if FUNC_SDMMC_EN
+    esp_vfs_fat_sdmmc_mount(mount_point, &host, &slot_config, &mount_config, &card);
+    #else
+    esp_vfs_fat_sdspi_mount(mount_point, &host, &slot_config, &mount_config, &card);
+    #endif
 
     /* Check for SDMMC mount result. */
     if (ret_val != ESP_OK) {
         if (ret_val == ESP_FAIL) {
             ESP_LOGE(TAG, "Failed to mount filesystem. "
-                     "If you want the card to be formatted, set the EXAMPLE_FORMAT_IF_MOUNT_FAILED menuconfig option.");
+            "If you want the card to be formatted, set the EXAMPLE_FORMAT_IF_MOUNT_FAILED menuconfig option.");
         } else {
             ESP_LOGE(TAG, "Failed to initialize the card (%s). "
-                     "Make sure SD card lines have pull-up resistors in place.", esp_err_to_name(ret_val));
+            "Make sure SD card lines have pull-up resistors in place.", esp_err_to_name(ret_val));
         }
         return ret_val;
     }

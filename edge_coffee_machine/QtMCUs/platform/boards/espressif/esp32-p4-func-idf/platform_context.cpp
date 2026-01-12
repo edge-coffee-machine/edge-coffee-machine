@@ -16,6 +16,7 @@
 #include <esp_log.h>
 
 #include <esp_timer.h>
+#include <bsp/esp-bsp.h>
 #include <bsp/display.h>
 
 #include <freertos/FreeRTOS.h>
@@ -25,9 +26,6 @@
 #include <random>
 
 #include "ppadrawingengine.h"
-
-#include "driver/i2c_master.h"
-#include "bsp/esp-bsp.h"
 
 namespace Qul {
 namespace Platform {
@@ -45,8 +43,6 @@ struct Esp32Platform : PlatformContext
     void initializeHardware(void)
     {
         bsp_i2c_init();
-        i2c_master_bus_handle_t i2c_bus = bsp_i2c_get_handle();
-        
         if (Qul::Platform::DeviceLink::instance()) {
             Qul::Platform::DeviceLink::instance()->init();
         }

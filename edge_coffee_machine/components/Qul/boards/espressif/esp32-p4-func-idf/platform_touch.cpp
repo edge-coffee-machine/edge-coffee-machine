@@ -9,14 +9,11 @@
 #include <platforminterface/log.h>
 
 #include <esp_lcd_touch.h>
+#include <bsp/esp-bsp.h>
+#include <bsp/touch.h>
 #include <esp_timer.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
-
-#include "esp_log.h"             // Required for ESP_LOGE
-#include "driver/i2c_master.h"   // Required for i2c_master_bus_handle_t
-#include "bsp/esp-bsp.h"
-#include "esp_lcd_touch_gt911.h"
 
 namespace Qul {
 namespace Platform {
@@ -55,49 +52,25 @@ static void touchPollTimerCallback(void *arg)
 
 void touchInit()
 {
-    // 1. Get the handle created by platform_context.cpp
-    i2c_master_bus_handle_t i2c_bus_handle = bsp_i2c_get_handle();
+    const bsp_touch_config_t touchConfig = {};
 
-    if (i2c_bus_handle == nullptr) {
-        ESP_LOGE("QUL", "BSP I2C handle is NULL. Ensure initializeHardware runs first.");
+    esp_err_t ret = bsp_touch_new(&touchConfig, &touchHandle);
+    if (ret != ESP_OK) {
         return;
     }
 
-    // 2. Configure GT911 on the Shared Bus
-    esp_lcd_panel_io_handle_t tp_io_handle = nullptr;
-    // Use the official config macro from esp_lcd_touch_gt911.h
-    esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_GT911_CONFIG();
-    
-    // Attach to the existing bus (Correct New Driver method)
-    if (esp_lcd_new_panel_io_i2c(i2c_bus_handle, &tp_io_config, &tp_io_handle) != ESP_OK) {
-         ESP_LOGE("QUL", "Failed to create panel IO");
-         return;
+    // Since ESP32-P4 doesn't have touch interrupt pin connected,
+    // create a timer to periodically wake up the main loop for touch polling
+    const esp_timer_create_args_t timer_args = {.callback = touchPollTimerCallback,
+                                                .arg = nullptr,
+                                                .dispatch_method = ESP_TIMER_TASK,
+                                                .name = "touch_poll"};
+
+    ret = esp_timer_create(&timer_args, &touchPollTimer);
+    if (ret == ESP_OK) {
+        // Start periodic timer with 16ms interval (60fps touch polling)
+        esp_timer_start_periodic(touchPollTimer, 16000);
     }
-
-    // 3. Init Touch Driver
-    esp_lcd_touch_config_t tp_cfg = {
-        .x_max = lcdWidth,
-        .y_max = lcdHeight,
-        .rst_gpio_num = (gpio_num_t)27, 
-        .int_gpio_num = (gpio_num_t)26,
-        .levels = { .reset = 0, .interrupt = 0 },
-    };
-
-    if (esp_lcd_touch_new_i2c_gt911(tp_io_handle, &tp_cfg, &touchHandle) != ESP_OK) {
-        ESP_LOGE("QUL", "Failed to create touch driver");
-        return;
-    }
-
-    // 4. Timer (Same as your existing code)
-    const esp_timer_create_args_t timer_args = {
-        .callback = touchPollTimerCallback,
-        .arg = nullptr,
-        .dispatch_method = ESP_TIMER_TASK,
-        .name = "touch_poll",
-        .skip_unhandled_events = true 
-    };
-    esp_timer_create(&timer_args, &touchPollTimer);
-    esp_timer_start_periodic(touchPollTimer, 16000);
 }
 
 void touchRead()

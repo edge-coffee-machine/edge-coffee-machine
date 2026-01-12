@@ -9,5 +9,6 @@ idf_build_set_property(LINK_OPTIONS "-Wno-psabi" APPEND)
 # Disable LVGL graphics in ESP-WHO components (since we use Qt)
 add_compile_definitions(BSP_CONFIG_NO_GRAPHIC_LIB=1)
 
+
 # Define the project
 project(edge_coffee_machine)
