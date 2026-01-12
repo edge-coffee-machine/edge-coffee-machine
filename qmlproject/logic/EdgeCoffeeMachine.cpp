@@ -14,12 +14,17 @@
 #include "User.h"
 #include "FaceRecognitionApp.h"
 
+#include "VoiceEngine.h"
+
+
 #include <platforminterface/log.h>
 
 #include <algorithm>
 #include <cstdio>
 #include <ctime>
 
+
+extern void start_speech_recognition();
 namespace Logic
 {
   /**
@@ -34,8 +39,31 @@ namespace Logic
    * 6. Initializes the drinksList property to point to the BeverageModel instance.
    * 7. Pushes the initial data to the UI models via `updateBeverageModel()`.
    */
+
+
+static Logic::EdgeCoffeeMachine* s_ecm = nullptr;
+
+extern "C" void ecm_set_instance(Logic::EdgeCoffeeMachine* inst)
+{
+    s_ecm = inst;
+}
+
+extern "C" void ecm_brew_selected(void)
+{
+    if (s_ecm) {
+        s_ecm->makeDrink(nullptr);   // brew za trenutno selektovano
+    }
+}
+extern "C" void ecm_cancel_brew(void){
+    if (s_ecm) {
+        s_ecm->stopBrewing();   // brew za trenutno selektovano
+    }
+}
+
+
   EdgeCoffeeMachine::EdgeCoffeeMachine()
   {
+      ecm_set_instance(this);
     m_brewTimer.setSingleShot(true);
     m_brewTimer.onTimeout([this]()
                           { this->finishBrewing(); });
@@ -94,13 +122,14 @@ namespace Logic
     usersList.setValue(&m_userModelInstance);      // Initialize usersList property to point to the UserModel instance
 
     updateModels();
-    m_faceRecognitionApp = start_face_recognition();
+    start_speech_recognition();
+    // m_faceRecognitionApp = start_face_recognition();
   }
 
   void EdgeCoffeeMachine::callEnrollment()
   {
       if (m_faceRecognitionApp) {
-          m_faceRecognitionApp->run();
+          m_faceRecognitionApp->trigger_enrollment();
       }
   }
 
