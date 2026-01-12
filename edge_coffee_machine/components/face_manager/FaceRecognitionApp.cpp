@@ -18,7 +18,7 @@ static void recognition_task_entry(void *arg)
 }
 
 FaceRecognitionApp::FaceRecognitionApp(who::frame_cap::WhoFrameCap *frame_cap)
-    : who::app::WhoRecognitionAppTerm(frame_cap), m_is_waiting_for_face(false), m_frame_counter(0) 
+    : who::app::WhoRecognitionAppTerm(frame_cap), m_is_waiting_for_face(false), m_frame_counter(0), m_is_paused(false)
 {
     auto recognition_task = m_recognition->get_recognition_task();
     auto detect_task = m_recognition->get_detect_task();
@@ -34,6 +34,9 @@ FaceRecognitionApp::FaceRecognitionApp(who::frame_cap::WhoFrameCap *frame_cap)
 
 void FaceRecognitionApp::detect_result_cb(const who::detect::WhoDetect::result_t &result)
 {
+    if (m_is_paused) {
+        return;
+    }
     m_frame_counter++;
     if (m_frame_counter % 60 == 0) { // Log every ~30 frames (approx 1 sec)
         Qul::PlatformInterface::log("[FaceRecognitionApp] Heartbeat: Frame %d. Waiting: %s. Faces visible: %d\n", 
@@ -59,6 +62,9 @@ void FaceRecognitionApp::detect_result_cb(const who::detect::WhoDetect::result_t
 
 void FaceRecognitionApp::recognition_result_cb(const std::string &result)
 {
+    if (m_is_paused) {
+        return;
+    }
     Qul::PlatformInterface::log("[FaceRecognitionApp] Result: %s\n", result.c_str());
     // 1. Handle Enrollment Failure (Retry Logic)
     if (result.find("Failed to enroll") != std::string::npos) {
@@ -134,4 +140,16 @@ void FaceRecognitionApp::trigger_enrollment()
 {
     m_is_waiting_for_face = true;
     Qul::PlatformInterface::log("[FaceRecognitionApp] Waiting for face to enroll...\n");
+}
+
+void FaceRecognitionApp::pause()
+{
+    m_is_paused = true;
+    Qul::PlatformInterface::log("[FaceRecognitionApp] Detection paused.\n");
+}
+
+void FaceRecognitionApp::resume()
+{
+    m_is_paused = false;
+    Qul::PlatformInterface::log("[FaceRecognitionApp] Detection resumed.\n");
 }
