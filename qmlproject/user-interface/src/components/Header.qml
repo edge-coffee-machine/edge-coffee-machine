@@ -61,6 +61,34 @@ Rectangle {
                 }
             }
         }
+
+        Row {
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 10
+            visible: EdgeCoffeeMachine.isRecognizingUser
+
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                height: 20
+                opacity: 0.2
+                width: 1
+            }
+
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                height: 10
+                width: 10
+                radius: 5
+                opacity: 0.8
+            }
+
+            TextDefault {
+                anchors.verticalCenter: parent.verticalCenter
+                font.pixelSize: 14
+                font.weight: 300
+                text: "Recognizing..."
+            }
+        }
     }
 
     Image {
