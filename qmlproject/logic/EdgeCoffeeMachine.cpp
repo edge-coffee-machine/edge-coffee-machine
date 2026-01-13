@@ -63,7 +63,7 @@ extern "C" void ecm_cancel_brew(void){
 
   EdgeCoffeeMachine::EdgeCoffeeMachine()
   {
-      ecm_set_instance(this);
+    ecm_set_instance(this);
     m_brewTimer.setSingleShot(true);
     m_brewTimer.onTimeout([this]()
                           { this->finishBrewing(); });
@@ -102,34 +102,26 @@ extern "C" void ecm_cancel_brew(void){
       selectedBeverage.setValue(nullptr);
     }
 
-    // --- USER TEST ---
-    static Qul::Timer initTimer;
-    initTimer.setSingleShot(true);
-    initTimer.setInterval(0); // 0ms = next event loop cycle
-    initTimer.onTimeout([this]()
-                        {
-                          Qul::PlatformInterface::log("[ECM] Initializing test users...\n");
-
-                          this->createUser(1);
-                          this->createUser(2);
-
-                          this->updateUserModel();
-                        });
-    initTimer.start();
-    // -------------------------
-
     drinksList.setValue(&m_beverageModelInstance); // Initialize drinksList property to point to the BeverageModel instance
     usersList.setValue(&m_userModelInstance);      // Initialize usersList property to point to the UserModel instance
 
     updateModels();
     start_speech_recognition();
-    // m_faceRecognitionApp = start_face_recognition();
+    m_faceRecognitionApp = start_face_recognition();
   }
 
   void EdgeCoffeeMachine::callEnrollment()
   {
       if (m_faceRecognitionApp) {
           m_faceRecognitionApp->trigger_enrollment();
+      }
+  }
+
+  void EdgeCoffeeMachine::callRecognition()
+  {
+      if (m_faceRecognitionApp) {
+          isRecognizing.setValue(true);
+          m_faceRecognitionApp->trigger_recognition();
       }
   }
 
@@ -320,8 +312,8 @@ extern "C" void ecm_cancel_brew(void){
     if (currentUser)
     {
       currentUser->beverageBrewed(target);
-      user.setValue(nullptr);
       Qul::PlatformInterface::log("[ECM] User %s brewed %s and logged out.\n", currentUser->name.value().c_str(), drinkName.c_str());
+      logoutUser();
     }
     else
     {
@@ -535,5 +527,6 @@ extern "C" void ecm_cancel_brew(void){
   void EdgeCoffeeMachine::logoutUser()
   {
     setUser(nullptr);
+    callRecognition();
   }
 }

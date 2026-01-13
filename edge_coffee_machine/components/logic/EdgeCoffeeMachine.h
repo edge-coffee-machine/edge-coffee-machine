@@ -141,6 +141,11 @@ namespace Logic
          */
         void callEnrollment();
 
+          /**
+         * @brief Calls the recognition function in FaceRecognitionApp.
+         */
+        void callRecognition();
+
         /**
          * @brief Identifies an existing user by ID.
          * @param id The unique ID detected by the AI subsystem.

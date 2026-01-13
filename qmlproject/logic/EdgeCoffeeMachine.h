@@ -95,20 +95,6 @@ namespace Logic
         Qul::Property<UserModel *> usersList;
 
         /**
-         * @brief Flag indicating if the machine is currently recognizing a user.
-         *
-         * Used to display recognition overlay in the UI.
-         */
-        Qul::Property<bool> isRecognizing;
-
-
-        /**
-         * @brief Sets the recognizing state of the machine.
-         * @param recognizing True if recognizing a user, false otherwise.
-         */
-        void setIsRecognizing(bool recognizing) { isRecognizing.setValue(recognizing); }
-
-        /**
          * @brief Starts the brewing process.
          *
          * Checks if the machine is idle and a valid beverage is selected.
@@ -154,6 +140,11 @@ namespace Logic
          * @brief Calls the enrollment function in FaceRecognitionApp.
          */
         void callEnrollment();
+
+          /**
+         * @brief Calls the recognition function in FaceRecognitionApp.
+         */
+        void callRecognition();
 
         /**
          * @brief Identifies an existing user by ID.

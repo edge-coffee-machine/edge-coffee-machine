@@ -18,7 +18,8 @@ static void recognition_task_entry(void *arg)
 }
 
 FaceRecognitionApp::FaceRecognitionApp(who::frame_cap::WhoFrameCap *frame_cap)
-    : who::app::WhoRecognitionAppTerm(frame_cap), m_is_waiting_for_face(false), m_frame_counter(0), m_is_paused(false)
+    : who::app::WhoRecognitionAppTerm(frame_cap), 
+      m_is_paused(true) // Set to true: Paused by default
 {
     auto recognition_task = m_recognition->get_recognition_task();
     auto detect_task = m_recognition->get_detect_task();
@@ -29,92 +30,93 @@ FaceRecognitionApp::FaceRecognitionApp(who::frame_cap::WhoFrameCap *frame_cap)
     detect_task->set_detect_result_cb(
         std::bind(&FaceRecognitionApp::detect_result_cb, this, std::placeholders::_1));
 
-    Qul::PlatformInterface::log("[FaceRecognitionApp] Initialized for ESP32-P4.\n");
+    Qul::PlatformInterface::log("[FaceRecognitionApp] Initialized for ESP32-P4 (Paused by default).\n");
 }
 
 void FaceRecognitionApp::detect_result_cb(const who::detect::WhoDetect::result_t &result)
 {
-    if (m_is_paused) {
+    if (m_is_paused || m_is_enrolling || m_is_recognizing) {
         return;
     }
-    m_frame_counter++;
-    if (m_frame_counter % 60 == 0) { // Log every ~30 frames (approx 1 sec)
-        Qul::PlatformInterface::log("[FaceRecognitionApp] Heartbeat: Frame %d. Waiting: %s. Faces visible: %d\n", 
-                                    m_frame_counter, 
-                                    m_is_waiting_for_face ? "YES" : "NO", 
-                                    (int)result.det_res.size());
-    }
-    if (m_frame_counter % 300 == 0 && m_is_waiting_for_face) { // Log every ~30 frames (approx 1 sec)
-        Logic::EdgeCoffeeMachine::instance().setIsRecognizing(false);
-    }
-    if (m_is_waiting_for_face && !result.det_res.empty()) {
-        // Stop waiting to prevent double-triggering
-        m_is_waiting_for_face = false;
 
-        Qul::PlatformInterface::log("[FaceRecognitionApp] Face detected! Triggering enrollment now.\n");
-
-        // Trigger the one-shot enrollment event in the core task
+   if (!result.det_res.empty()) {
         auto recognition_task = m_recognition->get_recognition_task();
-        xEventGroupSetBits(recognition_task->get_event_group(), 
-                           who::recognition::WhoRecognitionCore::ENROLL);
+
+        if (m_current_mode == MODE_ENROLL) {
+            Qul::PlatformInterface::log("[FaceRecognitionApp] Face detected. Starting Enrollment...\n");
+            m_is_enrolling = true; // Set busy flag
+            xEventGroupSetBits(recognition_task->get_event_group(), 
+                               who::recognition::WhoRecognitionCore::ENROLL);
+        }
+        else if (m_current_mode == MODE_RECOGNIZE) {
+            Qul::PlatformInterface::log("[FaceRecognitionApp] Face detected. Starting Recognition...\n");
+            m_is_recognizing = true; // Set busy flag
+            xEventGroupSetBits(recognition_task->get_event_group(), 
+                               who::recognition::WhoRecognitionCore::RECOGNIZE);
+        }
     }
 }
 
 void FaceRecognitionApp::recognition_result_cb(const std::string &result)
 {
-    if (m_is_paused) {
-        return;
-    }
-    Qul::PlatformInterface::log("[FaceRecognitionApp] Result: %s\n", result.c_str());
-    // 1. Handle Enrollment Failure (Retry Logic)
-    if (result.find("Failed to enroll") != std::string::npos) {
-        Qul::PlatformInterface::log("[FaceRecognitionApp] Enrollment failed (bad image?). Retrying...\n");
-        // Go back to waiting for a valid face frame
-        m_is_waiting_for_face = true;
-        return;
-    }
+    Qul::PlatformInterface::log("[FaceRecognitionApp] Engine Result: %s\n", result.c_str());
 
-    // 2. Handle Existing User Identification / Enrollment Success
-    if (result.find("ID: ") != std::string::npos) {
-        int id = -1;
-        bool enrolling = false;
-        
-        std::stringstream ss(result);
-        std::string part;
-        
-        while(std::getline(ss, part, ',')) {
-            size_t id_pos = part.find("ID: ");
-            if (id_pos != std::string::npos) {
-                id = std::stoi(part.substr(id_pos + 4));
-            }
+    if (m_is_recognizing) {
+        m_is_recognizing = false; // Clear busy flag
+
+        // Case 1: Success "ID: 123"
+        size_t id_pos = result.find("id: ");
+        if (id_pos != std::string::npos) {
+            // Parse the ID number from the string
+            int id = std::stoi(result.substr(id_pos + 4));
             
-            size_t enroll_pos = part.find("Enrolling: ");
-            if (enroll_pos != std::string::npos) {
-                if (part.find("yes") != std::string::npos) {
-                    enrolling = true;
-                }
-            }
-        }
+            Qul::PlatformInterface::log("[FaceRecognitionApp] Success! Identified User ID: %d\n", id);
+            Logic::EdgeCoffeeMachine::instance().identifyUser(id);
+            Logic::EdgeCoffeeMachine::instance().setIsRecognizing(false);
 
-        if (id != -1) {
-            if (enrolling) {
-                // Enrollment successful, we stop waiting (flag is already false)
-                Qul::PlatformInterface::log("[FaceRecognitionApp] Enrolling user with ID: %d\n", id);
-                Logic::EdgeCoffeeMachine::instance().createUser(id);
-            } else {
-                Qul::PlatformInterface::log("[FaceRecognitionApp] Identifying user with ID: %d\n", id);
-                Logic::EdgeCoffeeMachine::instance().identifyUser(id);
-            }
+            // Stop looking once found
+            FaceRecognitionApp::pause(); 
+            m_current_mode = MODE_IDLE;
+        } 
+        // Case 2: Unknown Face
+        else if (result.find("who?") != std::string::npos) {
+            Qul::PlatformInterface::log("[FaceRecognitionApp] Unknown face detected.\n");
+            Logic::EdgeCoffeeMachine::instance().logoutUser();
+            
+            // Optional: Pause after unknown? Or keep trying?
+            // FaceRecognitionApp::pause();
         }
-    } else if (result.find("Unknown face") != std::string::npos) {
-        Qul::PlatformInterface::log("[FaceRecognitionApp] Unknown face detected, logging out.\n");
-        Logic::EdgeCoffeeMachine::instance().logoutUser();
-    } else if (result.find("enrolled") != std::string::npos) { 
-        // Catch generic "id: X enrolled" message if format differs
-        Qul::PlatformInterface::log("[FaceRecognitionApp] User enrolled successfully.\n");
+        // Case 3: Failed (Blurry/Bad Angle)
+        else {
+            // Implicitly retry: We cleared the 'm_is_recognizing' flag 
+            // and didn't pause, so 'detect_result_cb' will trigger again on the next frame.
+        }
     }
 
-    Logic::EdgeCoffeeMachine::instance().setIsRecognizing(false);
+    // ---------------------------------------------------------
+    // HANDLE ENROLLMENT
+    // ---------------------------------------------------------
+    else if (m_is_enrolling) {
+        size_t id_pos = result.find("id: ");
+        if (id_pos != std::string::npos) {
+            // Parse the ID number from the string
+            int id = std::stoi(result.substr(id_pos + 4));
+            Qul::PlatformInterface::log("[FaceRecognitionApp] Enrollment Confirmed!\n");
+            
+            // Create user
+            Logic::EdgeCoffeeMachine::instance().createUser(id);
+            Logic::EdgeCoffeeMachine::instance().setIsRecognizing(false);
+            
+            // Clean up
+            m_is_enrolling = false;
+            m_current_mode = MODE_IDLE;
+            FaceRecognitionApp::pause(); 
+        } 
+        else if (result.find("Failed") != std::string::npos) {
+            Qul::PlatformInterface::log("[FaceRecognitionApp] Enrollment failed (blurry). Retrying...\n");
+            m_is_enrolling = false; // Retry immediately
+        }
+    }
 }
 
 FaceRecognitionApp* start_face_recognition()
@@ -138,18 +140,31 @@ FaceRecognitionApp* start_face_recognition()
 
 void FaceRecognitionApp::trigger_enrollment()
 {
-    m_is_waiting_for_face = true;
-    Qul::PlatformInterface::log("[FaceRecognitionApp] Waiting for face to enroll...\n");
+    m_current_mode = MODE_ENROLL; // Set intent to Enroll
+    FaceRecognitionApp::resume();
+    Qul::PlatformInterface::log("[FaceRecognitionApp] Mode set to ENROLL. Waiting for face...\n");
 }
 
-void FaceRecognitionApp::pause()
+void FaceRecognitionApp::trigger_recognition()
+{
+    Logic::EdgeCoffeeMachine::instance().setIsRecognizing(true);
+    m_current_mode = MODE_RECOGNIZE; // Set intent to Recognize
+    FaceRecognitionApp::resume();
+    Qul::PlatformInterface::log("[FaceRecognitionApp] Mode set to RECOGNIZE. Waiting for face...\n");
+}
+
+// Fixed: Return bool to match base class signature
+bool FaceRecognitionApp::pause()
 {
     m_is_paused = true;
     Qul::PlatformInterface::log("[FaceRecognitionApp] Detection paused.\n");
+    return true;
 }
 
-void FaceRecognitionApp::resume()
+// Fixed: Return bool to match base class signature
+bool FaceRecognitionApp::resume()
 {
     m_is_paused = false;
     Qul::PlatformInterface::log("[FaceRecognitionApp] Detection resumed.\n");
+    return true;
 }
