@@ -1,7 +1,7 @@
 @startuml voice_command_interaction
 skinparam sequenceMessageAlign center
 
-title Voice Command Interaction
+title Voice Command Interaction: Wake Word & Command Recognition
 
 participant Frontend
 participant Backend
@@ -12,46 +12,33 @@ participant Microphone
 Backend -> Backend: Customer Recognized
 activate Backend
 
-' 1. Backend sends menu and initiates voice interaction in parallel
+' 1. Initial Setup
 par
     Backend -> Frontend: Send Menu
 else
-    ' 2. Backend starts listening and streaming
     Backend -> Microphone: Activate (Start Listening)
     activate Microphone
-    Backend -> AI: Activate (Expect Audio Stream)
+    Backend -> AI: Start Wake Word Detection
     activate AI
 end
 
-' 3. The audio stream is now live
-Microphone ->> Backend: Live Audio Stream
-Backend ->> AI: Forward Live Audio Stream
-note right of AI: AI is now continuously processing\nthe stream for commands...
-
-' 4. The system now waits for one of two outcomes:
-alt Command Recognized
-    ' 4a. AI finds a command and sends it
-    AI -> Backend: Send Recognized Command
-    note left of AI: Command detected in stream
-
-    ' 5a. Backend executes the command
-    Backend -> Backend: Execute Command
-    ' Note: The diagram assumes the loop continues unless a "stop" command is given.
-    ' Deactivation is only shown on the timeout path per the prompt.
-
-else No Input / Timeout
-    ' 4b. Backend's internal timer expires
-    Backend -> Backend: Timeout (No input from AI or Frontend)
-
-    ' 5b. Backend stops the audio stream
-    Backend -> AI: Stop Audio Stream
-    deactivate AI
-    Backend -> Microphone: Stop Listening
-    deactivate Microphone
-
-    ' 6b. Backend tells Frontend to reset
-    Backend -> Frontend: Return to Default Screen
-    deactivate Backend
+' 2. Continuous Streaming for Wake Word
+loop Continuous Streaming
+    Microphone -> Backend: Live Audio Stream
+    Backend -> AI: Forward Live Audio Stream
+    AI -> AI: Process for "Hi ESP"
 end
+
+' 3. Wake Word Detected
+AI -> AI: "Hi ESP" Recognized
+note right of AI: AI transitions to\nCommand Recognition mode
+
+' 4. Command Recognition Phase
+' 4a. AI finds a command and sends it
+AI -> Backend: Send Recognized Command
+note left of AI: Specific command detected
+
+' 5a. Backend executes the command
+Backend -> Backend: Execute Command
 
 @enduml

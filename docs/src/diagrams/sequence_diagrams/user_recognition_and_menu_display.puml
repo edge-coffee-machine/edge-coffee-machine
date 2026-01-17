@@ -63,20 +63,14 @@ loop System Lifecycle
 
     ' 4. Backend waits for user interaction or timeout
     ' This 'alt' group correctly shows the two possibilities
-    alt User Interacts (Success)
-        Frontend -> Backend: Send User Event (e.g., selection)
+    Frontend -> Backend: Send User Event (e.g., selection)
 
-        ' ... Logic for processing the interaction ...
-        Backend -> Backend: Process User Selection
-        Backend -> Frontend: Confirm Selection / Show "Thank You"
+    ' ... Logic for processing the interaction ...
+    Backend -> Backend: Process User Selection
+    Backend -> Frontend: Confirm Selection / Show "Thank You"
 
-        ' After a successful interaction, reset the screen
-        Backend -> Frontend: Return to Default Screen
-
-    else Timeout (No event received)
-        ' This is the failure path from the description
-        Backend -> Frontend: Return to Default Screen
-    end
+    ' After a successful interaction, reset the screen
+    Backend -> Frontend: Return to Default Screen
 
     ' 5. Explicitly restart the flow before the main loop repeats
     Backend -> Backend: Restart Camera→AI Stream
