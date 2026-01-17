@@ -69,7 +69,7 @@
     text(size: 24pt, fill: rgb("#777"))[Edge Coffee Machine]
     linebreak()
     v(4pt)
-    text(size: 1.2em)[Living document · Snapshot: 2025-12-26]
+    text(size: 1.2em)[Living document · Snapshot: 2025-01-17]
     linebreak()
     text(
       fill: rgb("#777"),
@@ -144,7 +144,7 @@ The system collects data from multiple input sources:
 
 - *Camera*: Captures an image of the user to perform facial recognition.
 
-- *Microphone*: Captures predefined voice commands to control menu navigation and drink selection.
+- *Microphone*: Captures predefined voice commands to start and cancel the brewing process.
 
 - *Touchscreen Display*: Allows manual user input for customization or confirmation of selections.
 
@@ -156,7 +156,7 @@ This section defines the external interfaces of the system that enable interacti
 
 - _Touch Interface_ (Qt for MCU): Primary means of interaction for drink customization and confirmation.
 
-- _Voice Interface_: Allows users to issue specific commands such as “make espresso” or “show menu.”
+- _Voice Interface_: Allows users to issue specific commands such as “brew coffe” or “cancel brewing”.
 
 - _Vision Interface_ (Camera): Detects and recognizes users automatically without manual input.
 
@@ -166,7 +166,7 @@ This section defines the external interfaces of the system that enable interacti
 
 - _Backend (ESP-IDF in C++)_: Contains the core application logic, communication with the hardware peripherals, and management of AI inference results.
 
-- _AI Runtime Libraries (ESP-DL or emlearn)_: Used to execute trained machine learning models for facial and voice recognition.
+- _AI Runtime Libraries (ESP-DL and ESP-SR)_: Provide AI models and libraries for for facial and speech recognition.
 
 - _Internal Communication Protocols_: Communication between modules (e.g., between backend and AI runtime) is handled via in-memory message passing within the microcontroller's environment.
 
@@ -235,7 +235,7 @@ The system is decomposed into three primary software components, as illustrated 
   This is the core "brain" of the application. It is written in C++ and contains all business logic. While the final target platform will run on the ESP-IDF framework, the component is developed and tested in a desktop environment using the Qt framework to ensure logic and interfaces are correct before hardware integration.
   It orchestrates the other modules and decides what actions to take:
   - It directly processes the high-level events arriving from the _UI_, giving back a high-level command to update it.
-  - It receives raw data from the _Camera_ and passes them to the _AI component_, from which it obtains the embedding of the detected customer.
+  - It receives raw data from the _Camera_ and passes them to the _AI component_, from which it obtains the reference ID of the detected customer.
   - It receives raw data from the _Microphone_ and passes them to the _AI component_, from which it obtains the command to perform.
 
 - *AI component (ESP-DL, ESP-SR):*\
@@ -273,11 +273,9 @@ The _User_ approaches the ECM. The _Backend_ continuously receives images from t
 
 The latter executes a detection model to verify that a face is present in the image and, if it is, where it is located. If and only if a face is detected, the _AI component_ executes another model to effectively recognize the customer and obtain their User ID.
 
-After that, the User ID is sent to the _Backend_, which interrupts the data flow between the _Camera_ and the _AI component_. The _Backend_ compares the User ID received with those present in memory (cache), each of which is associated with a customer already recognized and served.
+After that, the User ID is sent to the _Backend_, which communicate to the _AI component_ to stop the detection of a face. The _Backend_ compares the User ID received with those present in memory (cache), each of which is associated with a customer already recognized and served.
 
 If a match is found, the _Backend_ updates its internal state by setting the recognized user as the current one. If no match is found, it sets the current user to a guest state (`null`). In both cases, it emits signals (`userChanged`, `beveragesChanged`) to notify the _Frontend_ that its state has changed. The _Frontend_ reacts to these signals by reading the updated properties (the current user and the corresponding beverage list) and refreshing the display to show either a personalized or a guest view.
-
-The _Backend_ waits for events coming from the _Frontend_; if it does not receive them after a certain delay, it communicates to the _Frontend_ to return to the default screen and restarts the data flow between the _Camera_ and the _AI component_.
 
 #figure(
   image("diagrams/sequence_diagrams/user_recognition_and_menu_display.svg"),
@@ -285,13 +283,11 @@ The _Backend_ waits for events coming from the _Frontend_; if it does not receiv
 
 === Voice Command Interaction
 
-Immediately after customer recognition, as the Backend sends the menu to the Frontend, it also initiates the voice interaction in parallel.
+The Backend continuously streams the audio coming from the microphone to the _AI component_ which continuously executes a model to detect and recognize the waking command "Hi ESP" within this live stream.
 
-The _Backend_ begins listening to the _Microphone_ and starts streaming the resulting audio data directly to the _AI component_. The _AI component_ activates and continuously executes a model to detect and recognize voice commands within this live stream.
+If the wake command is recognized, the _AI component_ start listening to recognize one of the predefined commands.
 
 If a command is recognized, the _AI component_ sends it to the _Backend_, which executes it.
-
-If the _Backend_ doesn't receive any input from either the _AI component_ or the _Frontend_, it stops the audio stream from the _Microphone_ to the _AI component_ and communicates to the _Frontend_ to return to the default screen.
 
 #figure(
   image("diagrams/sequence_diagrams/voice_command_interaction.svg"),
@@ -299,7 +295,7 @@ If the _Backend_ doesn't receive any input from either the _AI component_ or the
 
 === Drink Customization Through Touch Display
 
-After the customer recognition process is complete and the customer is viewing their menu, they interact with the _Touch Display_ to select one of the proposed beverages.
+The customer recognition process is complete and the customer is viewing their menu, they interact with the _Touch Display_ to select one of the proposed beverages.
 
 After the selection, they can request a modification of one or more characteristics of the selected drink.
 
@@ -881,14 +877,7 @@ To handle potential misidentifications, a “Not you?” button is displayed nex
 
 Both registered and guest users share a consistent layout. The central area highlights a featured beverage: either the preferred drink of the recognized user or the most popular one for guests. Next to the drink’s image and name, a customization sidebar allows adjustments to parameters such as foam, coffee, milk, water, and powder levels depending on the drink type.
 
-Beneath the customization section, the price and a prominent “Brew Now” button are displayed. On larger screens, an additional sidebar shows a list of available drinks, which can be customized according to the user’s preferences.
-
-#figure(
-  image("UI/Home - Small Screens.png"),
-  caption: [
-    The coffee machine Home screen for small screens.
-  ],
-)
+Beneath the customization section, the price and a prominent “Brew Now” button are displayed. An additional sidebar shows a list of available drinks, which can be customized according to the user’s preferences.
 
 #figure(
   image("UI/Speech Recognition.png"),
@@ -897,32 +886,9 @@ Beneath the customization section, the price and a prominent “Brew Now” butt
   ],
 )
 
-To enhance interaction transparency during voice input, the bottom area of the interface features a sound wave animation and a real-time transcription of the user's spoken commands. Users can manually activate voice recognition by tapping the waveform. Once a beverage command is recognized, the featured drink updates automatically, and the user can confirm by pressing "Brew Now".
-
 == User Onboarding Views
 
-When a new user signs up, the on boarding process consists of three steps:
-1. *Name Input*: The user provides their name or username via voice input. The system confirms recognition accuracy, offering options to retry or continue.
-  #figure(
-    image("UI/Remember me - 1.png"),
-    caption: [
-      Onboarding: Name input
-    ],
-  )
-2. *Face Registration*: The system captures facial data and takes a profile picture. The user can retake or confirm the image before proceeding.
-  #figure(
-    image("UI/Remember me - 2.png"),
-    caption: [
-      Onboarding: Face registration
-    ],
-  )
-3. *Welcome Screen*: The process concludes with a confirmation message, informing the user that they will now be automatically recognized by the machine in future sessions.
-  #figure(
-    image("UI/Remember me - 3.png"),
-    caption: [
-      Onboarding: Welcome screen
-    ],
-  )
+When a new user signs up, the system captures facial data to recognize him in the future. An username is randomly chosen and its initials are used as profile picture. At the end of the process, the user is redirected to the home screen.
 
 == Manual User Selection View
 
@@ -933,7 +899,7 @@ When a new user signs up, the on boarding process consists of three steps:
   ],
 )
 
-If the machine fails to identify a user, the *Manual User Selection View* allows them to choose a profile manually. This view displays all existing user profiles, along with a Guest option and the ability to add a new user.
+If the machine fails to identify a user, the *Manual User Selection View* allows them to choose a profile manually. This view displays all existing user profiles, along the ability to add a new user.
 
 == Drinks List View
 
@@ -944,7 +910,7 @@ If the machine fails to identify a user, the *Manual User Selection View* allows
   ],
 )
 
-On smaller displays, where space is limited, the full list of beverages is not shown on the *Home View*. By selecting the "All Drinks" button, users can browse the complete catalog of beverages, each accompanied by pricing information and grouped by drink category.
+The full list of beverages is not shown on the *Home View*. By selecting the "All Drinks" button, users can browse the complete catalog of beverages, each accompanied by pricing information and grouped by drink category.
 
 == Brewing View
 
@@ -955,9 +921,7 @@ On smaller displays, where space is limited, the full list of beverages is not s
   ],
 )
 
-When the brewing process begins, the user remains on the Home View. To draw focus, the rest of the interface is dimmed and slightly blurred, while the price component remains visible.
-
-During brewing, the price area transforms into a progress indicator, displaying a cancel button and an animated wave that gradually rises as brewing progresses, reaching the top upon completion.
+When the brewing process begins, the user remains on the Home View, the price area transforms into a progress indicator, displaying a cancel button and an animated wave that gradually rises as brewing progresses, reaching the top upon completion.
 
 #figure(
   rect(image("UI/Color Palette.png", width: 100%), inset: 0pt, stroke: 3pt),
