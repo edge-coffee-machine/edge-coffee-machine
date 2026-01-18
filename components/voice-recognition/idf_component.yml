@@ -1,3 +1,0 @@
-dependencies:
-  espressif/esp-sr:
-    version: "^2.3.0"

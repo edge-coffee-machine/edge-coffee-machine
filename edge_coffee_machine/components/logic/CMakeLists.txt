@@ -4,5 +4,5 @@ idf_component_register(SRCS "Beverage.cpp"
                             "User.cpp"
 
                        INCLUDE_DIRS "."
-                       REQUIRES voice_control Qul
+                       REQUIRES voice_manager Qul
                        PRIV_REQUIRES face_manager )

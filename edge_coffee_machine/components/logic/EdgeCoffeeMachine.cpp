@@ -120,7 +120,6 @@ extern "C" void ecm_cancel_brew(void){
   void EdgeCoffeeMachine::callRecognition()
   {
       if (m_faceRecognitionApp) {
-          isRecognizing.setValue(true);
           m_faceRecognitionApp->trigger_recognition();
       }
   }

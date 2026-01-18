@@ -65,7 +65,7 @@ Rectangle {
         Row {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 10
-            visible: EdgeCoffeeMachine.isRecognizingUser
+            visible: EdgeCoffeeMachine.isRecognizing
 
             Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
