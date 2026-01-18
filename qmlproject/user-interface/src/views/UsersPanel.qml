@@ -1,6 +1,7 @@
 import QtQuick
 import "../components/text"
-import "../components"
+import "../components" as Components
+
 import Theme
 
 Rectangle {
@@ -15,7 +16,7 @@ Rectangle {
     height: 600
     width: 1024
 
-    UserRecognition {
+    Components.UserRecognition {
         visible: EdgeCoffeeMachine.isRecognizing
         anchors.fill: parent
         anchors.margins: 30
@@ -142,7 +143,7 @@ Rectangle {
                         onClicked: {
                             console.log("Create User");
                             EdgeCoffeeMachine.setIsRecognizing(true);
-                            //console.log(edgeCoffeeMachineController.users);
+                            EdgeCoffeeMachine.callEnrollment();
                         }
                     }
                 }

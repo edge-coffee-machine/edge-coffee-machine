@@ -1,0 +1,14 @@
+[sections:qul_section]
+entries:
+    QulFontResourceData
+    QulModuleResourceData
+    QulResourceData
+
+[scheme:main_scheme]
+entries:
+    qul_section -> flash_rodata
+
+[mapping:main_default]
+archive: *
+entries:
+    * (main_scheme)

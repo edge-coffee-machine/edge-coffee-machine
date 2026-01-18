@@ -75,3 +75,8 @@ compile_commands.json
 
 # Build directories
 build*/
+managed_components*/
+
+# Generated QUL folderq
+generated/
+CMake/

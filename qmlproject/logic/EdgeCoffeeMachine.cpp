@@ -12,6 +12,10 @@
 #include "BeverageModel.h"
 #include "UserModel.h"
 #include "User.h"
+#include "FaceRecognitionApp.h"
+
+#include "VoiceEngine.h"
+
 
 #include <platforminterface/log.h>
 
@@ -19,6 +23,8 @@
 #include <cstdio>
 #include <ctime>
 
+
+extern void start_speech_recognition();
 namespace Logic
 {
   /**
@@ -33,8 +39,31 @@ namespace Logic
    * 6. Initializes the drinksList property to point to the BeverageModel instance.
    * 7. Pushes the initial data to the UI models via `updateBeverageModel()`.
    */
+
+
+static Logic::EdgeCoffeeMachine* s_ecm = nullptr;
+
+extern "C" void ecm_set_instance(Logic::EdgeCoffeeMachine* inst)
+{
+    s_ecm = inst;
+}
+
+extern "C" void ecm_brew_selected(void)
+{
+    if (s_ecm) {
+        s_ecm->makeDrink(nullptr);   // brew za trenutno selektovano
+    }
+}
+extern "C" void ecm_cancel_brew(void){
+    if (s_ecm) {
+        s_ecm->stopBrewing();   // brew za trenutno selektovano
+    }
+}
+
+
   EdgeCoffeeMachine::EdgeCoffeeMachine()
   {
+    ecm_set_instance(this);
     m_brewTimer.setSingleShot(true);
     m_brewTimer.onTimeout([this]()
                           { this->finishBrewing(); });
@@ -73,30 +102,27 @@ namespace Logic
       selectedBeverage.setValue(nullptr);
     }
 
-    // --- USER TEST ---
-    static Qul::Timer initTimer;
-    initTimer.setSingleShot(true);
-    initTimer.setInterval(0); // 0ms = next event loop cycle
-    initTimer.onTimeout([this]()
-                        {
-                          Qul::PlatformInterface::log("[ECM] Initializing test users...\n");
-
-                          this->enrollUser(10);
-                          this->enrollUser(20);
-
-                          User *testUser = new User("Paolo", "Rossi", 1, RecipeDatabase::getAllDefaultRecipes());
-                          m_user_list.push_back(testUser);
-                          m_users_by_id[99] = testUser;
-
-                          this->updateUserModel();
-                        });
-    initTimer.start();
-    // -------------------------
-
     drinksList.setValue(&m_beverageModelInstance); // Initialize drinksList property to point to the BeverageModel instance
     usersList.setValue(&m_userModelInstance);      // Initialize usersList property to point to the UserModel instance
 
     updateModels();
+    start_speech_recognition();
+    m_faceRecognitionApp = start_face_recognition();
+  }
+
+  void EdgeCoffeeMachine::callEnrollment()
+  {
+      if (m_faceRecognitionApp) {
+          m_faceRecognitionApp->trigger_enrollment();
+      }
+  }
+
+  void EdgeCoffeeMachine::callRecognition()
+  {
+      if (m_faceRecognitionApp) {
+          isRecognizing.setValue(true);
+          m_faceRecognitionApp->trigger_recognition();
+      }
   }
 
   /**
@@ -286,8 +312,8 @@ namespace Logic
     if (currentUser)
     {
       currentUser->beverageBrewed(target);
-      user.setValue(nullptr);
       Qul::PlatformInterface::log("[ECM] User %s brewed %s and logged out.\n", currentUser->name.value().c_str(), drinkName.c_str());
+      logoutUser();
     }
     else
     {
@@ -401,7 +427,7 @@ namespace Logic
    *
    * @param id The unique identifier assigned by the AI subsystem.
    */
-  void EdgeCoffeeMachine::enrollUser(int id)
+  void EdgeCoffeeMachine::createUser(int id)
   {
     if (m_users_by_id.find(id) != m_users_by_id.end())
     {
@@ -501,5 +527,6 @@ namespace Logic
   void EdgeCoffeeMachine::logoutUser()
   {
     setUser(nullptr);
+    callRecognition();
   }
 }

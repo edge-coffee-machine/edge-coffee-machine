@@ -23,6 +23,6 @@ Row {
         font.italic: true
         font.pixelSize: 16
         font.weight: 300
-        text: "Brew me an Espresso without sugar..."
+        text: "Try saying Hi ESP, Brew Coffee"
     }
 }

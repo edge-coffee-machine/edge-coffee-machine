@@ -19,45 +19,30 @@ This project uses **Qt for MCUs** (Qul), a lightweight Qt framework optimized fo
 
 - **UI Framework**: Qt for MCUs (`Qul::Core`, `Qul::Controls`)
 - **QML Engine**: MCU-optimized QML with restricted feature set
-- **Build System**: CMake with `qul_add_target()` for MCU project generation
+- **Build Pipeline**:
+  1.  **Source**: The [`qmlproject/`](./qmlproject/) directory contains the QML UI and C++ domain logic.
+  2.  **Transpilation**: The [`build_esp_project.sh`](./build_esp_project.sh) script invokes `qmlprojectexporter`.
+  3.  **Generation**: QML assets are transpiled into optimized C++ source code located in `edge_coffee_machine/QtMCUs/`.
+  4.  **Linking**: The ESP-IDF project links these generated files via the `components/Qul` component.
 
-### Supported Toolchains & Targets
+### Domain Logic (`qmlproject/logic/`)
 
-The project supports the following build configurations:
-
-- **Embedded MCU Target**:
-  - **Toolchain**: GCC/Clang
-  - **Board**: ESP32-P4-Function-EV-Board
-  - **Build Type**: Debug/Release
-
-The primary deployment target is embedded MCU hardware. Desktop previews are available within Qt Creator for development convenience.
-
-### C++ Domain Types & QML Integration
-
-**Domain Layer** ([`qmlproject/logic/`](./qmlproject/logic/)):
-
-- **Beverage**: Represents a drink configuration with customizable ingredient parameters (coffee, milk, water, etc.)
-- **User**: Represents a user profile that:
-  - Tracks beverage **weights** (preference scores) for each drink based on selection history
-  - Maintains behavior scores (`tryerScore`, `customizerScore`) to classify users into three categories:
-    - **Default** (new users)
-    - **Conservative** (stick to favorites)
-    - **Early Adopter** (frequent experimenters)
-  - Categorization determines UI behavior (e.g., Early Adopters see variety suggestions)
-- **EdgeCoffeeMachine**: Central singleton controller managing machine state, user sessions, and brewing simulation
-- **RecipeDatabase**: Manages persistent drink recipe data
-- **BeverageListModel** / **UserListModel**: Qt-compatible data models bridging C++ domain objects to QML
-
-**QML Integration**:
-
-- Domain types inherit from `Qul::Object` and expose properties via `Qul::Property<T>`
-- Models (e.g., `BeverageListModel`) adapt domain collections to Qt's model-view pattern for QML list views
-- `EdgeCoffeeMachine` is registered as a `Qul::Singleton`, making it globally accessible in QML as `EdgeCoffeeMachine`
-- Data binding synchronizes UI state with backend logic in real-time
+- **Beverage**: Drink configuration with customizable ingredients (coffee, milk, water).
+- **User**: Profile tracking preference scores and behavior categories (*Default, Conservative, Early Adopter*).
+- **EdgeCoffeeMachine**: Singleton controller managing state, sessions, and brewing simulation.
+- **RecipeDatabase**: Manages persistent drink recipes.
+- **Models**: `BeverageListModel` and `UserListModel` bridge C++ data to QML views.
 
 ### Project Structure
 
 ```
+edge_coffee_machine/            # ESP-IDF project root
+├── main/                       # Application entry point
+├── components/                 # ESP-IDF components
+│   ├── logic/                  # C++ domain logic
+│   ├── voice_manager/          # Voice recognition logic
+│   └── face_manager/           # Face recognition logic
+├── QtMCUs/                     # Generated Qt for MCUs files
 qmlproject/
 ├── main.qml                    # Application entry point
 ├── logic/                      # C++ domain layer
@@ -72,29 +57,67 @@ qmlproject/
         └── views/              # Full-screen QML views
 ```
 
-## 🚀 Development Rules
+## 🛠️ Build Project: Embedded Target (ESP32-P4)
 
-### 🧹 Formatting
+To manually build the project for the ESP32-P4 target, follow these steps. This process assumes you have the ESP-IDF environment set up and the Qt for MCUs SDK installed.
 
-#### QML Files
+### 1. Set Environment Variables
 
-Use `qmlformat` on all QML files before committing.
-The [configuration](https://doc.qt.io/qt-6/qtqml-tooling-qmlformat.html#settings-file) file is located at the project root: [`.qmlformat.ini`](./.qmlformat.ini).
+Export the `QUL_DIR` variable pointing to your Qt for MCUs installation directory:
 
-Qt Creator can be set up to format on save:
+```bash
+export QUL_DIR=/path/to/your/Qul
+```
 
-1. Go to **Settings > Qt Quick > Code Style**
-   1. Click on **Copy...** to create a custom style (name it as you like)
-   1. Under **Formatter Selection**, select **Custom Formatter** (ensure `qmlformat` is installed on your system)[^1]
-   1. Under **Custom Formatter Configuration**, select the path to the `qmlformat` executable (e.g., `/opt/homebrew/bin/qmlformat`)
-1. Go to **Settings > Qt Quick > QML/JS Editing**
-   1. Under **Formatting**, check **Enable auto format on file save**
+### 2. Run the Build Script
 
-## 📘 References
+Execute the provided build script, which handles:
+1.  Running `qmlprojectexporter` to generate C++ code from QML.
+    **Note:** The `qmlprojectexporter` command in `build_esp_project.sh` uses Linux-specific options (`-platform esp32-p4-func-idf`, `-toolchain gnu`, and paths). If you are not using Linux, you may need to modify the script to match your operating system and toolchain.
+2.  Moving generated files to the `edge_coffee_machine` project.
+3.  Fixing include paths.
+4.  Triggering the ESP-IDF build (`idf.py build`).
 
-- Frontend uses **[Qt for MCUs](https://doc.qt.io/QtForMCUs/)**
+```bash
+./build_esp_project.sh
+```
 
-[^1]: Select this option and not **QmlFormat** since the latter doesn't format on save correctly.
+**Note:** Ensure the script has execution permissions (`chmod +x build_esp_project.sh`).
+
+### ⚡ Flash Binary
+
+After building, you can flash the binary to your ESP32-P4 board using `idf.py flash`.
+
+```bash
+idf.py flash
+```
+
+**Important:** If you are re-flashing and want to clear any previously saved face recognition features, it is recommended to erase the flash entirely before flashing the new binary:
+
+```bash
+idf.py erase-flash flash
+```
+
+To monitor the serial output and verify the status of voice and face recognition, along with other application logs, use:
+
+```bash
+idf.py monitor
+```
+
+You can exit the monitor by pressing `Ctrl+]`.
+
+## 💻 Build: Desktop Target (Windows/Linux)
+
+To run the application on your PC (for development or visual testing), you must build the **Desktop** configuration.
+
+> **⚠️ Important Note:**
+> The Desktop build runs **only the UI and C++ Domain Logic**.
+> Because the AI components (Face & Voice Recognition) are heavily optimized for the ESP32-P4 hardware, they are **excluded** from this target. In the Desktop environment, these features are disabled or mocked to allow for rapid UI iteration without hardware.
+
+1. Open `qmlproject/edge_coffee_machine.qmlproject` in **Qt Creator**.
+2. Configure the project using the **Qt for MCUs Desktop Kit**.
+3. Build the project (Release or Debug).
+4. Verify that the executable is generated in your build directory.
 
 ## 🧪 Visual Testing Setup (Windows)
 
@@ -122,3 +145,25 @@ pip install -r requirements.txt
 ```powershell
 pytest tests/ui_tests
 ```
+
+## 🚀 Development Rules
+
+### 🧹 Formatting
+
+#### QML Files
+
+Use `qmlformat` on all QML files before committing.
+The [configuration](https://doc.qt.io/qt-6/qtqml-tooling-qmlformat.html#settings-file) file is located at the project root: [`.qmlformat.ini`](./.qmlformat.ini).
+
+Qt Creator can be set up to format on save:
+
+1. Go to **Settings > Qt Quick > Code Style**
+   1. Click on **Copy...** to create a custom style (name it as you like)
+   1. Under **Formatter Selection**, select **Custom Formatter** (ensure `qmlformat` is installed on your system)[^1]
+   1. Under **Custom Formatter Configuration**, select the path to the `qmlformat` executable (e.g., `/opt/homebrew/bin/qmlformat`)
+1. Go to **Settings > Qt Quick > QML/JS Editing**
+   1. Under **Formatting**, check **Enable auto format on file save**
+
+## 📘 References
+
+- Frontend uses **[Qt for MCUs](https://doc.qt.io/QtForMCUs/)**
