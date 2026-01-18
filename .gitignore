@@ -1,3 +1,6 @@
+# VS Code
+.vscode/
+
 # C++ objects and libs
 *.slo
 *.lo
@@ -9,6 +12,20 @@
 *.so.*
 *.dll
 *.dylib
+
+# Python (and venv)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+.pytest_cache/
+venv/
+
+# UI tests
+tests/ui_tests/screenshots/
+!tests/ui_tests/reference_images/
+
 
 # Qt-es
 object_script.*.Release
@@ -52,3 +69,9 @@ compile_commands.json
 *creator.user*
 
 *_qmlcache.qrc
+
+# MacOS
+.DS_Store
+
+# Build directories
+build*/

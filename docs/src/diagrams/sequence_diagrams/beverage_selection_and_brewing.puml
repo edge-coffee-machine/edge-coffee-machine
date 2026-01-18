@@ -1,0 +1,41 @@
+@startuml beverage_selection_and_brewing
+title Beverage Selection and Brewing
+
+actor User
+participant "Touch Display" as Frontend
+participant Backend
+
+' Context: This starts after user recognition and menu display.
+note over User, Frontend: User is facing their menu
+
+User -> Frontend: Select Beverage
+
+opt Modify Characteristics
+    User -> Frontend: Request Modifications
+    Frontend -> Frontend: Update Drink Characteristics
+end
+
+User -> Frontend: Command to Brew
+
+activate Frontend
+Frontend -> Backend: makeDrink(Beverage)
+deactivate Frontend
+
+activate Backend
+group Brewing Process [Can be Canceled]
+    alt User Cancels
+        User -> Frontend: Press Cancel
+        activate Frontend
+        Frontend -> Backend: Send Cancel Event
+        deactivate Frontend
+
+        Backend -> Backend: Abort Brew Process
+    else Brew Completes Normally
+        Backend -> Backend: Execute Brew Process
+        note over Backend: Brew Finished
+    end
+
+end
+deactivate Backend
+
+@enduml

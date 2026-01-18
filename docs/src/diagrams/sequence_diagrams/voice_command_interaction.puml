@@ -1,0 +1,44 @@
+@startuml voice_command_interaction
+skinparam sequenceMessageAlign center
+
+title Voice Command Interaction: Wake Word & Command Recognition
+
+participant Frontend
+participant Backend
+participant AI
+participant Microphone
+
+' Interaction starts after customer recognition
+Backend -> Backend: Customer Recognized
+activate Backend
+
+' 1. Initial Setup
+par
+    Backend -> Frontend: Send Menu
+else
+    Backend -> Microphone: Activate (Start Listening)
+    activate Microphone
+    Backend -> AI: Start Wake Word Detection
+    activate AI
+end
+
+' 2. Continuous Streaming for Wake Word
+loop Continuous Streaming
+    Microphone -> Backend: Live Audio Stream
+    Backend -> AI: Forward Live Audio Stream
+    AI -> AI: Process for "Hi ESP"
+end
+
+' 3. Wake Word Detected
+AI -> AI: "Hi ESP" Recognized
+note right of AI: AI transitions to\nCommand Recognition mode
+
+' 4. Command Recognition Phase
+' 4a. AI finds a command and sends it
+AI -> Backend: Send Recognized Command
+note left of AI: Specific command detected
+
+' 5a. Backend executes the command
+Backend -> Backend: Execute Command
+
+@enduml

@@ -1,0 +1,7 @@
+pytest
+pyautogui
+pygetwindow
+opencv-python
+numpy
+psutil
+Pillow>=11.0.0

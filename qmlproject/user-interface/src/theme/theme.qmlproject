@@ -1,0 +1,13 @@
+import QmlProject
+
+Project {
+    MCU.Module {
+        uri: "Theme"
+    }
+    
+    QmlFiles {
+        files: [
+            "Theme.qml"
+        ]
+    }
+}

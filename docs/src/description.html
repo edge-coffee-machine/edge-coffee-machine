@@ -1,0 +1,160 @@
+<p>
+  The Edge Coffee Machine (ECM) is an AI-driven embedded system designed to
+  demonstrate the power of Edge AI on microcontrollers. The project aims to
+  showcase how technology can respond to human needs by recognizing users,
+  remembering their individual preferences, and offering a personalized coffee
+  experience that feels natural and effortless. By running AI directly on the
+  device, the ECM ensures instant responses, enhanced data privacy, and
+  energy-efficient performance without cloud dependency.
+</p>
+
+<h3>Key Features</h3>
+
+<ul>
+  <li>
+    <strong>Facial Recognition:</strong> Automatically detects and recognizes
+    users through an integrated camera to trigger personalized sessions.
+  </li>
+  <li>
+    <strong>Smart User Classification:</strong> Categorizes users into
+    "Default," "Conservative," or "Early Adopter" profiles based on their
+    historical drink choices and customization habits.
+  </li>
+  <li>
+    <strong>Adaptive Recommendation Engine:</strong> Uses an exponential decay
+    model to prioritize favorite drinks or suggest new ones based on the user's
+    classification.
+  </li>
+  <li>
+    <strong>Voice Command Interface:</strong> Allows hands-free operation to
+    start (or cancel) the brewing process via locally processed speech
+    recognition.
+  </li>
+  <li>
+    <strong>Customizable Brewing:</strong> Offers precise touch-based adjustment
+    of ingredients including coffee beans, cocoa powder, water, milk, and foam.
+  </li>
+  <li>
+    <strong>Privacy-Centric Design:</strong> All biometric processing (face and
+    voice) occurs strictly on-device to ensure user data protection.
+  </li>
+</ul>
+
+<div style="max-width: 100%; overflow: hidden">
+  <h3>Interface Gallery</h3>
+
+  <div
+    style="
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+      overflow-x: auto;
+      padding-bottom: 15px;
+      scroll-snap-type: x mandatory;
+    "
+  >
+    <img
+      alt="Personalized Home Screen"
+      src="https://raw.githubusercontent.com/edge-coffee-machine/edge-coffee-machine/dev-mcu/docs/src/UI/Home - User.png"
+    />
+    <img
+      alt="Manual User Selection Screen"
+      src="https://raw.githubusercontent.com/edge-coffee-machine/edge-coffee-machine/dev-mcu/docs/src/UI/Manual User Selection.png"
+    />
+    <img
+      alt="Drinks List Screen"
+      src="https://raw.githubusercontent.com/edge-coffee-machine/edge-coffee-machine/dev-mcu/docs/src/UI/Drinks list.png"
+    />
+  </div>
+</div>
+
+<h3>Architecture &amp; Technology Stack</h3>
+
+<p>
+  The ECM is built as a <strong>modular monolith</strong>. The architecture is
+  logically decomposed into three primary layers: a Presentation Layer (UI), a
+  Business Logic Layer (Backend), and a Service Layer (AI component).
+</p>
+
+<ul>
+  <li>
+    <strong>Hardware:</strong> Espressif ESP32-P4-Function-EV-Board
+    microcontroller featuring a dual-core processor and a Neural Processing Unit
+    (NPU).
+  </li>
+  <li>
+    <strong>Frontend:</strong> Qt for MCU (QML) for high-performance,
+    smartphone-like user experiences on embedded hardware.
+  </li>
+  <li>
+    <strong>Backend:</strong> C++ using the Espressif IoT Development Framework
+    (ESP-IDF).
+  </li>
+  <li>
+    <strong>Edge AI:</strong> ESP-DL for face detection and recognition, and
+    ESP-SR for optimized voice command processing.
+  </li>
+</ul>
+
+<h3>Project Resources</h3>
+
+<ul>
+  <li>
+    <strong>GitHub:</strong>
+    <a href="https://github.com/edge-coffee-machine/edge-coffee-machine"
+      >Edge Coffee Machine Repository</a
+    >
+  </li>
+  <li>
+    <strong>Documentation:</strong>
+    <a
+      href="https://raw.githubusercontent.com/edge-coffee-machine/edge-coffee-machine/dev-mcu/docs/src/RASD.pdf"
+      >Requirements Document (RASD)</a
+    >
+    |
+    <a
+      href="https://raw.githubusercontent.com/edge-coffee-machine/edge-coffee-machine/dev-mcu/docs/src/DD.pdf"
+      >Design Document (DD)</a
+    >
+  </li>
+</ul>
+
+<h3>Team Contacts</h3>
+
+<ul>
+  <li>
+    <strong>Javier Asensio Castillo: </strong>
+    <a href="mailto:javierasensiocastillo@gmail.com"
+      >javierasensiocastillo@gmail.com</a
+    >
+  </li>
+  <li>
+    <strong>Piervito Creanza: </strong>
+    <a href="mailto:dsd@piervito.com">dsd@piervito.com</a>
+  </li>
+  <li>
+    <strong>Matteo Delton: </strong
+    ><a href="mailto:deltonmatteo@gmail.com">deltonmatteo@gmail.com</a>
+  </li>
+  <li>
+    <strong>Emiliano Finetti: </strong
+    ><a href="mailto:emilianofinetti@gmail.com">emilianofinetti@gmail.com</a>
+  </li>
+  <li>
+    <strong>Jorge Jiménez Oropesa: </strong
+    ><a href="mailto:jorgejimenezoropesa3@gmail.com"
+      >jorgejimenezoropesa3@gmail.com</a
+    >
+  </li>
+  <li>
+    <strong>Balša Rakočević </strong
+    ><a href="mailto:balsarakocevic002@gmail.com"
+      >balsarakocevic002@gmail.com</a
+    >
+  </li>
+  <li>
+    <strong>Maxime Trimboli:</strong>
+    <a href="mailto:maximetrimboli@gmail.com">maximetrimboli@gmail.com</a>
+  </li>
+</ul>
